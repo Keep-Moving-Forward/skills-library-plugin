@@ -1,1 +1,1 @@
-# skills-library-plugin
+# skills library plugin
