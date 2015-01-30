@@ -1,1 +1,1 @@
-# skills library plugin
+# Skills Library JQuery Plugin
