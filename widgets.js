@@ -298,7 +298,7 @@
                 $ka.push($k);
             });
 
-            $.fn.skillEngine.buildTree(obj.adam.selector, $ka, 'MM');
+            $.fn.skillEngine.buildTree(obj.adam.selector, $ka, 'MM', 'SEA');
         }
 
         $.getScript("https://www.itsyourskills.com/js/select2.js").done(function () {
@@ -336,7 +336,7 @@
         });
     }
 
-    $.fn.skillEngine.buildTree = function ($adam, $data, $mode) {
+    $.fn.skillEngine.buildTree = function ($adam, $data, $mode, $opt) {
 
         if ($mode == 'MM') {
 
@@ -419,7 +419,10 @@
 
                 $($adam + ' li#' + $data.id).show();
                 $($adam + ' li#' + $data.id + ' > ul').show();
-                $('div.iys-min-ht').scrollTo('#skillcheck-' + $data.id, 1000);
+
+                if ($opt == 'SEA') {
+                    $('div.iys-min-ht').scrollTo('#skillcheck-' + $data.id, 1000);
+                }
             }
 
             readymade($data);
