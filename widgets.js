@@ -92,7 +92,7 @@
         });
 
         if ($output.length > 0) {
-            return(JSON.stringify($output));
+            return(JSON.stringify($output.reverse()));
         }
         else {
 
@@ -102,9 +102,8 @@
     }
 
     $.fn.skillEngine.preview = function (obj) {
-
-        $('div#myModal div.modal-body').addClass('easy-tree');
-        $('div#myModal div.modal-body').html($.fn.skillEngine.buildTree('', $.fn.skillEngine.output(obj), 'PRE'));
+        $modal = $('div#myModal div.modal-body');
+        $modal.html('<div class="easy-tree">' + $.fn.skillEngine.buildTree('', $.fn.skillEngine.output(obj), 'PRE') + '</div>');
     }
 
     /* Loading HTML */
@@ -338,9 +337,6 @@
 
     $.fn.skillEngine.buildTree = function ($adam, $data, $mode) {
 
-        $data = $data.reverse();
-//        console.log(JSON.stringify($data));
-
         if ($mode == 'MM') {
 
             readymade = function ($data, $parent) {
@@ -465,10 +461,8 @@
                             $tree += '</label>';
                             $tree += '</span>';
                             $tree += '<div class="rating-f experties_dashboard">';
-                            $tree += '<div class="br-widget">';
-                            //                                    $tree += '<a class="br-selected" data-rating-text="0 - 2 yrs exp" data-rating-value="0" href="#"><span></span></a><a class="br-selected" data-rating-text="2 - 5 yrs exp" data-rating-value="1" href="#"><span></span></a><a class="br-current br-selected" data-rating-text="5 - 10 yrs exp" data-rating-value="2" href="#"><span></span></a><a class="" data-rating-text="10 - 20 yrs exp" data-rating-value="3" href="#"><span></span></a><a class="" data-rating-text=" 20 plus yrs exp" data-rating-value="4" href="#"><span></span></a><div class="br-current-rating">5 - 10 yrs exp</div></div>';
-                            $tree += '<select class="skillselect"  name="skills-rating[]" id="skillselect-' + $data[i].id + '" data-id="' + $data[i].id + '">';
-                            $tree += $.fn.skillEngine.scaleType($data[i].scale_type, $data[i].rating);
+                            $tree += '<select class="skillselect" disable="true"  name="skills-rating[]" id="skillselect-' + $data[i].id + '" data-id="' + $data[i].id + '">';
+                            $tree += $.fn.skillEngine.scaleType($data[i].scale_type, parseInt($data[i].rating));
                             $tree += '</select>';
                             $tree += '</div>';
                         }
@@ -498,10 +492,10 @@
         $.each(scale_split, function (index, value) {
 
             if (rate == index) {
-                scale += '<option value="' + (index + 1) + '" selected="selected">' + value + '</option>';
+                scale += '<option value="' + (index) + '" selected="selected">' + value + '</option>';
             } else {
 
-                scale += '<option value="' + (index + 1) + '">' + value + '</option>';
+                scale += '<option value="' + (index) + '">' + value + '</option>';
             }
         });
         return scale;
