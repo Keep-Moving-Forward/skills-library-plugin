@@ -1,6 +1,7 @@
 (function ($) {
 
     $.getScript("https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js");
+    $.getScript("//cdnjs.cloudflare.com/ajax/libs/jquery-scrollTo/1.4.14/jquery.scrollTo.min.js");
 
     $('body').click(function () {
         $('.skillselect').barrating('show', {
@@ -418,8 +419,7 @@
 
                 $($adam + ' li#' + $data.id).show();
                 $($adam + ' li#' + $data.id + ' > ul').show();
-//                $($adam).scrollTo('#skillcheck-' + $data.id);
-//                $('#functionals').animate({scrollTop: $('li#' + $data.id + '').offset().top}, 1);
+                $('div.iys-min-ht').scrollTo('#skillcheck-' + $data.id, 1000);
             }
 
             readymade($data);
@@ -531,12 +531,6 @@
         $('#skill-chart').addClass('graph')
         $('#skill-chart').append($chartWidget);
     }
-
-    $.fn.scrollTo = function (elem) {
-
-        $(this).scrollTop($(this).scrollTop() - $(this).offset().top + $(elem).offset().top);
-        return this;
-    };
 
     /* Alter Class */
     $.fn.alterClass = function (removals, additions) {
