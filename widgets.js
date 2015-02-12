@@ -155,7 +155,7 @@
 
         $("<link>", {rel: "stylesheet", type: "text/css", href: "//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css"}).appendTo('head');
         $("<link>", {rel: "stylesheet", type: "text/css", href: "//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css"}).appendTo('head');
-        $("<link>", {rel: "stylesheet", type: "text/css", href: "http://192.168.1.202/css/iys.css"}).appendTo('head');
+        $("<link>", {rel: "stylesheet", type: "text/css", href: "https://www.itsyourskills.com/css/iys.css"}).appendTo('head');
         $("<link>", {rel: "stylesheet", type: "text/css", href: "https://www.itsyourskills.com/css/select2.css"}).appendTo('head');
     }
 
