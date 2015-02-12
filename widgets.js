@@ -127,8 +127,12 @@
                 $blueprint += '<h2>Managerial Skills</h2>';
                 break;
         }
+        switch (obj.options.type) {
+            case 'functionals':
+                $blueprint += '<a class="iys-edit"><div id="skill-top-count"></div></a>';
+                break;
+        }
 
-        $blueprint += '<a class="iys-edit"><div id="skill-top-count"></div></a>';
         $blueprint += '</div>';
         $blueprint += '<div id="iys-arrow"></div>';
         $blueprint += '<div id="skill-count-scroll" class="content_2 iys-min-ht">';
@@ -554,7 +558,8 @@
                 $('div#chart-' + skillid).remove();
             }
 
-            $('#skill-chart').append('<div id="chart-' + skillid + '" style="height: ' + ((parseInt(value) + 1) * 20) + '%;" class="bar active-bar"></div>');
+            $('#skill-chart').append('<div id="chart-' + skillid + '" data-toggle="tooltip" data-placement="top" title="' + $('li#' + skillid).data('value') + '" style="height: ' + ((parseInt(value) + 1) * 20) + '%;" class="bar active-bar"></div>');
+            $('#skill-chart-text').text($('li#' + skillid).data('value'));
         }
         else {
 
