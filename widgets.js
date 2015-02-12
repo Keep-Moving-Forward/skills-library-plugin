@@ -103,7 +103,7 @@
     }
 
     $.fn.skillEngine.preview = function (obj) {
-        $modal = $('div#myModal div.modal-body');
+        $modal = $('div#previewModal div.modal-body');
         $modal.html('<div class="easy-tree">' + $.fn.skillEngine.buildTree('', $.fn.skillEngine.output(obj), 'PRE') + '</div>');
     }
 
@@ -115,27 +115,43 @@
         $blueprint += '<div class="iys-bg">';
         $blueprint += '<div class="col-lg-12 col-sm-12 col-md-12">';
         $blueprint += '<div class="yellow_bg_head">';
-        $blueprint += '<h2>Functional Skills</h2>';
+
+        switch (obj.options.type) {
+            case 'functionals':
+                $blueprint += '<h2>Functional Skills</h2>';
+                break;
+            case 'behavioural':
+                $blueprint += '<h2>Behavioural Skills</h2>';
+                break;
+            case 'managerial':
+                $blueprint += '<h2>Managerial Skills</h2>';
+                break;
+        }
+
         $blueprint += '<a class="iys-edit"><div id="skill-top-count"></div></a>';
         $blueprint += '</div>';
         $blueprint += '<div id="iys-arrow"></div>';
         $blueprint += '<div id="skill-count-scroll" class="content_2 iys-min-ht">';
         $blueprint += '<ul class="easy-tree" id="0"></ul>';
         $blueprint += '</div>';
-        $blueprint += '<div class="yellow_bg_head">';
-        $blueprint += '<a class="iys-edit"><div id="skill-bottom-count"></div></a>';
-        $blueprint += '</div>';
+
+        switch (obj.options.type) {
+            case 'functionals':
+                $blueprint += '<a class="iys-edit"><div id="skill-bottom-count"></div></a>';
+                break;
+        }
+
         $blueprint += '<div class="clearfix"></div>';
         $blueprint += '</div>';
         $blueprint += '</div>';
         $blueprint += '</div>';
 
-        $previewModal = '<div class="modal fade" data-backdrop="false" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">';
+        $previewModal = '<div class="modal fade" data-backdrop="false" id="previewModal" tabindex="-1" role="dialog" aria-labelledby="previewModalLabel" aria-hidden="true">';
         $previewModal += '<div class="modal-dialog modal-lg">';
         $previewModal += '<div class="modal-content">';
         $previewModal += '<div class="modal-header">';
         $previewModal += '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>';
-        $previewModal += '<h4 class="modal-title" id="myModalLabel">Skill Preview</h4>';
+        $previewModal += '<h4 class="modal-title" id="previewModalLabel">Skill Preview</h4>';
         $previewModal += '</div>';
         $previewModal += '<div class="modal-body">';
         $previewModal += '</div>';
@@ -421,6 +437,7 @@
                 $($adam + ' li#' + $data.id + ' > ul').show();
 
                 if ($opt == 'SEA') {
+
                     $('div.iys-min-ht').scrollTo('#skillcheck-' + $data.id, 1000);
                 }
             }
@@ -524,15 +541,28 @@
     $.fn.skillEngine.chart = function (value, text) {
 
         var skillid = $(this).parent().siblings('select.skillselect').data('id');
-        $('li#' + skillid).data('rating', value);
-        $('#skillcheck-' + skillid).prop("checked", true);
+        $('#skill-chart').addClass('graph');
+
+        if (value != '') {
+
+            $('li#' + skillid).data('rating', value);
+            $('#skillcheck-' + skillid).prop("checked", true);
+            $('#skill-chart').children('div').removeClass('active-bar');
+
+            if ($('div#chart-' + skillid).length) {
+
+                $('div#chart-' + skillid).remove();
+            }
+
+            $('#skill-chart').append('<div id="chart-' + skillid + '" style="height: ' + ((parseInt(value) + 1) * 20) + '%;" class="bar active-bar"></div>');
+        }
+        else {
+
+            $('#skillcheck-' + skillid).prop("checked", false);
+            $('div#chart-' + skillid).remove();
+        }
+
         $('#skills-count').text($('input[name="skills[]"]:checkbox:checked').length);
-
-        $('#skill-chart').children('div').removeClass('active-bar');
-        $chartWidget = '<div style="height: ' + ((parseInt(value) + 1) * 20) + '%;" class="bar active-bar"></div>';
-
-        $('#skill-chart').addClass('graph')
-        $('#skill-chart').append($chartWidget);
     }
 
     /* Alter Class */
@@ -561,21 +591,21 @@
     }
     /* End of Alter Class */
 
-    $.uuid = function () {
-
-        var d = new Date().getTime();
-        var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-            var r = (d + Math.random() * 16) % 16 | 0;
-            d = Math.floor(d / 16);
-            return (c == 'x' ? r : (r & 0x3 | 0x8)).toString(16);
-        });
-        return uuid;
+//    $.uuid = function () {
+//
+//        var d = new Date().getTime();
+//        var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+//            var r = (d + Math.random() * 16) % 16 | 0;
+//            d = Math.floor(d / 16);
+//            return (c == 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+//        });
+//        return uuid;
 
 //        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
 //            var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
 //            return v.toString(16);
 //        });
-    };
+//    };
 
     /* View Port*/
     $.belowthefold = function (element, settings) {
