@@ -422,7 +422,7 @@
 
                 $($adam + ' li#' + $data.id).show();
                 $($adam + ' li#' + $data.id + ' > ul').show();
-                $($adam).scrollTo('#skillcheck-' + $data.id);
+//                $($adam).scrollTo('#skillcheck-' + $data.id);
 //                $('#functionals').animate({scrollTop: $('li#' + $data.id + '').offset().top}, 1);
             }
 
