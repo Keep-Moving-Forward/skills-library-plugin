@@ -103,7 +103,7 @@
     }
 
     $.fn.skillEngine.preview = function (obj) {
-        $modal = $('div#previewModal div.modal-body');
+        $modal = $('div#myModal div.modal-body');
         $modal.html('<div class="easy-tree">' + $.fn.skillEngine.buildTree('', $.fn.skillEngine.output(obj), 'PRE') + '</div>');
     }
 
@@ -150,12 +150,12 @@
         $blueprint += '</div>';
         $blueprint += '</div>';
 
-        $previewModal = '<div class="modal fade" data-backdrop="false" id="previewModal" tabindex="-1" role="dialog" aria-labelledby="previewModalLabel" aria-hidden="true">';
+        $previewModal = '<div class="modal fade" data-backdrop="false" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">';
         $previewModal += '<div class="modal-dialog modal-lg">';
         $previewModal += '<div class="modal-content">';
         $previewModal += '<div class="modal-header">';
         $previewModal += '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>';
-        $previewModal += '<h4 class="modal-title" id="previewModalLabel">Skill Preview</h4>';
+        $previewModal += '<h4 class="modal-title" id="myModalLabel">Skill Preview</h4>';
         $previewModal += '</div>';
         $previewModal += '<div class="modal-body">';
         $previewModal += '</div>';
