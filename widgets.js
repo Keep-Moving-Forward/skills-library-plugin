@@ -1,9 +1,7 @@
 (function ($) {
 
-    $.getScript("//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js");
-    $.getScript("//cdnjs.cloudflare.com/ajax/libs/jquery-scrollTo/1.4.14/jquery.scrollTo.min.js");
+    $('body').on('click', function () {
 
-    $('body').click(function () {
         $('.skillselect').barrating('show', {
             onSelect: $.fn.skillEngine.chart
         });
@@ -40,38 +38,77 @@
                 $.fn.skillEngine.setupCSS();
                 $.fn.skillEngine.setupHTML(this);
                 $.fn.skillEngine.request(this);
+                $.fn.skillEngine.scroll();
 
                 var self = this;
                 return this.each(function () {
 
                     var tree = $(this);
 
-                    $('#skill-count-scroll').on('scroll', function () {
-
-                        var top = $("input[name='skills[]']:above-the-top:checked").each(function (key, value) {
-
-                            return value;
-                        });
-                        var bottom = $("input[name='skills[]']:below-the-fold:checked").each(function (key, value) {
-
-                            return value;
-                        });
-                        $('#skill-top-count').text('Skills seleceted @ top #' + top.length);
-                        $('#skill-bottom-count').text('Skills seleceted @ bottom #' + bottom.length);
-                    });
-
                     $(tree).on('click', 'ul li a', function () {
 
                         var id = $(this).parent('li')[0].id;
                         self.selector = 'li#' + id;
                         self.options.id = id;
-                        $.fn.skillEngine.beautify(self);
-                        if ($(self.selector).attr('data-appended') == "false" && ($(self.selector).attr('data-is_child') == 1 || $(self.selector).attr('data-is_child') == 2)) {
 
-                            $.fn.skillEngine.request(self);
+                        $.fn.skillEngine.Events.click(self);
+                    });
+
+                    $(tree).on('focusin', 'input.in-build-search', function () {
+
+                        $(this).css('width', '150px');
+                        $li = $(this).offsetParent()[0];
+                        var id = $(this).parent('li')[0].id;
+                        self.selector = 'li#' + id;
+                        self.options.id = id;
+
+                        if ($(self.selector).attr('data-appended') == "false") {
+
+                            $.fn.skillEngine.Events.click(self);
+
                         }
                     });
+
+                    $(tree).on('focusout', 'input.in-build-search', function () {
+
+                        $(this).css('width', '20px');
+                    });
+
+                    $(tree).on('keyup', 'input.in-build-search', function () {
+
+                        $li = $(this).offsetParent()[0];
+                        var id = $(this).parent('li')[0].id;
+                        self.selector = 'li#' + id;
+                        self.options.id = id;
+
+                        var txt = $(this).val();
+
+                        $(self.selector + ' ul').show();
+                        $(self.selector).find('li').each(function () {
+
+                            if ($(this).text().toUpperCase().indexOf(txt.toUpperCase()) != -1) {
+
+                                $(this).show();
+                            }
+                            else {
+
+                                $(this).hide();
+                            }
+                        });
+                    });
+
                 });
+        }
+    };
+
+    $.fn.skillEngine.Events = {
+        click: function (obj) {
+            $.fn.skillEngine.beautify(obj);
+            if ($(obj.selector).attr('data-appended') == "false" && ($(obj.selector).attr('data-is_child') == 1 || $(obj.selector).attr('data-is_child') == 2)) {
+
+                $.fn.skillEngine.request(obj);
+            }
+
         }
     };
 
@@ -179,6 +216,24 @@
         $("<link>", {rel: "stylesheet", type: "text/css", href: "https://www.itsyourskills.com/css/select2.css"}).appendTo('head');
     }
 
+    $.fn.skillEngine.scroll = function () {
+
+
+        $('#skill-count-scroll').on('scroll', function () {
+
+            var top = $("input[name='skills[]']:above-the-top:checked").each(function (key, value) {
+
+                return value;
+            });
+            var bottom = $("input[name='skills[]']:below-the-fold:checked").each(function (key, value) {
+
+                return value;
+            });
+            $('#skill-top-count').text('Skills seleceted @ top #' + top.length);
+            $('#skill-bottom-count').text('Skills seleceted @ bottom #' + bottom.length);
+        });
+    }
+
     /* Beautify the icons */
     $.fn.skillEngine.beautify = function (obj) {
 
@@ -186,8 +241,11 @@
 
             return true;
         });
+
         $(obj.selector).siblings().children('i').alterClass('fa-*', 'fa-plus-circle');
+
         if ($skillChecked.length > 0) {
+
             $(obj.selector + ' > i').alterClass('fa-*', ' fa-check-circle-o ');
         }
         else {
@@ -321,39 +379,36 @@
             $.fn.skillEngine.buildTree(obj.adam.selector, $ka, 'MM', 'SEA');
         }
 
-        $.getScript("https://www.itsyourskills.com/js/select2.js").done(function () {
-
-            $('.keyword').select2({
-                placeholder: "Please Enter Your skill",
-                minimumInputLength: 2,
-                allowClear: true,
-                multiple: false,
-                openOnEnter: true,
-                quietMillis: 2000,
-                ajax: {
-                    url: 'https://www.itsyourskills.com/skill_proxy.php',
-                    dataType: 'json',
-                    cache: "true",
-                    data: function (term) {
-                        return {
-                            term: term,
-                        };
-                    },
-                    results: function (data, callback) {
-
-                        var datum = [];
-                        $.each(data, function (key, value) {
-                            var compressedSkill = value.skillKey;
-                            datum.push({'id': compressedSkill, 'text': value.tree_id_value});
-                        });
-                        return {results: datum};
-                    }
+        $('.keyword').select2({
+            placeholder: "Please Enter Your skill",
+            minimumInputLength: 2,
+            allowClear: true,
+            multiple: false,
+            openOnEnter: true,
+            quietMillis: 2000,
+            ajax: {
+                url: 'https://www.itsyourskills.com/skill_proxy.php',
+                dataType: 'json',
+                cache: "true",
+                data: function (term) {
+                    return {
+                        term: term,
+                    };
                 },
-                formatResult: formatResult,
-                formatSelection: formatSelection
+                results: function (data, callback) {
 
-            }).on("change", covertTreeValueToJson);
-        });
+                    var datum = [];
+                    $.each(data, function (key, value) {
+                        var compressedSkill = value.skillKey;
+                        datum.push({'id': compressedSkill, 'text': value.tree_id_value});
+                    });
+                    return {results: datum};
+                }
+            },
+            formatResult: formatResult,
+            formatSelection: formatSelection
+
+        }).on("change", covertTreeValueToJson);
     }
 
     $.fn.skillEngine.buildTree = function ($adam, $data, $mode, $opt) {
@@ -391,9 +446,10 @@
 
                     $tree += '<i class="fa  fa-plus-circle  text-success"></i>';
                     $tree += '<a class="btn">' + $data.value + '</a>';
+                    $tree += '<input style="color:#000;" type="text" class="in-build-search textbox" />';
                 }
 
-                if ($data.is_child == 0 || $data.is_child == 2) {
+                if ($data.is_child == 0) {
 
                     $tree += '<span class="checkbox text-info text-sm">';
                     $tree += '<label>';
@@ -416,6 +472,26 @@
                     $tree += $.fn.skillEngine.scaleType($data.scale_type, $data.rating);
                     $tree += '</select>';
                     $tree += '</div>';
+                }
+
+                if ($data.is_child == 2) {
+
+                    $tree += '<span class="checkbox text-info text-sm">';
+                    $tree += '<label>';
+                    $tree += '<input type="checkbox" class="skillcheck" name="skills[]" id="skillcheck-' + $data.id + '" data-id="' + $data.id + '"';
+                    if (typeof $data.rating === "undefined" || $data.rating === null || $data.rating == "") {
+
+
+                    }
+                    else {
+
+                        $tree += ' checked="true"';
+                    }
+
+                    $tree += '>';
+                    $tree += $data.value;
+                    $tree += '</label>';
+                    $tree += '</span>';
                 }
 
                 $tree += '</li>';
@@ -442,14 +518,13 @@
 
                 if ($opt == 'SEA') {
 
-                    $('div.iys-min-ht').scrollTo('#skillcheck-' + $data.id, 1000);
+                    $('div.iys-min-ht').scrollTo('#skillcheck-' + $data.id, 200);
                 }
             }
 
             readymade($data);
-            $('body').trigger('click');
-        }
 
+        }
         if ($mode == 'PRE') {
 
             readymade = function ($data, $parent) {
@@ -485,7 +560,7 @@
                             $tree += '</label>';
                             $tree += '</span>';
                             $tree += '<div class="rating-f experties_dashboard">';
-                            $tree += '<select class="skillselect" disable="true"  name="skills-rating[]" id="skillselect-' + $data[i].id + '" data-id="' + $data[i].id + '">';
+                            $tree += '<select class="skillselect" data-readonly="false" disable="true"  name="skills-rating[]" id="skillselect-' + $data[i].id + '" data-id="' + $data[i].id + '">';
                             $tree += $.fn.skillEngine.scaleType($data[i].scale_type, parseInt($data[i].rating));
                             $tree += '</select>';
                             $tree += '</div>';
@@ -505,6 +580,7 @@
             return readymade(JSON.parse($data));
         }
 
+        $('body').trigger('click');
     }
 
     $.fn.skillEngine.scaleType = function (type, rate) {
@@ -525,28 +601,10 @@
         return scale;
     }
 
-//    $.fn.skillEngine.rating = function () {
-//
-//        $(document).on('ajaxComplete load ready', function () {
-//
-//            $('.skillcheck').on('click', function () {
-//
-//                //                $(this).prop("checked", false);
-//                $('#skillselect-' + $(this).data('id')).barrating('clear');
-//                $('#skills-count').text($('input[name="skills[]"]:checkbox:checked').length);
-//            });
-//
-//            $('.skillselect').barrating('show', {
-//                onSelect: $.fn.skillEngine.chart
-//            });
-//        });
-//    }
-
     $.fn.skillEngine.chart = function (value, text) {
 
         var skillid = $(this).parent().siblings('select.skillselect').data('id');
         $('#skill-chart').addClass('graph');
-
         if (value != '') {
 
             $('li#' + skillid).data('rating', value);
@@ -570,304 +628,23 @@
         $('#skills-count').text($('input[name="skills[]"]:checkbox:checked').length);
     }
 
-    /* Alter Class */
-    $.fn.alterClass = function (removals, additions) {
-
-        var self = this;
-        if (removals.indexOf('*') === -1) {
-            self.removeClass(removals);
-            return !additions ? self : self.addClass(additions);
-        }
-
-        var patt = new RegExp('\\s' +
-                removals.
-                replace(/\*/g, '[A-Za-z0-9-_]+').
-                split(' ').
-                join('\\s|\\s') +
-                '\\s', 'g');
-        self.each(function (i, it) {
-            var cn = ' ' + it.className + ' ';
-            while (patt.test(cn)) {
-                cn = cn.replace(patt, ' ');
-            }
-            it.className = $.trim(cn);
-        });
-        return !additions ? self : self.addClass(additions);
-    }
-    /* End of Alter Class */
-
-//    $.uuid = function () {
+//    $.fn.skillEngine.rating = function () {
 //
-//        var d = new Date().getTime();
-//        var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-//            var r = (d + Math.random() * 16) % 16 | 0;
-//            d = Math.floor(d / 16);
-//            return (c == 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+//        $(document).on('ajaxComplete load ready', function () {
+//
+//            $('.skillcheck').on('click', function () {
+//
+//                //                $(this).prop("checked", false);
+//                $('#skillselect-' + $(this).data('id')).barrating('clear');
+//                $('#skills-count').text($('input[name="skills[]"]:checkbox:checked').length);
+//            });
+//
+//            $('.skillselect').barrating('show', {
+//                onSelect: $.fn.skillEngine.chart
+//            });
 //        });
-//        return uuid;
+//    }
 
-//        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-//            var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-//            return v.toString(16);
-//        });
-//    };
 
-    /* View Port*/
-    $.belowthefold = function (element, settings) {
-        var fold = $(window).height() + $(window).scrollTop();
-        return fold <= $(element).offset().top - settings.threshold;
-    };
-    $.abovethetop = function (element, settings) {
-        var top = $(window).scrollTop();
-        return top >= $(element).offset().top + $(element).height() - settings.threshold;
-    };
-    $.rightofscreen = function (element, settings) {
-        var fold = $(window).width() + $(window).scrollLeft();
-        return fold <= $(element).offset().left - settings.threshold;
-    };
-    $.leftofscreen = function (element, settings) {
-        var left = $(window).scrollLeft();
-        return left >= $(element).offset().left + $(element).width() - settings.threshold;
-    };
-    $.inviewport = function (element, settings) {
-        return !$.rightofscreen(element, settings) && !$.leftofscreen(element, settings) && !$.belowthefold(element, settings) && !$.abovethetop(element, settings);
-    };
-    $.extend($.expr[':'], {
-        "below-the-fold": function (a, i, m) {
-            return $.belowthefold(a, {threshold: 0});
-        },
-        "above-the-top": function (a, i, m) {
-            return $.abovethetop(a, {threshold: 0});
-        },
-        "left-of-screen": function (a, i, m) {
-            return $.leftofscreen(a, {threshold: 0});
-        },
-        "right-of-screen": function (a, i, m) {
-            return $.rightofscreen(a, {threshold: 0});
-        },
-        "in-viewport": function (a, i, m) {
-            return $.inviewport(a, {threshold: 0});
-        }
-    });
-    /* End of  View Port*/
 
-    /* Bar Rating */
-    var BarRating, root, hasTouch;
-    root = typeof window !== "undefined" && window !== null ? window : global;
-    hasTouch = 'ontouchstart'in root;
-    root.BarRating = BarRating = (function () {
-        function BarRating() {
-
-            this.show = function () {
-                var $this = $(this.elem), $widget, $all, userOptions = this.options, nextAllorPreviousAll, initialOption, clickEvent = hasTouch ? 'touchstart' : 'click';
-
-                if (!$this.data('barrating')) {
-
-                    if (userOptions.initialRating) {
-
-                        initialOption = $('option[value="' + userOptions.initialRating + '"]', $this);
-                    } else {
-
-                        initialOption = $('option:selected', $this);
-                    }
-
-                    $this.data('barrating', {currentRatingValue: initialOption.val(), currentRatingText: initialOption.text(), originalRatingValue: initialOption.val(), originalRatingText: initialOption.text()});
-                    $widget = $('<div />', {'class': 'br-widget'}).insertAfter($this);
-
-                    $this.find('option').each(function () {
-
-                        var val, text, $a, $span;
-                        val = $(this).val();
-                        if (val) {
-
-                            text = $(this).text();
-                            $a = $('<a />', {href: '#', 'data-rating-value': val, 'data-rating-text': text});
-                            $span = $('<span />', {text: (userOptions.showValues) ? text : ''});
-                            $widget.append($a.append($span));
-                        }
-                    });
-
-                    if (userOptions.showSelectedRating) {
-                        $widget.append($('<div />', {text: '', 'class': 'br-current-rating'}));
-                    }
-
-                    $this.data('barrating').deselectable = (!$this.find('option:first').val()) ? true : false;
-
-                    if (userOptions.reverse) {
-
-                        nextAllorPreviousAll = 'nextAll';
-                    } else {
-
-                        nextAllorPreviousAll = 'prevAll';
-                    }
-
-                    if (userOptions.reverse) {
-
-                        $widget.addClass('br-reverse');
-                    }
-
-                    if (userOptions.readonly) {
-
-                        $widget.addClass('br-readonly');
-                    }
-
-                    $widget.on('ratingchange', function (event, value, text) {
-
-                        var selBx = null;
-                        value = value ? value : $this.data('barrating').currentRatingValue;
-                        text = text ? text : $this.data('barrating').currentRatingText;
-                        selBx = $this.find('option[value="' + value + '"]');
-                        selBx.prop('selected', true);
-
-                        if (userOptions.showSelectedRating) {
-
-                            $(this).find('.br-current-rating').text(text);
-                        }
-
-                    }).trigger('ratingchange');
-
-                    $widget.on('updaterating', function (event) {
-
-                        $(this).find('a[data-rating-value="' + $this.data('barrating').currentRatingValue + '"]').addClass('br-selected br-current')[nextAllorPreviousAll]().addClass('br-selected');
-                    }).trigger('updaterating');
-
-                    $all = $widget.find('a');
-
-                    if (hasTouch || userOptions.readonly) {
-
-                        $all.on('click', function (event) {
-
-                            event.preventDefault();
-                        });
-                    }
-
-                    if (!userOptions.readonly) {
-
-                        $all.on(clickEvent, function (event) {
-
-                            var $a = $(this), value, text;
-                            event.preventDefault();
-                            $all.removeClass('br-active br-selected');
-                            $a.addClass('br-selected')[nextAllorPreviousAll]().addClass('br-selected');
-                            value = $a.attr('data-rating-value');
-                            text = $a.attr('data-rating-text');
-
-                            if ($a.hasClass('br-current') && $this.data('barrating').deselectable) {
-
-                                $a.removeClass('br-selected br-current')[nextAllorPreviousAll]().removeClass('br-selected br-current');
-                                value = '', text = '';
-
-                                if (!$.isEmptyObject($a.parent().prev('label')))
-                                    $a.parent().prev('label').show();
-                            } else {
-
-                                $all.removeClass('br-current');
-                                $a.addClass('br-current');
-
-                                if (!$.isEmptyObject($a.parent().prev('label')))
-                                    $a.parent().prev('label').hide();
-                            }
-
-                            $this.data('barrating').currentRatingValue = value;
-                            $this.data('barrating').currentRatingText = text;
-                            $widget.trigger('ratingchange');
-
-                            userOptions.onSelect.call(this, $this.data('barrating').currentRatingValue, $this.data('barrating').currentRatingText);
-                            return false;
-                        });
-
-                        if (!hasTouch) {
-
-                            $all.on({mouseenter: function () {
-
-                                    var $a = $(this);
-                                    $all.removeClass('br-active').removeClass('br-selected');
-                                    $a.addClass('br-active')[nextAllorPreviousAll]().addClass('br-active');
-                                    $widget.trigger('ratingchange', [$a.attr('data-rating-value'), $a.attr('data-rating-text')]);
-                                }});
-
-                            $widget.on({mouseleave: function () {
-
-                                    $all.removeClass('br-active');
-                                    $widget.trigger('ratingchange').trigger('updaterating');
-                                }});
-                        }
-                    }
-                    $this.hide();
-                }
-            }
-
-            this.clear = function () {
-
-                var $this = $(this.elem);
-                var $widget = $this.next('.br-widget');
-
-                if ($widget && $this.data('barrating')) {
-
-                    $widget.find('a').removeClass('br-selected br-current');
-                    $this.data('barrating').currentRatingValue = $this.data('barrating').originalRatingValue;
-                    $this.data('barrating').currentRatingText = $this.data('barrating').originalRatingText;
-                    $widget.trigger('ratingchange').trigger('updaterating');
-
-                    this.options.onClear.call(this, $this.data('barrating').currentRatingValue, $this.data('barrating').currentRatingText);
-                }
-            }
-
-            this.destroy = function () {
-
-                var $this = $(this.elem);
-                var $widget = $this.next('.br-widget');
-
-                if ($widget && $this.data('barrating')) {
-
-                    var value = $this.data('barrating').currentRatingValue;
-                    var text = $this.data('barrating').currentRatingText;
-                    $this.removeData('barrating');
-                    $widget.off().remove();
-                    $this.show();
-
-                    this.options.onDestroy.call(this, value, text);
-                }
-            }
-        }
-        BarRating.prototype.init = function (options, elem) {
-            var self;
-            self = this;
-            self.elem = elem;
-            return self.options = $.extend({}, $.fn.barrating.defaults, options);
-        };
-        return BarRating;
-    })();
-
-    $.fn.barrating = function (method, options) {
-        return this.each(function () {
-            var plugin = new BarRating();
-            if (!$(this).is('select')) {
-                $.error('Sorry, this plugin only works with select fields.');
-            }
-            if (plugin.hasOwnProperty(method)) {
-                plugin.init(options, this);
-                return plugin[method]();
-            } else if (typeof method === 'object' || !method) {
-                options = method;
-                plugin.init(options, this);
-                return plugin.show();
-            } else {
-                $.error('Method ' + method + ' does not exist on jQuery.barrating');
-            }
-        });
-    };
-    return $.fn.barrating.defaults = {
-        initialRating: null,
-        showValues: false,
-        showSelectedRating: true,
-        reverse: false,
-        readonly: false,
-        onSelect: function (value, text) {
-        },
-        onClear: function (value, text) {
-        },
-        onDestroy: function (value, text) {
-        }};
-    /* End of Bar Rating */
 })($);
