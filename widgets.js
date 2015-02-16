@@ -1,6 +1,6 @@
 (function ($) {
 
-    $.getScript("https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js");
+    $.getScript("//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js");
     $.getScript("//cdnjs.cloudflare.com/ajax/libs/jquery-scrollTo/1.4.14/jquery.scrollTo.min.js");
 
     $('body').click(function () {
