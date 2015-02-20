@@ -13,33 +13,26 @@
             'apikey': this.data('apikey'),
             'id': (typeof this.data('skill-id') === 'undefined' || this.data('skill-id') == "") ? 0 : this.data('skill-id'),
         }, $.fn.skillEngine.defaults, options);
-
         this.adam = $(this);
-
         switch ($mode) {
 
             case "output":
                 return $.fn.skillEngine.output(this);
                 break;
-
             case "input":
                 $.fn.skillEngine.input(this, options.data);
                 break;
-
             case "preview":
                 $.fn.skillEngine.preview(this);
                 break;
-
             case "search":
                 $.fn.skillEngine.search(this, options.wrapper);
                 break;
-
             default:
                 $.fn.skillEngine.setupCSS();
                 $.fn.skillEngine.setupHTML(this);
                 $.fn.skillEngine.request(this);
                 $.fn.skillEngine.scroll();
-
                 var self = this;
                 return this.each(function () {
 
@@ -47,11 +40,29 @@
 
                     $(tree).on('click', 'ul li a', function () {
 
-                        var id = $(this).parent('li')[0].id;
-                        self.selector = 'li#' + id;
-                        self.options.id = id;
+                        var $li = $(this).parent('li');
+                        if ($li.hasClass('skill-others')) {
 
-                        $.fn.skillEngine.Events.click(self);
+                            $.each($li.siblings(), function (key, value) {
+
+                                $(value).children('ul').hide();
+                                $(value).show();
+                            });
+                            $li.hide();
+                            $.fn.skillEngine.checkbox(self);
+                        }
+                        else {
+
+                            self.selector = 'li#' + $li.attr('id');
+                            self.options.id = $li.attr('id');
+                            $.fn.skillEngine.Events.click(self);
+                        }
+                    });
+
+                    $(tree).on('click', 'input[name="skills[]"]:checkbox', function () {
+
+                        console.log($(this).parents('li').siblings('i'));
+                        $(this).parents('li').siblings('i').alterClass('fa-*', ' fa-check-circle-o ');
                     });
 
                     $(tree).on('focusin', 'input.in-build-search', function () {
@@ -61,28 +72,22 @@
                         var id = $(this).parent('li')[0].id;
                         self.selector = 'li#' + id;
                         self.options.id = id;
-
                         if ($(self.selector).attr('data-appended') == "false") {
 
                             $.fn.skillEngine.Events.click(self);
-
                         }
                     });
-
                     $(tree).on('focusout', 'input.in-build-search', function () {
 
                         $(this).css('width', '20px');
                     });
-
                     $(tree).on('keyup', 'input.in-build-search', function () {
 
                         $li = $(this).offsetParent()[0];
                         var id = $(this).parent('li')[0].id;
                         self.selector = 'li#' + id;
                         self.options.id = id;
-
                         var txt = $(this).val();
-
                         $(self.selector + ' ul').show();
                         $(self.selector).find('li').each(function () {
 
@@ -96,7 +101,6 @@
                             }
                         });
                     });
-
                 });
         }
     };
@@ -111,11 +115,8 @@
 
         }
     };
-
     $.fn.skillEngine.defaults = {};
-
     $.fn.skillEngine.type = ['functionals', 'behavioural', 'managerial'];
-
     $.fn.skillEngine.input = function (obj, $data) {
 
         $.fn.skillEngine.buildTree(obj.selector, $data, 'MM');
@@ -128,14 +129,12 @@
 
             $output.push($(value).data());
         });
-
         if ($output.length > 0) {
             return(JSON.stringify($output.reverse()));
         }
         else {
 
             return 'Please select aleast one functional skill!';
-
         }
     }
 
@@ -152,7 +151,6 @@
         $blueprint += '<div class="iys-bg">';
         $blueprint += '<div class="col-lg-12 col-sm-12 col-md-12">';
         $blueprint += '<div class="yellow_bg_head">';
-
         switch (obj.options.type) {
             case 'functionals':
                 $blueprint += '<h2>Functional Skills</h2>';
@@ -175,7 +173,6 @@
         $blueprint += '<div id="skill-count-scroll" class="content_2 iys-min-ht">';
         $blueprint += '<ul class="easy-tree" id="0"></ul>';
         $blueprint += '</div>';
-
         switch (obj.options.type) {
             case 'functionals':
                 $blueprint += '<a class="iys-edit"><div id="skill-bottom-count"></div></a>';
@@ -186,7 +183,6 @@
         $blueprint += '</div>';
         $blueprint += '</div>';
         $blueprint += '</div>';
-
         $previewModal = '<div class="modal fade" data-backdrop="false" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">';
         $previewModal += '<div class="modal-dialog modal-lg">';
         $previewModal += '<div class="modal-content">';
@@ -202,7 +198,6 @@
         $previewModal += '</div>';
         $previewModal += '</div>';
         $previewModal += '</div>';
-
         $(obj).append($blueprint);
         $('body').append($previewModal);
     }
@@ -237,14 +232,9 @@
     /* Beautify the icons */
     $.fn.skillEngine.beautify = function (obj) {
 
-        var $skillChecked = $(obj.selector).find("input:checked").each(function () {
-
-            return true;
-        });
-
         $(obj.selector).siblings().children('i').alterClass('fa-*', 'fa-plus-circle');
 
-        if ($skillChecked.length > 0) {
+        if ($(obj.selector).find("input:checked").length > 0) {
 
             $(obj.selector + ' > i').alterClass('fa-*', ' fa-check-circle-o ');
         }
@@ -265,37 +255,139 @@
 
     $.fn.skillEngine.switch = function (obj) {
 
-        var $skillChecked = $(document).find('input[name="skills[]"]:checkbox').each(function () {
+        $.each($(obj.selector).siblings(), function (key, value) {
 
-//                    $('li#0').hide();
-//                    if ($(this).is(":checked")) {
-//
-//                        console.log($(this).parents());
-//                    }
+            if ($(value).hasClass('skill-others') && $(value).siblings().find('input[name="skills[]"]:checkbox').length < 1) {
 
-            $(this).not(":checked").closest('li').hide();
-//                    $(this).not(":checked").prev().siblings('ul').hide();
+                $(value).show();
+            }
+            else {
+
+                if ($(value).data('appended') != 'false') {
+
+                    if (!$(value).find('input[name="skills[]"]:checkbox:checked').length) {
+
+                        $(value).hide();
+                    }
+                    else {
+
+                        $(value).show();
+                    }
+                }
+            }
         });
-//                console.log($(obj.selector).siblings('li'));
 
-//                $.each($(obj.selector).siblings('li'), function (key, value) {
-//
-//                    console.log($(value).find('input[name="skills[]"]:checkbox').not(":checked").closest('li').hide());
-//                });
-
-        if ($(obj.selector).children('ul').length < 1 || $(obj.selector).children('ul').is(':hidden')) {
+        if ($(obj.selector).children('ul').is(':hidden')) {
 
             $(obj.selector).children('ul').show();
-            $(obj.selector).children('ul').children('li').show();
+            $(obj.selector).children('ul').children('li:not(.skill-others)').show();
+
+            return false;
+
+        }
+        else if ($(obj.selector).children('ul').is(':visible') && $(obj.selector).find('input[name="skills[]"]:checkbox:checked').length > 0 && $(obj.selector).find('input[name="skills[]"]:checkbox:checked').length != $(obj.selector).find('input[name="skills[]"]:checkbox').length) {
+
+            if (($(obj.selector).children('ul').children('li').length - 1) == $(obj.selector).children('ul').children('li:visible').length) {
+
+                var $localcheckbox = $(obj.selector).find('input[name="skills[]"]:checkbox');
+
+                if ($localcheckbox.length > 0) {
+
+                    $localcheckbox.each(function () {
+
+                        $(this).not(":checked").closest('li').hide(); //Important
+
+                        var $parentId = $('li#' + $(this).data('id')).data('parent_id');
+                        var $parentSelector = $('li#' + $parentId + ' > ul');
+
+                        $.each($parentSelector.children(), function (key, value) {
+
+                            if ($(value).data('is_child') == 1 && 'li#' + $(value).data('id') != obj.selector && !$(value).find('input[name="skills[]"]:checkbox').is(":checked")) {
+
+                                $(value).hide();
+                            }
+                        });
+                    });
+                }
+
+            }
+            else {
+
+                $(obj.selector).children('ul').show();
+                $(obj.selector).children('ul').children('li:not(.skill-others)').show();
+            }
+
+            return false;
         }
         else {
 
             if ($(obj.selector).attr('data-appended') == "true") {
 
                 $(obj.selector).children('ul').hide();
-                $(obj.selector).children('ul').children('li').hide();
+                $(obj.selector).children('ul').children('li:not(.skill-others)').hide();
             }
         }
+
+        $.fn.skillEngine.checkbox(obj);
+    }
+
+    $.fn.skillEngine.checkbox = function (obj) {
+
+        /* Global Checkbox  System*/
+        var $globalcheckbox = $(document).find('input[name="skills[]"]:checkbox');
+
+        if ($globalcheckbox.length > 0) {
+
+            $globalcheckbox.each(function () {
+
+                if ($(this).is(":checked")) {
+
+                    $(this).parentsUntil('li[data-parent_id="0"]').show();
+                }
+
+                $(this).not(":checked").closest('li').hide(); //Important
+
+                var $parentId = $('li#' + $(this).data('id')).data('parent_id');
+                var $parentSelector = $('li#' + $parentId + ' > ul');
+
+                $.each($parentSelector.children(), function (key, value) {
+
+                    if ($(value).data('is_child') == 1 && 'li#' + $(value).data('id') != obj.selector && !$(value).find('input[name="skills[]"]:checkbox').is(":checked")) {
+
+                        $(value).hide();
+                    }
+                });
+
+            });
+        }
+        /* End of Global Checkbox System*/
+
+//        alert($toggle + ' vis - ' + $(obj.selector).children('ul').is(':visible') + ', len -' + $(obj.selector).find('input[name="skills[]"]:checkbox:checked').length);
+//
+//        if ($toggle == 'show' || ($(obj.selector).children('ul').is(':visible') && $(obj.selector).find('input[name="skills[]"]:checkbox:checked').length > 0)) {
+//
+//            var $localcheckbox = $(obj.selector).find('input[name="skills[]"]:checkbox');
+//
+//            if ($localcheckbox.length > 0) {
+//
+//                $localcheckbox.each(function () {
+//
+//                    $(this).not(":checked").closest('li').show(); //Important
+//
+//                    var $parentId = $('li#' + $(this).data('id')).data('parent_id');
+//                    var $parentSelector = $('li#' + $parentId + ' > ul');
+//
+//                    $.each($parentSelector.children(), function (key, value) {
+//
+//                        if ($(value).data('is_child') == 1 && 'li#' + $(value).data('id') != obj.selector && !$(value).find('input[name="skills[]"]:checkbox').is(":checked")) {
+//
+//                            $(value).show();
+//                        }
+//                    });
+//                    /* End of Global Checkbox Hiding System*/
+//                });
+//            }
+//        }
     }
 
     /* Request Skills using access token*/
@@ -324,7 +416,7 @@
     $.fn.skillEngine.search = function (obj) {
 
         function formatResult(item) {
-            // return item template
+// return item template
             var treeArr = item.text.replace(/[(:\d_)]+/g, '@@@').split('@@@');
             treeArr = treeArr.slice(1, treeArr.length - 1),
                     skillname = treeArr[0], categories = [], catstr = '';
@@ -333,7 +425,7 @@
             } else if (treeArr.length == 2) {
                 categories.push(treeArr[1]);
             } else {
-                //
+//
             }
             catstr = (categories.length > 0 ? ('<div><smaller>(' + categories.join(' <i class="fa fa-angle-double-left"></i> ') + ')</smaller></div>') : '');
             return '<div><b>' + skillname + '</b></div>' + catstr;
@@ -347,9 +439,7 @@
             $original = $e.val.split('|^|');
             $childscale = $original[1].split('_');
             $skillsDetails = $original[0].substring(1, $original[0].length - 1).split(':');
-
             $ka = [];
-
             $.each($skillsDetails, function (key, value) {
 
                 $k = {};
@@ -375,7 +465,6 @@
 
                 $ka.push($k);
             });
-
             $.fn.skillEngine.buildTree(obj.adam.selector, $ka, 'MM', 'SEA');
         }
 
@@ -441,10 +530,9 @@
 
                 $tree = '';
                 $tree += '<li id="' + $data.id + '" data-value="' + $data.value + '" data-parent_id="' + $data.parent_id + '" data-is_child="' + $data.is_child + '" data-id="' + $data.id + '" ' + (($data.is_child == 1) ? 'data-appended="false"' : 'data-rating="" data-scale_type="' + $data.scale_type + '"') + ' >';
-
                 if ($data.is_child == 1) {
 
-                    $tree += '<i class="fa  fa-plus-circle  text-success"></i>';
+                    $tree += '<i class="fa  fa-plus-circle text-success"></i>';
                     $tree += '<a class="btn">' + $data.value + '</a>';
                     $tree += '<input style="color:#000;" type="text" class="in-build-search textbox" />';
                 }
@@ -495,12 +583,17 @@
                 }
 
                 $tree += '</li>';
-
                 $element = $adam + ' li#' + $data.parent_id;
-
+                $othersLi = '<li class="skill-others" style="display:none;" ><a class="btn btn-sm btn-warning"> <i class="fa fa-sort text-success"></i> Others</a></li>';
                 if (!$($adam + ' li#' + $data.id).length) {
 
                     if ($data.parent_id == 0) {
+
+                        if (!$($adam + ' ul#0').has('li.skill-others').length) {
+
+                            $($adam + ' ul#0').append($othersLi);
+                        }
+
                         $($adam + ' ul#0').append($tree);
                     }
 
@@ -509,13 +602,12 @@
                         $($element + ' > ul').append($tree);
                     } else {
 
-                        $($element).append('<ul>' + $tree + '</ul>');
+                        $($element).append('<ul>' + $othersLi + $tree + '</ul>');
                     }
                 }
 
                 $($adam + ' li#' + $data.id).show();
                 $($adam + ' li#' + $data.id + ' > ul').show();
-
                 if ($opt == 'SEA') {
 
                     $('div.iys-min-ht').scrollTo('#skillcheck-' + $data.id, 200);
@@ -523,8 +615,8 @@
             }
 
             readymade($data);
-
         }
+
         if ($mode == 'PRE') {
 
             readymade = function ($data, $parent) {
@@ -535,7 +627,6 @@
                 }
 
                 $tree = '';
-
                 if ($parent != 0) {
 
                     $tree += '<ul>';
@@ -588,7 +679,6 @@
         var scale_type = [{"id": "1", "scale": "Novice:Competent:Proficient:Expert:Master"}, {"id": "2", "scale": "0 - 2 yrs exp:2 - 5 yrs exp:5 - 10 yrs exp:10 - 20 yrs exp: 20 plus yrs exp"}, {"id": "4", "scale": "Fair:Good:Very Good:Excellent:Outstanding"}, {"id": "5", "scale": "1 - 5:6 - 10:11 - 50:51 - 200:&gt;200"}, {"id": "6", "scale": "Low:Medium:High:Very High:Extreme"}, {"id": "7", "scale": "&lt;10:10 - 50:50 - 100:100 - 200:&gt;200"}, {"id": "8", "scale": "&lt; 1 Mn:1 - 2 Mn:2 - 5 Mn:5 - 10 Mn:&gt; 10 Mn"}, {"id": "9", "scale": "Experience in compliance:Experience in making improvements:Experience in driving implementation:Experience in making changes:Experience in conceptualising and strategising"}, {"id": "10", "scale": "Mostly compliance:Made improvements:Led small scale implementation:Led large scale implementation:Conceptualised \/ Strategised"}, {"id": "11", "scale": "Compliance:Improvement:Implementation Team:Implementation Head:Strategy"}, {"id": "12", "scale": "Operational Level:Junior Mgmt:Middle Mgmt:Senior Mgmt:CXO Level"}, {"id": "13", "scale": "Making Improvements:Adding Features:Involved in NPD:Driving NPD:Strategy for NPD"}, {"id": "14", "scale": "&lt; 1 Month:1-3 Months:3-12 Months:1-2 Years:&gt;2 Years"}, {"id": "15", "scale": "Level 1:Level 2:Level 3:Level 4:Level 5"}];
         scale_split = scale_type[type].scale.split(':');
         var scale = '<option value=""></option>';
-
         $.each(scale_split, function (index, value) {
 
             if (rate == index) {
@@ -610,7 +700,6 @@
             $('li#' + skillid).data('rating', value);
             $('#skillcheck-' + skillid).prop("checked", true);
             $('#skill-chart').children('div').removeClass('active-bar');
-
             if ($('div#chart-' + skillid).length) {
 
                 $('div#chart-' + skillid).remove();
