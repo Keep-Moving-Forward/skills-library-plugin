@@ -710,24 +710,4 @@
 
         $('#skills-count').text($('input[name="skills[]"]:checkbox:checked').length);
     }
-
-//    $.fn.skillEngine.rating = function () {
-//
-//        $(document).on('ajaxComplete load ready', function () {
-//
-//            $('.skillcheck').on('click', function () {
-//
-//                //                $(this).prop("checked", false);
-//                $('#skillselect-' + $(this).data('id')).barrating('clear');
-//                $('#skills-count').text($('input[name="skills[]"]:checkbox:checked').length);
-//            });
-//
-//            $('.skillselect').barrating('show', {
-//                onSelect: $.fn.skillEngine.chart
-//            });
-//        });
-//    }
-
-
-
 })($);
