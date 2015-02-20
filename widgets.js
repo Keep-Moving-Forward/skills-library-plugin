@@ -6,7 +6,6 @@
             onSelect: $.fn.skillEngine.chart
         });
     });
-
     $.fn.skillEngine = function ($mode, options) {
 
         this.options = $.extend({
@@ -14,11 +13,14 @@
             'id': (typeof this.data('skill-id') === 'undefined' || this.data('skill-id') == "") ? 0 : this.data('skill-id'),
         }, $.fn.skillEngine.defaults, options);
         this.adam = $(this);
-
+        this.attr('data-type', options.type);
         switch ($mode) {
 
             case "output":
-                return $.fn.skillEngine.output(this);
+                if (options.type)
+                    return $.fn.skillEngine.output(this, options.type);
+                else
+                    return $.fn.skillEngine.output(this);
                 break;
 
             case "input":
@@ -30,21 +32,29 @@
                 if (options.data) {
 
                     $.fn.skillEngine.setupCSS();
-                    $(this).append($.fn.skillEngine.preview(this, options.data));
-                    $('.skillselect').barrating({'readonly': true});
-
+                    $(this).append($.fn.skillEngine.preview(options.data));
                 }
                 else {
 
-                    $output = $.fn.skillEngine.output(this, true);
-                    return $.fn.skillEngine.preview(this, $output);
-                }
-                break;
+                    $output = $.fn.skillEngine.output(this, options.type);
 
+                    if (!$output[options.type].err) {
+
+
+                        $(this).html($.fn.skillEngine.preview($output[options.type]));
+                    }
+                    else {
+
+                        $(this).html('<p class="text-center text-danger">No ' + options.type + ' skills selected</p>');
+                    }
+
+                }
+
+                $('.previewskillselect').barrating({'readonly': true});
+                break;
             case "search":
                 $.fn.skillEngine.search(this, options.wrapper);
                 break;
-
             default:
                 $.fn.skillEngine.setupCSS();
                 $.fn.skillEngine.setupHTML(this);
@@ -54,7 +64,6 @@
                 return this.each(function () {
 
                     var tree = $(this);
-
                     $(tree).on('click', 'ul li a', function () {
 
                         var $li = $(this).parent('li');
@@ -75,13 +84,11 @@
                             $.fn.skillEngine.Events.click(self);
                         }
                     });
-
                     $(tree).on('click', 'input[name="skills[]"]:checkbox', function () {
 
                         console.log($(this).parents('li').siblings('i'));
                         $(this).parents('li').siblings('i').alterClass('fa-*', ' fa-check-circle-o ');
                     });
-
                     $(tree).on('focusin', 'input.in-build-search', function () {
 
                         $(this).css('width', '150px');
@@ -121,7 +128,6 @@
                 });
         }
     };
-
     $.fn.skillEngine.Events = {
         click: function (obj) {
             $.fn.skillEngine.beautify(obj);
@@ -132,107 +138,111 @@
 
         }
     };
-
     $.fn.skillEngine.defaults = {};
-
     $.fn.skillEngine.type = ['functionals', 'behavioural', 'managerial'];
-
     $.fn.skillEngine.input = function (obj) {
 
+//        console.log(obj);
         $.fn.skillEngine.buildTree(obj);
     }
 
     $.fn.skillEngine.output = function (obj, $type) {
 
-        $output = [];
-
         if ($type) {
 
-            $.each($(obj.adam.selector + ' input[name="skills[]"]:checkbox:checked').parents('li'), function (index, value) {
+            $data = [];
+            $.each($('[data-type="' + $type + '"] input[name="skills[]"]:checkbox:checked').parents('li'), function (index, value) {
 
-                $output.push($(value).data());
+                $data.push($(value).data());
             });
-        }
-        else {
+            if ($data.length > 0) {
 
-            $.each($('input[name="skills[]"]:checkbox:checked').parents('li'), function (index, value) {
-
-                $output.push($(value).data());
-            });
-        }
-
-        if ($output.length > 0) {
-
-            return(JSON.stringify($output.reverse()));
-        }
-        else {
-
-            return {msg: 'Please select aleast one ' + obj.options.type + ' skill!', err: true, type: obj.options.type};
-        }
-    }
-
-    $.fn.skillEngine.preview = function (obj, $output) {
-
-        if (!$output.err) {
-
-            readymade = function ($data, $parent) {
-
-                if (typeof $parent === "undefined" || $parent === null) {
-
-                    $parent = 0;
-                }
-
-                $tree = '';
-                if ($parent != 0) {
-
-                    $tree += '<ul>';
-                }
-
-                for (var i = 0; i < $data.length; i++) {
-
-                    if ($data[i]['parent_id'] == $parent) {
-
-                        $tree += '<li id="' + $data[i].id + '" data-value="' + $data[i].value + '" data-scale_type="' + $data[i].scale_type + '" data-parent_id="' + $data[i].parent_id + '" data-is_child="' + $data[i].is_child + '" data-id="' + $data[i].id + '" ' + (($data[i].is_child == 1) ? 'data-appended="false"' : 'data-rating=""') + ' >';
-                        if ($data[i].is_child == 1) {
-
-                            $tree += '<i class="fa  fa-check-circle-o  text-success"></i>';
-                            $tree += '<a class="btn">' + $data[i].value + '</a>';
-                        }
-
-                        $tree += readymade($data, $data[i]['id']);
-
-                        if ($data[i].is_child == 0 || $data[i].is_child == 2) {
-
-                            $tree += '<span class="checkbox text-info text-sm">';
-                            $tree += '<label>';
-                            $tree += $data[i].value;
-                            $tree += '</label>';
-                            $tree += '</span>';
-                            $tree += '<div class="rating-f experties_dashboard">';
-                            $tree += '<select class="skillselect" data-readonly="false" disable="true"  name="skills-rating[]" id="skillselect-' + $data[i].id + '" data-id="' + $data[i].id + '">';
-                            $tree += $.fn.skillEngine.scaleType($data[i].scale_type, parseInt($data[i].rating));
-                            $tree += '</select>';
-                            $tree += '</div>';
-                        }
-
-                        $tree += '</li>';
-                    }
-                }
-
-                if ($parent != 0) {
-
-                    $tree += '</ul>';
-                }
-                return $tree;
+                $output = {};
+                $output[$type] = $data.reverse();
             }
+            else {
 
-            return('<ul class="easy-tree">' + readymade($output) + '</ul>');
-        }
-        else {
-
+                $output = {};
+                $output[$type] = {msg: 'Please select aleast one ' + obj.options.type + ' skill!', err: true, type: obj.options.type};
+            }
             return($output);
         }
     }
+
+    $.fn.skillEngine.preview = function ($output) {
+
+        readymade = function ($data, $parent) {
+
+            if (typeof $parent === "undefined" || $parent === null) {
+
+                $parent = 0;
+            }
+
+            $tree = '';
+            if ($parent != 0) {
+
+                $tree += '<ul>';
+            }
+
+            for (var i = 0; i < $data.length; i++) {
+
+                if ($data[i]['parent_id'] == $parent) {
+
+                    $tree += '<li id="' + $data[i].id + '" data-value="' + $data[i].value + '" data-scale_type="' + $data[i].scale_type + '" data-parent_id="' + $data[i].parent_id + '" data-is_child="' + $data[i].is_child + '" data-id="' + $data[i].id + '" ';
+
+                    if ($data.is_child == 1) {
+
+                        $tree += 'data-appended="false"';
+                    }
+                    else {
+
+                        if ($data.rating) {
+                            $tree += 'data-rating="' + $data.rating + '"';
+                        }
+                        else {
+                            $tree += 'data-rating=""';
+                        }
+                        $tree += 'data-scale_type="' + $data.scale_type + '"';
+                    }
+
+                    $tree += ' >';
+
+                    if ($data[i].is_child == 1) {
+
+                        $tree += '<i class="fa  fa-check-circle-o  text-success"></i>';
+                        $tree += '<a class="btn">' + $data[i].value + '</a>';
+                    }
+
+                    $tree += readymade($data, $data[i]['id']);
+                    if ($data[i].is_child == 0 || $data[i].is_child == 2) {
+
+                        $tree += '<span class="checkbox text-info text-sm">';
+                        $tree += '<label>';
+                        $tree += $data[i].value;
+                        $tree += '</label>';
+                        $tree += '</span>';
+                        $tree += '<div class="rating-f experties_dashboard">';
+                        $tree += '<select class="previewskillselect" name="skills-rating[]" id="skillselect-' + $data[i].id + '" data-id="' + $data[i].id + '">';
+                        $tree += $.fn.skillEngine.scaleType($data[i].scale_type, parseInt($data[i].rating));
+                        $tree += '</select>';
+                        $tree += '</div>';
+                    }
+
+                    $tree += '</li>';
+                }
+            }
+
+            if ($parent != 0) {
+
+                $tree += '</ul>';
+            }
+            return $tree;
+        }
+
+        return('<ul class="easy-tree">' + readymade($output) + '</ul>');
+
+    }
+
 
     /* Loading HTML */
     $.fn.skillEngine.setupHTML = function (obj) {
@@ -263,7 +273,6 @@
         $blueprint += '<div id="skill-count-scroll" class="content_2 iys-min-ht">';
         $blueprint += '<ul class="easy-tree" id="0"></ul>';
         $blueprint += '</div>';
-
         switch (obj.options.type) {
             case 'functionals':
                 $blueprint += '<a class="iys-edit"><div id="skill-bottom-count"></div></a>';
@@ -308,7 +317,6 @@
     $.fn.skillEngine.beautify = function (obj) {
 
         $(obj.selector).siblings().children('i').alterClass('fa-*', 'fa-plus-circle');
-
         if ($(obj.selector).find("input:checked").length > 0) {
 
             $(obj.selector + ' > i').alterClass('fa-*', ' fa-check-circle-o ');
@@ -332,7 +340,8 @@
 
         $.each($(obj.selector).siblings(), function (key, value) {
 
-            if ($(value).hasClass('skill-others') && $(value).siblings().find('input[name="skills[]"]:checkbox').length < 1) {
+            if ($(value).hasClass('skill-others')) {
+//            if ($(value).hasClass('skill-others') && $(value).siblings().find('input[name="skills[]"]:checkbox').length < 1) {
 
                 $(value).show();
             }
@@ -351,21 +360,17 @@
                 }
             }
         });
-
         if ($(obj.selector).children('ul').is(':hidden')) {
 
             $(obj.selector).children('ul').show();
             $(obj.selector).children('ul').children('li:not(.skill-others)').show();
-
             return false;
-
         }
         else if ($(obj.selector).children('ul').is(':visible') && $(obj.selector).find('input[name="skills[]"]:checkbox:checked').length > 0 && $(obj.selector).find('input[name="skills[]"]:checkbox:checked').length != $(obj.selector).find('input[name="skills[]"]:checkbox').length) {
 
             if (($(obj.selector).children('ul').children('li').length - 1) == $(obj.selector).children('ul').children('li:visible').length) {
 
                 var $localcheckbox = $(obj.selector).find('input[name="skills[]"]:checkbox');
-
                 if ($localcheckbox.length > 0) {
 
                     $localcheckbox.each(function () {
@@ -374,7 +379,6 @@
 
                         var $parentId = $('li#' + $(this).data('id')).data('parent_id');
                         var $parentSelector = $('li#' + $parentId + ' > ul');
-
                         $.each($parentSelector.children(), function (key, value) {
 
                             if ($(value).data('is_child') == 1 && 'li#' + $(value).data('id') != obj.selector && !$(value).find('input[name="skills[]"]:checkbox').is(":checked")) {
@@ -410,7 +414,6 @@
 
         /* Global Checkbox  System*/
         var $globalcheckbox = $(document).find('input[name="skills[]"]:checkbox');
-
         if ($globalcheckbox.length > 0) {
 
             $globalcheckbox.each(function () {
@@ -424,7 +427,6 @@
 
                 var $parentId = $('li#' + $(this).data('id')).data('parent_id');
                 var $parentSelector = $('li#' + $parentId + ' > ul');
-
                 $.each($parentSelector.children(), function (key, value) {
 
                     if ($(value).data('is_child') == 1 && 'li#' + $(value).data('id') != obj.selector && !$(value).find('input[name="skills[]"]:checkbox').is(":checked")) {
@@ -432,7 +434,6 @@
                         $(value).hide();
                     }
                 });
-
             });
         }
         /* End of Global Checkbox System*/
@@ -514,6 +515,9 @@
 
                 $datum.push($data);
             });
+
+            obj.options.data = $datum;
+
             $.fn.skillEngine.buildTree(obj, 'SEARCH');
         }
 
@@ -553,7 +557,6 @@
 
         $data = obj.options.data;
         $adam = obj.adam.selector;
-
         readymade = function ($data, $parent) {
 
             if (typeof $parent === "undefined" || $parent === null) {
@@ -579,7 +582,25 @@
         treeList = function ($data) {
 
             $tree = '';
-            $tree += '<li id="' + $data.id + '" data-value="' + $data.value + '" data-parent_id="' + $data.parent_id + '" data-is_child="' + $data.is_child + '" data-id="' + $data.id + '" ' + (($data.is_child == 1) ? 'data-appended="false"' : 'data-rating="" data-scale_type="' + $data.scale_type + '"') + ' >';
+            $tree += '<li id="' + $data.id + '" data-value="' + $data.value + '" data-parent_id="' + $data.parent_id + '" data-is_child="' + $data.is_child + '" data-id="' + $data.id + '" ';
+
+            if ($data.is_child == 1) {
+
+                $tree += 'data-appended="false"';
+            }
+            else {
+
+                if ($data.rating) {
+                    $tree += 'data-rating="' + $data.rating + '"';
+                }
+                else {
+                    $tree += 'data-rating=""';
+                }
+                $tree += 'data-scale_type="' + $data.scale_type + '"';
+            }
+
+            $tree += ' >';
+
             if ($data.is_child == 1) {
 
                 $tree += '<i class="fa  fa-plus-circle text-success"></i>';
@@ -658,6 +679,7 @@
 
             $($adam + ' li#' + $data.id).show();
             $($adam + ' li#' + $data.id + ' > ul').show();
+
             if ($opt == 'SEARCH') {
 
                 $('div.iys-min-ht').scrollTo('#skillcheck-' + $data.id, 200);
