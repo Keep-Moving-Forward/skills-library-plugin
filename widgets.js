@@ -28,15 +28,17 @@
             case "preview":
 
                 if (options.data) {
+
                     $.fn.skillEngine.setupCSS();
-                    $output = options.data;
+                    $(this).append($.fn.skillEngine.preview(this, options.data));
+                    $('.skillselect').barrating({'readonly': true});
+
                 }
                 else {
 
                     $output = $.fn.skillEngine.output(this, true);
+                    return $.fn.skillEngine.preview(this, $output);
                 }
-
-                return $.fn.skillEngine.preview(this, $output);
                 break;
 
             case "search":
