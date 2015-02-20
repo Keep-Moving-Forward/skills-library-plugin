@@ -226,7 +226,7 @@
                 return $tree;
             }
 
-            return('<ul class="easy-tree">' + readymade(JSON.parse($output)) + '</ul>');
+            return('<ul class="easy-tree">' + readymade($output) + '</ul>');
         }
         else {
 
