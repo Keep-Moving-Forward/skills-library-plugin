@@ -361,33 +361,6 @@
             });
         }
         /* End of Global Checkbox System*/
-
-//        alert($toggle + ' vis - ' + $(obj.selector).children('ul').is(':visible') + ', len -' + $(obj.selector).find('input[name="skills[]"]:checkbox:checked').length);
-//
-//        if ($toggle == 'show' || ($(obj.selector).children('ul').is(':visible') && $(obj.selector).find('input[name="skills[]"]:checkbox:checked').length > 0)) {
-//
-//            var $localcheckbox = $(obj.selector).find('input[name="skills[]"]:checkbox');
-//
-//            if ($localcheckbox.length > 0) {
-//
-//                $localcheckbox.each(function () {
-//
-//                    $(this).not(":checked").closest('li').show(); //Important
-//
-//                    var $parentId = $('li#' + $(this).data('id')).data('parent_id');
-//                    var $parentSelector = $('li#' + $parentId + ' > ul');
-//
-//                    $.each($parentSelector.children(), function (key, value) {
-//
-//                        if ($(value).data('is_child') == 1 && 'li#' + $(value).data('id') != obj.selector && !$(value).find('input[name="skills[]"]:checkbox').is(":checked")) {
-//
-//                            $(value).show();
-//                        }
-//                    });
-//                    /* End of Global Checkbox Hiding System*/
-//                });
-//            }
-//        }
     }
 
     /* Request Skills using access token*/
