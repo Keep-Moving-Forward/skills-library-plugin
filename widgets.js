@@ -52,9 +52,11 @@
 
                 $('.previewskillselect').barrating({'readonly': true});
                 break;
+
             case "search":
                 $.fn.skillEngine.search(this, options.wrapper);
                 break;
+
             default:
                 $.fn.skillEngine.setupCSS();
                 $.fn.skillEngine.setupHTML(this);
@@ -140,8 +142,16 @@
     };
     $.fn.skillEngine.defaults = {};
     $.fn.skillEngine.type = ['functionals', 'behavioural', 'managerial'];
-    $.fn.skillEngine.input = function (obj) {
+    $.fn.skillEngine.input = function (obj, $type) {
 
+//        if ($type == $(obj).data('type')) {
+//
+//
+//        }
+//        else {
+//
+//            alert('Illegal Element and Type instantiated');
+//        }
 //        console.log(obj);
         $.fn.skillEngine.buildTree(obj);
     }
