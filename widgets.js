@@ -23,7 +23,15 @@
                 $.fn.skillEngine.input(this, options.data);
                 break;
             case "preview":
-                $.fn.skillEngine.preview(this);
+
+                if (options.data) {
+                    $output = options.data;
+                }
+                else {
+                    $output = $.fn.skillEngine.output(this, true);
+                }
+
+                return $.fn.skillEngine.preview(this, $output);
                 break;
             case "search":
                 $.fn.skillEngine.search(this, options.wrapper);
@@ -115,37 +123,59 @@
 
         }
     };
+
     $.fn.skillEngine.defaults = {};
+
     $.fn.skillEngine.type = ['functionals', 'behavioural', 'managerial'];
+
     $.fn.skillEngine.input = function (obj, $data) {
 
         $.fn.skillEngine.buildTree(obj.selector, $data, 'MM');
     }
 
-    $.fn.skillEngine.output = function (obj) {
+    $.fn.skillEngine.output = function (obj, $type) {
 
         $output = [];
-        $.each($('input[name="skills[]"]:checkbox:checked').parents('li'), function (index, value) {
 
-            $output.push($(value).data());
-        });
+        if ($type) {
+
+            $.each($(obj.adam.selector + ' input[name="skills[]"]:checkbox:checked').parents('li'), function (index, value) {
+
+                $output.push($(value).data());
+            });
+        }
+        else {
+
+            $.each($('input[name="skills[]"]:checkbox:checked').parents('li'), function (index, value) {
+
+                $output.push($(value).data());
+            });
+        }
+
         if ($output.length > 0) {
+
             return(JSON.stringify($output.reverse()));
         }
         else {
 
-            return 'Please select aleast one functional skill!';
+            return {msg: 'Please select aleast one ' + obj.options.type + ' skill!', err: true, type: obj.options.type};
         }
     }
 
-    $.fn.skillEngine.preview = function (obj) {
-        $modal = $('div#myModal div.modal-body');
-        $modal.html('<div class="easy-tree">' + $.fn.skillEngine.buildTree('', $.fn.skillEngine.output(obj), 'PRE') + '</div>');
+    $.fn.skillEngine.preview = function (obj, $output) {
+
+        if (!$output.err) {
+
+            return('<ul class="easy-tree">' + $.fn.skillEngine.buildTree('', $output, 'PREVIEW') + '</ul>');
+        }
+        else {
+
+            return($output);
+        }
     }
 
     /* Loading HTML */
     $.fn.skillEngine.setupHTML = function (obj) {
-
 
         $blueprint = '<div class="content no-padding">';
         $blueprint += '<div class="iys-bg">';
@@ -173,6 +203,7 @@
         $blueprint += '<div id="skill-count-scroll" class="content_2 iys-min-ht">';
         $blueprint += '<ul class="easy-tree" id="0"></ul>';
         $blueprint += '</div>';
+
         switch (obj.options.type) {
             case 'functionals':
                 $blueprint += '<a class="iys-edit"><div id="skill-bottom-count"></div></a>';
@@ -183,23 +214,7 @@
         $blueprint += '</div>';
         $blueprint += '</div>';
         $blueprint += '</div>';
-        $previewModal = '<div class="modal fade" data-backdrop="false" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">';
-        $previewModal += '<div class="modal-dialog modal-lg">';
-        $previewModal += '<div class="modal-content">';
-        $previewModal += '<div class="modal-header">';
-        $previewModal += '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>';
-        $previewModal += '<h4 class="modal-title" id="myModalLabel">Skill Preview</h4>';
-        $previewModal += '</div>';
-        $previewModal += '<div class="modal-body">';
-        $previewModal += '</div>';
-        $previewModal += '<div class="modal-footer">';
-        $previewModal += '<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>';
-        $previewModal += '</div>';
-        $previewModal += '</div>';
-        $previewModal += '</div>';
-        $previewModal += '</div>';
         $(obj).append($blueprint);
-        $('body').append($previewModal);
     }
 
     /* Loading the CSS */
@@ -438,7 +453,7 @@
 
                 $ka.push($k);
             });
-            $.fn.skillEngine.buildTree(obj.adam.selector, $ka, 'MM', 'SEA');
+            $.fn.skillEngine.buildTree(obj.adam.selector, $ka, 'MM', 'SEARCH');
         }
 
         $('.keyword').select2({
@@ -581,7 +596,7 @@
 
                 $($adam + ' li#' + $data.id).show();
                 $($adam + ' li#' + $data.id + ' > ul').show();
-                if ($opt == 'SEA') {
+                if ($opt == 'SEARCH') {
 
                     $('div.iys-min-ht').scrollTo('#skillcheck-' + $data.id, 200);
                 }
@@ -590,7 +605,7 @@
             readymade($data);
         }
 
-        if ($mode == 'PRE') {
+        if ($mode == 'PREVIEW') {
 
             readymade = function ($data, $parent) {
 
@@ -617,7 +632,9 @@
                         }
 
                         $tree += readymade($data, $data[i]['id']);
+
                         if ($data[i].is_child == 0 || $data[i].is_child == 2) {
+
                             $tree += '<span class="checkbox text-info text-sm">';
                             $tree += '<label>';
                             $tree += $data[i].value;
