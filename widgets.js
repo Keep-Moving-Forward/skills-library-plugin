@@ -175,10 +175,6 @@
                 }
             });
 
-            console.log($data);
-
-            return false;
-
             if ($data.length > 0) {
 
                 $output = {};
