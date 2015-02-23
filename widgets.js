@@ -154,7 +154,11 @@
             $.each($('[data-type="' + $type + '"] input[name="skills[]"]:checkbox:checked').parents('li'), function (index, value) {
 
                 $data.push($(value).data());
+//                console.log(value);
+//                console.log($('li#' + $(value).attr('id') + ' > form:first').serializeArray());
             });
+
+//            return false;
             if ($data.length > 0) {
 
                 $output = {};
@@ -633,9 +637,11 @@
                 $tree += '</select>';
                 $tree += '</div>';
 
-                if (obj.options.placeholder) {
+                if (obj.options.htmlholder) {
                     $tree += '<div class="text-success">';
-                    $tree += obj.options.placeholder;
+                    $tree += '<form id="skillform-' + $data.id + '">';
+                    $tree += obj.options.htmlholder;
+                    $tree += '</form>';
                     $tree += '<div>';
                 }
             }
