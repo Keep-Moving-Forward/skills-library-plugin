@@ -55,8 +55,17 @@
             default:
                 $.fn.skillEngine.setupCSS();
                 $.fn.skillEngine.setupHTML(this);
-                $.fn.skillEngine.request(this);
+
+                if (!options.lock) {
+                    $.fn.skillEngine.request(this);
+                }
+
                 $.fn.skillEngine.scroll();
+
+                if (options.data) {
+                    $.fn.skillEngine.input(this);
+                }
+
                 var self = this;
                 return this.each(function () {
 
@@ -137,7 +146,7 @@
     };
     $.fn.skillEngine.defaults = {};
     $.fn.skillEngine.type = ['functionals', 'behavioural', 'managerial'];
-    $.fn.skillEngine.input = function (obj, $type) {
+    $.fn.skillEngine.input = function (obj) {
 
         $.fn.skillEngine.buildTree(obj);
     }
