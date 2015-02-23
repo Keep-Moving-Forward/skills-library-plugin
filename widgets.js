@@ -40,7 +40,6 @@
 
                     if (!$output[options.type].err) {
 
-
                         $(this).html($.fn.skillEngine.preview($output[options.type]));
                     }
                     else {
@@ -144,15 +143,6 @@
     $.fn.skillEngine.type = ['functionals', 'behavioural', 'managerial'];
     $.fn.skillEngine.input = function (obj, $type) {
 
-//        if ($type == $(obj).data('type')) {
-//
-//
-//        }
-//        else {
-//
-//            alert('Illegal Element and Type instantiated');
-//        }
-//        console.log(obj);
         $.fn.skillEngine.buildTree(obj);
     }
 
@@ -174,6 +164,7 @@
 
                 $output = {};
                 $output[$type] = {msg: 'Please select aleast one ' + obj.options.type + ' skill!', err: true, type: obj.options.type};
+
             }
             return($output);
         }
@@ -252,7 +243,6 @@
         return('<ul class="easy-tree">' + readymade($output) + '</ul>');
 
     }
-
 
     /* Loading HTML */
     $.fn.skillEngine.setupHTML = function (obj) {
@@ -636,11 +626,18 @@
                 $tree += $data.value;
                 $tree += '</label>';
                 $tree += '</span>';
+
                 $tree += '<div class="rating-f experties_dashboard">';
                 $tree += '<select class="skillselect"  name="skills-rating[]" id="skillselect-' + $data.id + '" data-id="' + $data.id + '">';
                 $tree += $.fn.skillEngine.scaleType($data.scale_type, $data.rating);
                 $tree += '</select>';
                 $tree += '</div>';
+
+                if (obj.options.placeholder) {
+                    $tree += '<div class="text-success">';
+                    $tree += obj.options.placeholder;
+                    $tree += '<div>';
+                }
             }
 
             if ($data.is_child == 2) {
