@@ -161,7 +161,6 @@
 
                 if ($(value).data('is_child') == 1) {
 
-                    alert('a');
                     $data.push($(value).data());
                 }
                 else {
@@ -174,8 +173,6 @@
 
                     $data.push($datum);
                 }
-
-
             });
 
             console.log($data);
