@@ -731,6 +731,7 @@
                 $tree += '<input type="hidden" name="is_child" value="' + $data.is_child + '" />';
                 $tree += '<input type="hidden" name="scale_type" value="' + $data.scale_type + '" />';
                 $tree += '<input type="hidden" name="rating" value="' + $data.rating + '" />';
+                $tree += '<input type="hidden" name="value" value="' + $data.value + '" />';
 
                 if (obj.options.htmlholder) {
 
