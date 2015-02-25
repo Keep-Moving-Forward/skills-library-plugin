@@ -125,6 +125,12 @@
 
                     });
                     $widget = $('<div />', {'class': 'br-widget'}).insertAfter($this);
+
+                    // append .br-current-rating div to the widget
+                    if (userOptions.showSelectedRating) {
+                        $widget.append($('<div />', {text: '', 'class': 'br-current-rating', style: 'float:left;'}));
+                    }
+
                     // create A elements that will replace OPTIONs
                     $this.find('option').each(function () {
                         var val, text, $a, $span;
@@ -138,10 +144,6 @@
                         }
 
                     });
-                    // append .br-current-rating div to the widget
-                    if (userOptions.showSelectedRating) {
-                        $widget.append($('<div />', {text: '', 'class': 'br-current-rating'}));
-                    }
 
                     // first OPTION empty - allow deselecting of ratings
                     $this.data('barrating').deselectable = (!$this.find('option:first').val()) ? true : false;
