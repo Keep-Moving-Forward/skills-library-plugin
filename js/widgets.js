@@ -35,7 +35,7 @@
                 }
                 else {
 
-                    $(this).html('<p class="text-center text-danger">No ' + options.type + ' skills selected</p>');
+                    $(this).html('<p>No ' + options.type + ' skills selected</p>');
                 }
 
                 $('.previewskillselect').barrating({'readonly': true});
@@ -472,12 +472,12 @@
                     $tree += readymade($data, $data[i]['id']);
                     if ($data[i].is_child == 0 || $data[i].is_child == 2) {
 
-                        $tree += '<span class="checkbox text-info text-sm">';
+                        $tree += '<span>';
                         $tree += '<label>';
                         $tree += $data[i].value;
                         $tree += '</label>';
                         $tree += '</span>';
-                        $tree += '<div class="rating-f experties_dashboard">';
+                        $tree += '<div class="rating-f">';
                         $tree += '<select class="previewskillselect" name="skills-rating[]" id="skillselect-' + $data[i].id + '" data-id="' + $data[i].id + '">';
                         $tree += $.fn.skillEngine.scaleType($data[i].scale_type, parseInt($data[i].rating));
                         $tree += '</select>';
@@ -551,12 +551,12 @@
                     $tree += readymade($data, $data[i]['id']);
                     if ($data[i].is_child == 0 || $data[i].is_child == 2) {
 
-                        $tree += '<span class="checkbox text-info text-sm">';
+                        $tree += '<span>';
                         $tree += '<label>';
                         $tree += $data[i].value;
                         $tree += '</label>';
                         $tree += '</span>';
-                        $tree += '<div class="rating-f experties_dashboard">';
+                        $tree += '<div class="rating-f">';
                         $tree += '<select class="previewskillselect" name="skills-rating[]" id="skillselect-' + $data[i].id + '" data-id="' + $data[i].id + '">';
                         $tree += $.fn.skillEngine.scaleType($data[i].scale_type, parseInt($data[i].rating));
                         $tree += '</select>';
@@ -607,10 +607,10 @@
         treeList = function ($data) {
 
             $tree = '';
-            $tree += '<li class="parent_li" id="' + $data.id + '" data-value="' + $data.value + '" data-parent_id="' + $data.parent_id + '" data-is_child="' + $data.is_child + '" data-id="' + $data.id + '" ';
+            $tree += '<li id="' + $data.id + '" data-value="' + $data.value + '" data-parent_id="' + $data.parent_id + '" data-is_child="' + $data.is_child + '" data-id="' + $data.id + '" ';
             if ($data.is_child == 1) {
 
-                $tree += 'data-appended="false"';
+                $tree += 'class="parent_li" data-appended="false"';
             }
             else {
 
@@ -623,12 +623,12 @@
 
                 $tree += '';
                 $tree += '<a> <i class="iys-plus"></i> ' + $data.value + '</a>';
-                $tree += '<input style="color:#000;" type="text" class="in-build-search textbox" />';
+                $tree += '<input type="text" class="in-build-search textbox" />';
             }
 
             if ($data.is_child == 0) {
 
-                $tree += '<span class="checkbox text-info text-sm">';
+                $tree += '<span>';
                 $tree += '<label>';
                 $tree += '<input type="checkbox" class="skillcheck" name="skills[]" id="skillcheck-' + $data.id + '" data-id="' + $data.id + '"';
 
@@ -644,7 +644,7 @@
                 $tree += $data.value;
                 $tree += '</label>';
                 $tree += '</span>';
-                $tree += '<div class="rating-f experties_dashboard">';
+                $tree += '<div class="rating-f">';
                 $tree += '<select class="skillselect"  name="skills-rating[]" id="skillselect-' + $data.id + '" data-id="' + $data.id + '">';
                 $tree += $.fn.skillEngine.scaleType($data.scale_type, $data.rating);
                 $tree += '</select>';
@@ -671,7 +671,7 @@
             /* Concept */
             if ($data.is_child == 2) {
 
-                $tree += '<span class="checkbox text-info text-sm">';
+                $tree += '<span>';
                 $tree += '<label>';
                 $tree += '<input type="checkbox" class="skillcheck" name="skills[]" id="skillcheck-' + $data.id + '" data-id="' + $data.id + '"';
 
@@ -758,8 +758,8 @@
         function formatResult(item) {
 
             var treeArr = item.text.replace(/[(:\d_)]+/g, '@@@').split('@@@');
-            treeArr = treeArr.slice(1, treeArr.length - 1),
-                    skillname = treeArr[0], categories = [], catstr = '';
+            treeArr = treeArr.slice(1, treeArr.length - 1);
+            var skillname = treeArr[0], categories = [], catstr = '';
             if (treeArr.length >= 3) {
                 categories = treeArr.slice(treeArr.length - 2);
             } else if (treeArr.length == 2) {
@@ -767,13 +767,14 @@
             } else {
 
             }
-            catstr = (categories.length > 0 ? ('<div><smaller>(' + categories.join(' <i class="fa fa-angle-double-left"></i> ') + ')</smaller></div>') : '');
+            catstr = (categories.length > 0 ? ('<div><smaller>(' + categories.join(' &laquo; ') + ')</smaller></div>') : '');
             return '<div><b>' + skillname + '</b></div>' + catstr;
         }
 
         function formatSelection(item) {
             return '';
         }
+
         function covertTreeValueToJson($e) {
 
             $original = $e.val.split('|^|');
@@ -857,7 +858,7 @@
                 $('div#chart-' + skillid).remove();
             }
 
-            $('#skill-chart').append('<div id="chart-' + skillid + '" data-toggle="tooltip" data-placement="top" title="' + $('li#' + skillid).data('value') + '" style="height: ' + ((parseInt(value) + 1) * 20) + '%;" class="bar active-bar"></div>');
+            $('#skill-chart').append('<div id="chart-' + skillid + '" title="' + $('li#' + skillid).data('value') + '" style="height: ' + ((parseInt(value) + 1) * 20) + '%;" class="bar active-bar"></div>');
             $('#skill-chart-text').text($('li#' + skillid).data('value'));
         }
         else {
