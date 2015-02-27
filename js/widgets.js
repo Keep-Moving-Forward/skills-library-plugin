@@ -674,9 +674,9 @@
                 $tree += '<input type="hidden" name="rating" value="' + $data.rating + '" />';
                 $tree += '<input type="hidden" name="value" value="' + $data.value + '" />';
 
-                if (options.attribute) {
+                if (obj.options.attribute) {
 
-                    $tree += $data[i][options.attribute];
+                    $tree += $data[i][obj.options.attribute];
                 }
 
                 if (obj.options.htmlholder) {
