@@ -67,10 +67,9 @@
                         var $li = $(this).parent('li');
                         if ($li.hasClass('skill-others')) {
 
-
                             $parent = $li.parents('li').eq(0);
 
-                            if ($parent.data('appended') || $li.closest('ul#0').length) {
+                            if ($parent.data('appended') || $li.parent('ul#0').length) {
 
                                 $.each($li.siblings(), function (key, value) {
 
@@ -128,11 +127,12 @@
 
                     $(tree).on('focusin', 'input.in-build-search', function () {
 
-                        $(this).css('width', '150px');
+                        $(this).css({'width': '150px', 'border': '1px solid #CCC'});
                         $li = $(this).offsetParent()[0];
                         var id = $(this).parent('li')[0].id;
                         self.selector = 'li#' + id;
                         self.options.id = id;
+                        $(this).removeClass('iys-placeholder');
                         if ($(self.selector).attr('data-appended') == "false") {
 
                             $.fn.skillEngine.Events.click(self);
@@ -140,7 +140,10 @@
                     });
                     $(tree).on('focusout', 'input.in-build-search', function () {
 
-                        $(this).css('width', '20px');
+                        if ($(this).val().length == 0) {
+                            $(this).css({'width': '20px', 'border': 'none'});
+                            $(this).addClass('iys-placeholder');
+                        }
                     });
                     $(tree).on('keyup', 'input.in-build-search', function () {
 
@@ -623,7 +626,7 @@
 
                 $tree += '';
                 $tree += '<a> <i class="iys-plus"></i> ' + $data.value + '</a>';
-                $tree += '<input type="text" class="in-build-search textbox" />';
+                $tree += '<input type="text" class="in-build-search textbox iys-placeholder" />';
             }
 
             if ($data.is_child == 0) {
