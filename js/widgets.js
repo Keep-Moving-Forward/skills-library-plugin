@@ -673,7 +673,7 @@
 
                 if (obj.options.attribute) {
 
-                    $tree += $data[i][options.attribute];
+                    $tree += $data[i][obj.options.attribute];
                 }
 
                 if (obj.options.htmlholder) {
