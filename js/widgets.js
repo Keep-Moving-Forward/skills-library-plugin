@@ -61,53 +61,54 @@
                 var self = this;
                 return this.each(function () {
 
-                    var tree = $(this);
-                    $(tree).on('click', 'ul li a', function () {
+                    if (!options.lock) {
+                        var tree = $(this);
+                        $(tree).on('click', 'ul li a', function () {
 
-                        var $li = $(this).parent('li');
-                        if ($li.hasClass('skill-others')) {
+                            var $li = $(this).parent('li');
+                            if ($li.hasClass('skill-others')) {
 
-                            $parent = $li.parents('li').eq(0);
+                                $parent = $li.parents('li').eq(0);
 
-                            if ($parent.data('appended') || $li.parent('ul#0').length) {
+                                if ($parent.data('appended') || $li.parent('ul#0').length) {
 
-                                $.each($li.siblings(), function (key, value) {
+                                    $.each($li.siblings(), function (key, value) {
 
-                                    $(value).find('ul').hide();
+                                        $(value).find('ul').hide();
 //                                $(value).find('li').hide(); // Others will be hidden
-                                    $(value).show();
+                                        $(value).show();
 
-                                    if (!$(value).hasClass('skill-others')) {
+                                        if (!$(value).hasClass('skill-others')) {
 
-                                        $(value).find('> a:first > i:first').alterClass('iys-*', 'iys-plus');
-                                    }
-                                });
+                                            $(value).find('> a:first > i:first').alterClass('iys-*', 'iys-plus');
+                                        }
+                                    });
 
-                                $.fn.skillEngine.checkbox(self);
-                                $li.siblings().show();
-                                $li.hide();
+                                    $.fn.skillEngine.checkbox(self);
+                                    $li.siblings().show();
+                                    $li.hide();
+                                }
+                                else {
+
+                                    self.selector = 'li#' + $parent.attr('id');
+                                    self.options.id = $parent.attr('id');
+                                    $.fn.skillEngine.Events.click(self);
+                                }
+
+                                $li.children(' > a > i').eq(0).alterClass('iys-*', 'iys-plus');
+//                                $(obj.selector).siblings('li').children(' a > i').alterClass('iys-*', 'iys-plus');
+
                             }
                             else {
 
-                                self.selector = 'li#' + $parent.attr('id');
-                                self.options.id = $parent.attr('id');
+                                self.selector = 'li#' + $li.attr('id');
+                                self.options.id = $li.attr('id');
                                 $.fn.skillEngine.Events.click(self);
                             }
 
-                            $li.children(' > a > i').eq(0).alterClass('iys-*', 'iys-plus');
-//                                $(obj.selector).siblings('li').children(' a > i').alterClass('iys-*', 'iys-plus');
+                        });
 
-                        }
-                        else {
-
-                            self.selector = 'li#' + $li.attr('id');
-                            self.options.id = $li.attr('id');
-                            $.fn.skillEngine.Events.click(self);
-                        }
-
-                    });
-
-                    $(tree).on('click', 'input[name="skills[]"]:checkbox', function () {
+                        $(tree).on('click', 'input[name="skills[]"]:checkbox', function () {
 
 //                        $li = $(this).closest('li');
 //                        $parent = 'li#' + $li.data('parent_id');
@@ -132,48 +133,50 @@
 //                            console.log($(value));
 //                            $(value).children(' > a > i').alterClass('iys-*', 'iys-intermediate');
 //                        });
-                    });
+                        });
 
-                    $(tree).on('focusin', 'input.in-build-search', function () {
+                        $(tree).on('focusin', 'input.in-build-search', function () {
 
-                        $(this).css({'width': '150px', 'border': '1px solid #CCC'});
-                        $li = $(this).offsetParent()[0];
-                        var id = $(this).parent('li')[0].id;
-                        self.selector = 'li#' + id;
-                        self.options.id = id;
-                        $(this).removeClass('iys-placeholder');
-                        if ($(self.selector).attr('data-appended') == "false") {
+                            $(this).css({'width': '150px', 'border': '1px solid #CCC'});
+                            $li = $(this).offsetParent()[0];
+                            var id = $(this).parent('li')[0].id;
+                            self.selector = 'li#' + id;
+                            self.options.id = id;
+                            $(this).removeClass('iys-placeholder');
+                            if ($(self.selector).attr('data-appended') == "false") {
 
-                            $.fn.skillEngine.Events.click(self);
-                        }
-                    });
-                    $(tree).on('focusout', 'input.in-build-search', function () {
-
-                        if ($(this).val().length == 0) {
-                            $(this).css({'width': '20px', 'border': 'none'});
-                            $(this).addClass('iys-placeholder');
-                        }
-                    });
-                    $(tree).on('keyup', 'input.in-build-search', function () {
-
-                        $li = $(this).offsetParent()[0];
-                        var id = $(this).parent('li')[0].id;
-                        self.selector = 'li#' + id;
-                        self.options.id = id;
-                        var txt = $(this).val();
-                        $(self.selector + ' ul').show();
-                        $(self.selector).find('li').each(function () {
-
-                            if ($(this).text().toUpperCase().indexOf(txt.toUpperCase()) != -1) {
-
-                                $(this).show();
-                            }
-                            else {
-
-                                $(this).hide();
+                                $.fn.skillEngine.Events.click(self);
                             }
                         });
-                    });
+                        $(tree).on('focusout', 'input.in-build-search', function () {
+
+                            if ($(this).val().length == 0) {
+                                $(this).css({'width': '20px', 'border': 'none'});
+                                $(this).addClass('iys-placeholder');
+                            }
+                        });
+                        $(tree).on('keyup', 'input.in-build-search', function () {
+
+                            $li = $(this).offsetParent()[0];
+                            var id = $(this).parent('li')[0].id;
+                            self.selector = 'li#' + id;
+                            self.options.id = id;
+                            var txt = $(this).val();
+                            $(self.selector + ' ul').show();
+                            $(self.selector).find('li').each(function () {
+
+                                if ($(this).text().toUpperCase().indexOf(txt.toUpperCase()) != -1) {
+
+                                    $(this).show();
+                                }
+                                else {
+
+                                    $(this).hide();
+                                }
+                            });
+                        });
+
+                    }
                 });
         }
     };
