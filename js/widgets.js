@@ -76,6 +76,11 @@
                                     $(value).find('ul').hide();
 //                                $(value).find('li').hide(); // Others will be hidden
                                     $(value).show();
+
+                                    if (!$(value).hasClass('skill-others')) {
+
+                                        $(value).find('> a:first > i:first').alterClass('iys-*', 'iys-plus');
+                                    }
                                 });
 
                                 $.fn.skillEngine.checkbox(self);
@@ -88,6 +93,11 @@
                                 self.options.id = $parent.attr('id');
                                 $.fn.skillEngine.Events.click(self);
                             }
+
+
+                            $li.children(' > a > i').eq(0).alterClass('iys-*', 'iys-plus');
+//                                $(obj.selector).siblings('li').children(' a > i').alterClass('iys-*', 'iys-plus');
+
                         }
                         else {
 
