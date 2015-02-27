@@ -360,7 +360,7 @@
 
         switch (obj.options.type) {
             case 'functionals':
-                $blueprint += '<div class="iys-fun-end"><p><span id="skills-count"></span> Functional Skills added to your profile</p><a><div id="skill-bottom-count"></div></a></div>';
+                $blueprint += '<div class="iys-fun-end"><p>You have selected <span id="skills-count">0</span> Functional Skills</p><a><div id="skill-bottom-count"></div></a></div>';
                 break;
         }
         $blueprint += '</div>';
@@ -379,8 +379,8 @@
 
                 return value;
             });
-            $('#skill-top-count').text('Skills seleceted @ top #' + top.length);
-            $('#skill-bottom-count').text('Skills seleceted @ bottom #' + bottom.length);
+            $('#skill-top-count').text('Skills selected @ top #' + top.length);
+            $('#skill-bottom-count').text('Skills selected @ bottom #' + bottom.length);
         });
     }
 
