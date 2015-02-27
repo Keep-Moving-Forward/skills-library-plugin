@@ -94,7 +94,6 @@
                                 $.fn.skillEngine.Events.click(self);
                             }
 
-
                             $li.children(' > a > i').eq(0).alterClass('iys-*', 'iys-plus');
 //                                $(obj.selector).siblings('li').children(' a > i').alterClass('iys-*', 'iys-plus');
 
