@@ -133,7 +133,7 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAPCAYA
 .iys-tree ul li>a {padding-left:20px;}
 .iys-tree>li>a{font-weight: bold !important; font-size: 15px; cursor: pointer;color: #414141;}
 .iys-tree ul{margin: 0 !important}
-.iys-tree li div{font-weight: 500 !important; margin: 0 1px; color:#D07C0C;display: inline-block;float: right;vertical-align: middle;}
+.iys-tree li div{font-weight: 500 !important; margin: 0 1px; color:#D07C0C;display: inline-block;vertical-align: middle;}
 .iys-tree li.parent_li>a{font-weight: 900}
 .iys-tree li.parent_li>ul{padding-left: 15px}
 .iys-tree li p{margin: 3px 20px;}
