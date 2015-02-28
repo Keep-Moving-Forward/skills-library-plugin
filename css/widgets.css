@@ -361,6 +361,7 @@ html[dir="rtl"] .select2-container-multi .select2-search-choice-close{left:auto;
 .rating-e .br-widget a.br-active {background-color: #e3e3e3;color: #646464;}
 .rating-e .br-widget a.br-selected {background-color: #59a6d6;color: white;}
 /******* EXAMPLE F *******/
+.rating-f{float:right;}
 .rating-f .br-widget {height: 24px;}
 .rating-f .br-widget a { background: url('img/star.png');
     width: 24px;
