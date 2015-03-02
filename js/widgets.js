@@ -463,35 +463,34 @@
                 if ($data[i]['parent_id'] == $parent) {
 
                     $tree += '<li id="' + $data[i].id + '" data-value="' + $data[i].value + '" data-scale_type="' + $data[i].scale_type + '" data-parent_id="' + $data[i].parent_id + '" data-is_child="' + $data[i].is_child + '" data-id="' + $data[i].id + '" ';
-                    if ($data.is_child == 1) {
+
+                    if ($data[i].is_child == 1) {
 
                         $tree += 'class="parent_li" data-appended="false"';
                     }
                     else {
 
-                        if ($data.rating) {
-                            $tree += 'data-rating="' + $data.rating + '"';
+                        if ($data[i].rating) {
+                            $tree += 'data-rating="' + $data[i].rating + '"';
                         }
                         else {
                             $tree += 'data-rating=""';
                         }
-                        $tree += 'data-scale_type="' + $data.scale_type + '"';
+                        $tree += 'data-scale_type="' + $data[i].scale_type + '"';
                     }
 
                     $tree += ' >';
                     if ($data[i].is_child == 1) {
 
-                        $tree += '<a><i class="iys-tick"></i>' + $data[i].value + '</a>';
+                        $tree += '<a><i class="iys-intermediate"></i>' + $data[i].value + '</a>';
                     }
 
                     $tree += readymade($data, $data[i]['id']);
                     if ($data[i].is_child == 0 || $data[i].is_child == 2) {
 
-                        $tree += '<span>';
-                        $tree += '<label>';
+                        $tree += '<a><i class="iys-tick"></i>';
                         $tree += $data[i].value;
-                        $tree += '</label>';
-                        $tree += '</span>';
+                        $tree += '</a>';
                         $tree += '<div class="rating-f">';
                         $tree += '<select class="previewskillselect" name="skills-rating[]" id="skillselect-' + $data[i].id + '" data-id="' + $data[i].id + '">';
                         $tree += $.fn.skillEngine.scaleType($data[i].scale_type, parseInt($data[i].rating));
