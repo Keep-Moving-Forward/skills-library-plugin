@@ -482,7 +482,7 @@
                     $tree += ' >';
                     if ($data[i].is_child == 1) {
 
-                        $tree += '<a><i class="iys-intermediate"></i>' + $data[i].value + '</a>';
+                        $tree += '<a><i class="iys-toptree"></i>' + $data[i].value + '</a>';
                     }
 
                     $tree += readymade($data, $data[i]['id']);
@@ -541,19 +541,19 @@
                 if ($data[i]['parent_id'] == $parent) {
 
                     $tree += '<li id="' + $data[i].id + '" data-value="' + $data[i].value + '" data-scale_type="' + $data[i].scale_type + '" data-parent_id="' + $data[i].parent_id + '" data-is_child="' + $data[i].is_child + '" data-id="' + $data[i].id + '" ';
-                    if ($data.is_child == 1) {
+                    if ($data[i].is_child == 1) {
 
                         $tree += 'class="parent_li" data-appended="false"';
                     }
                     else {
 
-                        if ($data.rating) {
-                            $tree += 'data-rating="' + $data.rating + '"';
+                        if ($data[i].rating) {
+                            $tree += 'data-rating="' + $data[i].rating + '"';
                         }
                         else {
                             $tree += 'data-rating=""';
                         }
-                        $tree += 'data-scale_type="' + $data.scale_type + '"';
+                        $tree += 'data-scale_type="' + $data[i].scale_type + '"';
                     }
 
                     $tree += ' >';
