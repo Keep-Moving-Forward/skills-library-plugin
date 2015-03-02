@@ -637,7 +637,9 @@
 
                 $tree += '';
                 $tree += '<a> <i class="iys-plus"></i> ' + $data.value + '</a>';
-                $tree += '<input type="text" class="in-build-search textbox iys-placeholder" />';
+                if (!obj.options.lock) {
+                    $tree += '<input type="text" class="in-build-search textbox iys-placeholder" />';
+                }
             }
 
             if ($data.is_child == 0) {
