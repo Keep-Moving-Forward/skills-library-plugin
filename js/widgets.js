@@ -699,6 +699,11 @@
                 else {
 
                     $tree += ' checked="true"';
+
+                    if (obj.options.lock) {
+
+                        $tree += ' disabled="true"';
+                    }
                 }
 
                 $tree += '>';
@@ -748,9 +753,16 @@
         }
 
         readymade($data);
-        $('.skillselect').barrating('show', {
-            onSelect: $.fn.skillEngine.chart
-        });
+
+        if (obj.options.lock) {
+
+            $('.skillselect').barrating({'readonly': true});
+        } else {
+
+            $('.skillselect').barrating('show', {
+                onSelect: $.fn.skillEngine.chart
+            });
+        }
     }
 
     $.fn.skillEngine.scaleType = function (type, rate) {
