@@ -181,7 +181,10 @@
         }
     };
 
-    $.fn.skillEngine.defaults = {};
+    $.fn.skillEngine.defaults = {
+        lock: false,
+        unlockRating: false
+    };
 
     $.fn.skillEngine.type = ['functionals', 'behavioural', 'managerial'];
 
@@ -761,7 +764,7 @@
 
         readymade($data);
 
-        if (obj.options.lock) {
+        if (obj.options.lock && !obj.options.unlockRating) {
 
             $('.skillselect').barrating({'readonly': true});
         } else {
