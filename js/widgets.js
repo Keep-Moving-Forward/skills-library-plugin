@@ -8,6 +8,7 @@
         }, $.fn.skillEngine.defaults, options);
         this.adam = $(this);
         this.attr('data-type', options.type);
+        Mustache.tags = ["<%", "%>"];
         switch ($mode) {
 
             case "output":
@@ -446,6 +447,64 @@
         }
     }
 
+    $.fn.skillEngine.preview = function ($output) {
+
+        readymade = function ($data, $parent) {
+
+            if (typeof $parent === "undefined" || $parent === null) {
+
+                $parent = 0;
+            }
+
+            $tree = '';
+            if ($parent != 0) {
+
+                $tree += '<ul>';
+            }
+
+            for (var i = 0; i < $data.length; i++) {
+
+                if ($data[i]['parent_id'] == $parent) {
+
+                    $tree += '<li';
+                    if ($data[i].is_child == 1) {
+
+                        $tree += 'class="parent_li"';
+                    }
+
+                    $tree += ' >';
+                    if ($data[i].is_child == 1) {
+
+                        $tree += '<a><i class="iys-toptree"></i>' + $data[i].value + '</a>';
+                    }
+
+                    $tree += readymade($data, $data[i]['id']);
+                    if ($data[i].is_child == 0 || $data[i].is_child == 2) {
+
+                        $tree += '<a><i class="iys-tick"></i>';
+                        $tree += $data[i].value;
+                        $tree += '</a>';
+                        $tree += '<div class="rating-f">';
+                        $tree += '<select class="previewskillselect" name="skills-rating[]" id="skillselect-' + $data[i].id + '" data-id="' + $data[i].id + '">';
+                        $tree += $.fn.skillEngine.scaleType($data[i].scale_type, parseInt($data[i].rating));
+                        $tree += '</select>';
+                        $tree += '</div>';
+                    }
+
+                    $tree += '</li>';
+                }
+            }
+
+            if ($parent != 0) {
+
+                $tree += '</ul>';
+            }
+            return $tree;
+        }
+
+        return('<ul class="iys-tree">' + readymade($output) + '</ul>');
+    }
+
     $.fn.skillEngine.view = function (options) {
 
         readymade = function ($data, $parent) {
@@ -502,9 +561,9 @@
 
                         $tree += '<p>';
 
-                        if (options.htmlholder) {
+                        if (options.template) {
 
-                            $tree += $data[i][options.htmlholder];
+                            $tree += Mustache.render(options.template, $data[i]);
                         }
 
                         $tree += '</p>';
@@ -522,76 +581,6 @@
         }
 
         return('<ul class="iys-tree">' + readymade(options.data) + '</ul>');
-    }
-
-    $.fn.skillEngine.preview = function ($output) {
-
-        readymade = function ($data, $parent) {
-
-            if (typeof $parent === "undefined" || $parent === null) {
-
-                $parent = 0;
-            }
-
-            $tree = '';
-            if ($parent != 0) {
-
-                $tree += '<ul>';
-            }
-
-            for (var i = 0; i < $data.length; i++) {
-
-                if ($data[i]['parent_id'] == $parent) {
-
-                    $tree += '<li id="' + $data[i].id + '" data-value="' + $data[i].value + '" data-scale_type="' + $data[i].scale_type + '" data-parent_id="' + $data[i].parent_id + '" data-is_child="' + $data[i].is_child + '" data-id="' + $data[i].id + '" ';
-                    if ($data[i].is_child == 1) {
-
-                        $tree += 'class="parent_li" data-appended="false"';
-                    }
-                    else {
-
-                        if ($data[i].rating) {
-                            $tree += 'data-rating="' + $data[i].rating + '"';
-                        }
-                        else {
-                            $tree += 'data-rating=""';
-                        }
-                        $tree += 'data-scale_type="' + $data[i].scale_type + '"';
-                    }
-
-                    $tree += ' >';
-                    if ($data[i].is_child == 1) {
-
-                        $tree += '<a><i class="iys-tick"></i>' + $data[i].value + '</a>';
-                    }
-
-                    $tree += readymade($data, $data[i]['id']);
-                    if ($data[i].is_child == 0 || $data[i].is_child == 2) {
-
-                        $tree += '<span>';
-                        $tree += '<label>';
-                        $tree += $data[i].value;
-                        $tree += '</label>';
-                        $tree += '</span>';
-                        $tree += '<div class="rating-f">';
-                        $tree += '<select class="previewskillselect" name="skills-rating[]" id="skillselect-' + $data[i].id + '" data-id="' + $data[i].id + '">';
-                        $tree += $.fn.skillEngine.scaleType($data[i].scale_type, parseInt($data[i].rating));
-                        $tree += '</select>';
-                        $tree += '</div>';
-                    }
-
-                    $tree += '</li>';
-                }
-            }
-
-            if ($parent != 0) {
-
-                $tree += '</ul>';
-            }
-            return $tree;
-        }
-
-        return('<ul class="iys-tree">' + readymade($output) + '</ul>');
     }
 
     $.fn.skillEngine.buildTree = function (obj, $opt) {
@@ -688,9 +677,9 @@
                     $tree += $data[i][obj.options.attribute];
                 }
 
-                if (obj.options.htmlholder) {
+                if (obj.options.template) {
 
-                    $tree += obj.options.htmlholder;
+                    $tree += Mustache.render(obj.options.template, $data);
                 }
 
                 $tree += '</form>';
