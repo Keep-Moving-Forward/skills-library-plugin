@@ -466,7 +466,7 @@
 
                 if ($data[i]['parent_id'] == $parent) {
 
-                    $tree += '<li';
+                    $tree += '<li ';
                     if ($data[i].is_child == 1) {
 
                         $tree += 'class="parent_li"';
