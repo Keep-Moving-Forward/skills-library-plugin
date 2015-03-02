@@ -654,6 +654,11 @@
                 else {
 
                     $tree += ' checked="true"';
+
+                    if (obj.options.lock) {
+
+                        $tree += ' disabled="true"';
+                    }
                 }
 
                 $tree += '>';
