@@ -12,7 +12,7 @@ text-align:  center;}
 .iys-bar5{background: #50B432;}
 .graph {width: 200px;height: 38px;border: 1px solid #1F9DA5;background-color: #fff;overflow-x: visible;overflow-y: hidden; padding: 5px;
     white-space: nowrap;}
-.bar {width: 10px;margin: 3px;display: inline-block;position: relative; background-color: #aeaeae;}
+.bar {width: 10px;margin: 3px;display: inline-block;position: relative;}
 .active-bar{background:#3B84C3;}
 .iys-graph{margin: 0 15px;float: left;font-size: 12px;}
 .iys-btn-holder h4{margin: 0;}
