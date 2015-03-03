@@ -888,7 +888,7 @@
                 $('div#chart-' + skillid).remove();
             }
 
-            $('#skill-chart').append('<div id="chart-' + skillid + '" title="' + $('li#' + skillid).data('value') + '" style="height: ' + ((parseInt(value) + 1) * 20) + '%;" class="bar active-bar"></div>');
+            $('#skill-chart').append('<div id="chart-' + skillid + '" title="' + $('li#' + skillid).data('value') + '" style="height: ' + ((parseInt(value) + 1) * 20) + '%;" class="bar active-bar iys-bar' + (parseInt(value) + 1) + '"></div>');
             $('#skill-chart-text').text($('li#' + skillid).data('value'));
         }
         else {
