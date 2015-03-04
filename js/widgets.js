@@ -747,7 +747,11 @@
 
             if ($opt == 'SEARCH') {
 
-                $('.skill-count-scroll').scrollTo('#skillcheck-' + $data.id, 200);
+                $('.skill-count-scroll').scrollTo('#skillcheck-' + $data.id, 200, {offset: {top: -200, bottom: 200}});
+                $('#skillcheck-' + $data.id).closest('li').delay(200).addClass('iys-highlight').delay(500).queue(function () {
+                    $(this).removeClass("iys-highlight").dequeue();
+                });
+
             }
         }
 
@@ -772,10 +776,10 @@
         $.each(scale_split, function (index, value) {
 
             if (rate == index) {
-                scale += '<option value="' + (index) + '" selected="selected">' + value + '</option>';
+                scale += '<option value="' + (index + 1) + '" selected="selected">' + value + '</option>';
             } else {
 
-                scale += '<option value="' + (index) + '">' + value + '</option>';
+                scale += '<option value="' + (index + 1) + '">' + value + '</option>';
             }
         });
         return scale;
