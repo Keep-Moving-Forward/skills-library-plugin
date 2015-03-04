@@ -374,7 +374,7 @@
         $blueprint += '</div>';
         $blueprint += '<div id="iys-arrow"></div>';
         $blueprint += '<div>';
-        $blueprint += '<ul class="iys-tree skill-count-scroll"  id="0"></ul>';
+        $blueprint += '<ul class="iys-tree skill-count-scroll" id="0"></ul>';
         $blueprint += '</div>';
 
         switch (obj.options.type) {
@@ -669,7 +669,7 @@
                 $tree += '<input type="hidden" name="parent_id" value="' + $data.parent_id + '" />';
                 $tree += '<input type="hidden" name="is_child" value="' + $data.is_child + '" />';
                 $tree += '<input type="hidden" name="scale_type" value="' + $data.scale_type + '" />';
-                $tree += '<input type="hidden" name="rating" value="' + $data.rating + '" />';
+                $tree += '<input type="hidden" name="rating" value="' + (typeof $data.rating == 'undefined' ? 0 : $data.rating) + '" />';
                 $tree += '<input type="hidden" name="value" value="' + $data.value + '" />';
 
                 if (obj.options.attribute) {
@@ -775,7 +775,7 @@
         var scale = '<option value=""></option>';
         $.each(scale_split, function (index, value) {
 
-            if (rate == index) {
+            if (rate == index + 1) {
                 scale += '<option value="' + (index + 1) + '" selected="selected">' + value + '</option>';
             } else {
 
