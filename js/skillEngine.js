@@ -1018,7 +1018,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
     $.fn.skillEngine.search = function () {
 
         obj = $.fn.skillEngine.obj['functionals'];
-        function formatResult(item) {
+        function formatItem(item) {
             var treeArr = item.text.replace(/[(:\d_)]+/g, '@@@').split('@@@');
             treeArr = treeArr.slice(1, treeArr.length - 1);
             var skillname = treeArr[0], categories = [], catstr = '';
@@ -1030,41 +1030,6 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
             }
             catstr = (categories.length > 0 ? ('<div><smaller>(' + categories.join(' &laquo; ') + ')</smaller></div>') : '');
             return '<div><b>' + skillname + '</b></div>' + catstr;
-        }
-
-        function formatSelection(item) {
-            return '';
-        }
-
-        function covertTreeValueToJson($e) {
-            $original = $e.val.split('|^|');
-            $childscale = $original[1].split('_');
-            $skillsDetails = $original[0].substring(1, $original[0].length - 1).split(':');
-            $datum = [];
-            $.each($skillsDetails, function (key, value) {
-                $data = {};
-                $temp = value.split('_');
-                $data.id = parseInt($temp[0]);
-                $data.value = $temp[1];
-                if ($skillsDetails.length - 1 > key) {
-                    $data.parent_id = parseInt($skillsDetails[key + 1].split('_')[0]);
-                }
-                else {
-                    $data.parent_id = 0;
-                }
-
-                if (key == 0) {
-                    $data.is_child = parseInt($childscale[0]);
-                    $data.scale_type = parseInt($childscale[1]);
-                }
-                else {
-                    $data.is_child = 1;
-                }
-
-                $datum.push($data);
-            });
-            obj.options.data = $datum;
-            $.fn.skillEngine.buildTree(obj, 'SEARCH');
         }
 
         function formatNoMatches(term) {
@@ -1111,17 +1076,24 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                 results: function (data, callback) {
                     var datum = [];
                     $.each(data, function (key, value) {
-                        var compressedSkill = value.skillKey;
+                        var compressedSkill = value.tree_structure;
                         datum.push({'id': compressedSkill, 'text': value.tree_id_value});
                     });
                     return {results: datum};
                 }
             },
-            formatResult: formatResult,
-            formatSelection: formatSelection,
+            formatResult: formatItem,
+            formatSelection: formatItem,
             formatNoMatches: formatNoMatches
 
-        }).on("change", covertTreeValueToJson);
+        }).on("change", function ($e) {
+
+            obj.options.data = JSON.parse($e.val);
+            $.fn.skillEngine.buildTree(obj, 'SEARCH');
+
+        });
+
+
         $(document).off('click', '#iysAddSkillBtn');
         $(document).on('click', '#iysAddSkillBtn', function () {
             $('#iysVerifyCaptchaModal').modal('show');
