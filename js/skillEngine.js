@@ -1133,8 +1133,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                 }
 
                 $.ajax({
-                    url: 'http://localhost:8000/proxy/verify-captcha/' + $('#g-recaptcha-response').val(),
-//                    url: 'http://api.itsyourskills.com/proxy/verify-captcha/' + $('#g-recaptcha-response').val(),
+                    url: 'http://api.itsyourskills.com/proxy/verify-captcha/' + $('#g-recaptcha-response').val(),
                     type: 'POST',
                     async: true,
                     success: function ($da) {
