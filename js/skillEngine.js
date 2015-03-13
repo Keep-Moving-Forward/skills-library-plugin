@@ -23,6 +23,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
         this.adam = $(this);
         $.fn.skillEngine.obj[this.options.type] = this;
         this.attr('data-type', options.type);
+        this.attr('data-id', 0);
         Mustache.tags = ["<%", "%>"];
 
         // Switch case for Mode
@@ -640,287 +641,509 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
 
     $.fn.skillEngine.buildTree = function (obj, $opt) {
 
-
-
         $data = obj.options.data;
         $adam = obj.adam.selector;
-        readymade = function ($data, $parent) {
+        if ($opt != 'SEARCH') {
 
-            if (typeof $parent === "undefined" || $parent === null) {
+            $parent = $(obj.selector).data();
 
-                $parent = 0;
-            }
-
+            var $tree = [], o = -1;
+            $tree[++o] = '<li class="skill-others" style="display:none;" ><a><i class="iys-others"></i> Others</a></li>';
             for (var i = 0; i < $data.length; i++) {
 
                 if (typeof $data != 'undefined' && typeof $data[i] != 'undefined') {
 
-                    if (parseInt($data[i].parent_id) == parseInt($parent)) {
+                    if (!$($adam + ' li#' + $data[i].id).length) {
 
-                        $tree = treeList($data[i]);
-                        readymade($data, parseInt($data[i].id));
-                    }
-                    else {
+                        /********** Start of Li **********/
+                        $tree[++o] = '<li id="' + $data[i].id + '" data-value="' + $data[i].value + '" data-parent_id="' + $data[i].parent_id + '" data-is_child="' + $data[i].is_child + '" data-id="' + $data[i].id + '" ';
+                        if ($data[i].is_child == 1) {
 
-                        $tree = treeList($data[i]);
-//                        break; // for performance make it break
-                    }
-
-                    if ($opt != 'SEARCH') {
-
-                        delete $data[i];
-                    }
-                }
-            }
-        }
-
-        treeList = function ($data) {
-
-            $tree = '';
-            /********** Start of Li **********/
-            $tree += '<li id="' + $data.id + '" data-value="' + $data.value + '" data-parent_id="' + $data.parent_id + '" data-is_child="' + $data.is_child + '" data-id="' + $data.id + '" ';
-            if ($data.is_child == 1) {
-
-                $tree += 'class="parent_li" data-appended="false"';
-            }
-            else {
-
-                $tree += 'data-scale_type="' + $data.scale_type + '"';
-            }
-
-            $tree += ' >';
-            switch (parseInt($data.is_child)) {
-
-                case 0:
-                    $tree += '<label>';
-                    $tree += '<input type="checkbox" class="skillcheck" name="skills[]" id="skillcheck-' + $data.id + '" data-id="' + $data.id + '" ' + (typeof $data.checked != 'undefined' && $data.checked == "true" ? 'checked="checked"' : '');
-                    if (obj.options.lock) {
-                        $tree += ' disabled="true"';
-                    }
-
-                    $tree += '>';
-                    $tree += $data.value;
-                    $tree += '</label>';
-                    $tree += '<div class="rating-f">';
-                    $tree += '<select class="skillselect"  name="skills-rating[]" id="skillselect-' + $data.id + '" data-id="' + $data.id + '">';
-                    $tree += $.fn.skillEngine.scaleType($data.scale_type, $data.rating);
-                    $tree += '</select>';
-                    $tree += '</div>';
-                    $tree += '<p>';
-                    $tree += '<form id="skillform-' + $data.id + '">';
-                    $tree += '<input type="hidden" name="id" value="' + $data.id + '" />';
-                    $tree += '<input type="hidden" name="parent_id" value="' + $data.parent_id + '" />';
-                    $tree += '<input type="hidden" name="is_child" value="' + $data.is_child + '" />';
-                    $tree += '<input type="hidden" name="scale_type" value="' + $data.scale_type + '" />';
-                    $tree += '<input type="hidden" name="rating" value="' + (typeof $data.rating == 'undefined' ? 0 : $data.rating) + '" />';
-                    $tree += '<input type="hidden" name="checked" value="' + (typeof $data.checked == 'undefined' ? false : $data.checked) + '" />';
-                    $tree += '<input type="hidden" name="value" value="' + $data.value + '" />';
-                    if (obj.options.template) {
-
-                        $tree += Mustache.render(obj.options.template, $data);
-                    }
-
-                    $tree += '</form>';
-                    $tree += '</p>';
-                    break;
-                case 1:
-
-                    $tree += '<a> <i class="iys-plus"></i> ' + $data.value + '</a>';
-                    if (!obj.options.lock) {
-                        $tree += '<input type="text" class="in-build-search textbox iys-placeholder" />';
-                    }
-                    break;
-                case 2:
-                    $tree += '<label>';
-                    $tree += '<input type="checkbox" class="skillcheck" name="skills[]" id="skillcheck-' + $data.id + '" data-id="' + $data.id + '" ' + (typeof $data.checked != 'undefined' && $data.checked == 'true' ? 'checked="checked"' : '');
-                    if (obj.options.lock) {
-                        $tree += ' disabled="true"';
-                    }
-
-                    $tree += '>';
-                    $tree += $data.value;
-                    $tree += '</label>';
-                    $tree += '<div class="rating-f">';
-                    $tree += '<select class="skillselect"  name="skills-rating[]" id="skillselect-' + $data.id + '" data-id="' + $data.id + '">';
-                    $tree += $.fn.skillEngine.scaleType($data.scale_type, $data.rating);
-                    $tree += '</select>';
-                    $tree += '</div>';
-                    $tree += '<p>';
-                    $tree += '<form id="skillform-' + $data.id + '">';
-                    $tree += '<input type="hidden" name="id" value="' + $data.id + '" />';
-                    $tree += '<input type="hidden" name="parent_id" value="' + $data.parent_id + '" />';
-                    $tree += '<input type="hidden" name="is_child" value="' + $data.is_child + '" />';
-                    $tree += '<input type="hidden" name="scale_type" value="' + $data.scale_type + '" />';
-                    $tree += '<input type="hidden" name="rating" value="' + (typeof $data.rating == 'undefined' ? 0 : $data.rating) + '" />';
-                    $tree += '<input type="hidden" name="checked" value="' + (typeof $data.checked == 'undefined' ? false : $data.checked) + '" />';
-                    $tree += '<input type="hidden" name="value" value="' + $data.value + '" />';
-                    if (obj.options.template) {
-
-                        $tree += Mustache.render(obj.options.template, $data);
-                    }
-
-                    $tree += '</form>';
-                    $tree += '</p>';
-
-                    self = obj;
-                    self.selector = 'li#' + $data.id;
-                    self.options.id = $data.id;
-                    $.fn.skillEngine.request(self);
-                    break;
-                case 3:
-                    $tree += '<label>';
-                    $tree += '<input type="checkbox" class="skillcheck" name="skills[]" id="skillcheck-' + $data.id + '" data-id="' + $data.id + '" ' + (typeof $data.checked != 'undefined' && $data.checked == 'true' ? 'checked="checked"' : '');
-                    if (obj.options.lock) {
-                        $tree += ' disabled="true"';
-                    }
-
-                    $tree += '>';
-                    $tree += $data.value;
-                    $tree += '</label>';
-                    $tree += '<p>';
-                    $tree += '<form id="skillform-' + $data.id + '">';
-                    $tree += '<input type="hidden" name="id" value="' + $data.id + '" />';
-                    $tree += '<input type="hidden" name="parent_id" value="' + $data.parent_id + '" />';
-                    $tree += '<input type="hidden" name="is_child" value="' + $data.is_child + '" />';
-                    $tree += '<input type="hidden" name="value" value="' + $data.value + '" />';
-                    $tree += '<input type="hidden" name="checked" value="' + (typeof $data.checked == 'undefined' ? false : $data.checked) + '" />';
-                    $tree += '</form>';
-                    $tree += '</p>';
-                    break;
-                case 4:
-                    $tree += '<a> <i class="iys-plus"></i> ' + $data.value + '</a>';
-                    if (!obj.options.lock) {
-                        $tree += '<input type="text" class="in-build-search textbox iys-placeholder" />';
-                    }
-                    $tree += '<input type="checkbox" class="skillcheck" name="skills[]" id="skillcheck-' + $data.id + '" data-id="' + $data.id + '"';
-                    if (typeof $data.rating === "undefined" || $data.rating === null || $data.rating == "") {
-                    }
-                    else {
-                        $tree += ' checked="true"';
-                        if (obj.options.lock) {
-                            $tree += ' disabled="true"';
-                        }
-                    }
-                    $tree += '>';
-                    $tree += '<div class="rating-f">';
-                    $tree += '<select class="skillselect"  name="skills-rating[]" id="skillselect-' + $data.id + '" data-id="' + $data.id + '">';
-                    $tree += $.fn.skillEngine.scaleType($data.scale_type, $data.rating);
-                    $tree += '</select>';
-                    $tree += '</div>';
-                    $tree += '<p>';
-                    $tree += '<form id="skillform-' + $data.id + '">';
-                    $tree += '<input type="hidden" name="id" value="' + $data.id + '" />';
-                    $tree += '<input type="hidden" name="parent_id" value="' + $data.parent_id + '" />';
-                    $tree += '<input type="hidden" name="is_child" value="' + $data.is_child + '" />';
-                    $tree += '<input type="hidden" name="scale_type" value="' + $data.scale_type + '" />';
-                    $tree += '<input type="hidden" name="rating" value="' + (typeof $data.rating == 'undefined' ? 0 : $data.rating) + '" />';
-                    $tree += '<input type="hidden" name="value" value="' + $data.value + '" />';
-
-                    if (obj.options.template) {
-
-                        $tree += Mustache.render(obj.options.template, $data);
-                    }
-
-                    $tree += '</form>';
-                    $tree += '</p>';
-
-                    break;
-                default:
-                    $tree = 'Out of Child';
-            }
-
-            $tree += '</li>';
-            /********** End of Li **********/
-
-            /********** Start of Appending **********/
-            if ($opt == 'SEARCH') {
-                $othersLi = '<li class="skill-others"><a><i class="iys-others"></i> Others</a></li>';
-            }
-            else {
-                $othersLi = '<li class="skill-others" style="display:none;" ><a><i class="iys-others"></i> Others</a></li>';
-            }
-
-            $element = $adam + ' li#' + $data.parent_id;
-            if (!$($adam + ' li#' + $data.id).length) {
-
-                if ($data.parent_id == 0) {
-
-                    if (!$($adam + ' ul#0').has('li.skill-others').length) {
-
-                        $($adam + ' ul#0').append($othersLi);
-                    }
-
-                    $($adam + ' ul#0').append($tree);
-
-                    if ($opt != 'SEARCH') {
-
-                        $($adam + ' ul[id="0"] > li:not([class=skill-others]').tinysort({order: 'asc'});
-                    }
-
-                } else {
-
-                    if ($($element).has('ul li.skill-others').length) {
-
-                        $($element + ' > ul').append($tree);
-                    } else {
-
-                        if ($data.is_child == 3) {
-
-                            $($element).append('<ul class="iysConceptChild">' + $othersLi + $tree + '</ul>');
+                            $tree[++o] = 'class="parent_li" data-appended="false"';
                         }
                         else {
 
-                            $($element).append('<ul>' + $othersLi + $tree + '</ul>');
+                            $tree[++o] = 'data-scale_type="' + $data[i].scale_type + '"';
                         }
+
+                        $tree[++o] = ' >';
+                        switch (parseInt($data[i].is_child)) {
+
+                            case 0:
+                                $tree[++o] = '<label>';
+                                $tree[++o] = '<input type="checkbox" class="skillcheck" name="skills[]" id="skillcheck-' + $data[i].id + '" data-id="' + $data[i].id + '" ' + (typeof $data[i].checked != 'undefined' && $data[i].checked == "true" ? 'checked="checked"' : '');
+                                if (obj.options.lock) {
+                                    $tree[++o] = ' disabled="true"';
+                                }
+
+                                $tree[++o] = '>';
+                                $tree[++o] = $data[i].value;
+                                $tree[++o] = '</label>';
+                                $tree[++o] = '<div class="rating-f">';
+                                $tree[++o] = '<select class="skillselect"  name="skills-rating[]" id="skillselect-' + $data[i].id + '" data-id="' + $data[i].id + '">';
+                                $tree[++o] = $.fn.skillEngine.scaleType($data[i].scale_type, $data[i].rating);
+                                $tree[++o] = '</select>';
+                                $tree[++o] = '</div>';
+                                $tree[++o] = '<p>';
+                                $tree[++o] = '<form id="skillform-' + $data[i].id + '">';
+                                $tree[++o] = '<input type="hidden" name="id" value="' + $data[i].id + '" />';
+                                $tree[++o] = '<input type="hidden" name="parent_id" value="' + $data[i].parent_id + '" />';
+                                $tree[++o] = '<input type="hidden" name="is_child" value="' + $data[i].is_child + '" />';
+                                $tree[++o] = '<input type="hidden" name="scale_type" value="' + $data[i].scale_type + '" />';
+                                $tree[++o] = '<input type="hidden" name="rating" value="' + (typeof $data[i].rating == 'undefined' ? 0 : $data[i].rating) + '" />';
+                                $tree[++o] = '<input type="hidden" name="checked" value="' + (typeof $data[i].checked == 'undefined' ? false : $data[i].checked) + '" />';
+                                $tree[++o] = '<input type="hidden" name="value" value="' + $data[i].value + '" />';
+                                if (obj.options.template) {
+
+                                    $tree[++o] = Mustache.render(obj.options.template, $data[i]);
+                                }
+
+                                $tree[++o] = '</form>';
+                                $tree[++o] = '</p>';
+                                break;
+                            case 1:
+
+                                $tree[++o] = '<a> <i class="iys-plus"></i> ' + $data[i].value + '</a>';
+                                if (!obj.options.lock) {
+                                    $tree[++o] = '<input type="text" class="in-build-search textbox iys-placeholder" />';
+                                }
+                                break;
+                            case 2:
+                                $tree[++o] = '<label>';
+                                $tree[++o] = '<input type="checkbox" class="skillcheck" name="skills[]" id="skillcheck-' + $data[i].id + '" data-id="' + $data[i].id + '" ' + (typeof $data[i].checked != 'undefined' && $data[i].checked == 'true' ? 'checked="checked"' : '');
+                                if (obj.options.lock) {
+                                    $tree[++o] = ' disabled="true"';
+                                }
+
+                                $tree[++o] = '>';
+                                $tree[++o] = $data[i].value;
+                                $tree[++o] = '</label>';
+                                $tree[++o] = '<div class="rating-f">';
+                                $tree[++o] = '<select class="skillselect"  name="skills-rating[]" id="skillselect-' + $data[i].id + '" data-id="' + $data[i].id + '">';
+                                $tree[++o] = $.fn.skillEngine.scaleType($data[i].scale_type, $data[i].rating);
+                                $tree[++o] = '</select>';
+                                $tree[++o] = '</div>';
+                                $tree[++o] = '<p>';
+                                $tree[++o] = '<form id="skillform-' + $data[i].id + '">';
+                                $tree[++o] = '<input type="hidden" name="id" value="' + $data[i].id + '" />';
+                                $tree[++o] = '<input type="hidden" name="parent_id" value="' + $data[i].parent_id + '" />';
+                                $tree[++o] = '<input type="hidden" name="is_child" value="' + $data[i].is_child + '" />';
+                                $tree[++o] = '<input type="hidden" name="scale_type" value="' + $data[i].scale_type + '" />';
+                                $tree[++o] = '<input type="hidden" name="rating" value="' + (typeof $data[i].rating == 'undefined' ? 0 : $data[i].rating) + '" />';
+                                $tree[++o] = '<input type="hidden" name="checked" value="' + (typeof $data[i].checked == 'undefined' ? false : $data[i].checked) + '" />';
+                                $tree[++o] = '<input type="hidden" name="value" value="' + $data[i].value + '" />';
+                                if (obj.options.template) {
+
+                                    $tree[++o] = Mustache.render(obj.options.template, $data[i]);
+                                }
+
+                                $tree[++o] = '</form>';
+                                $tree[++o] = '</p>';
+                                self = obj;
+                                self.selector = 'li#' + $data[i].id;
+                                self.options.id = $data[i].id;
+                                $.fn.skillEngine.request(self);
+                                break;
+                            case 3:
+                                $tree[++o] = '<label>';
+                                $tree[++o] = '<input type="checkbox" class="skillcheck" name="skills[]" id="skillcheck-' + $data[i].id + '" data-id="' + $data[i].id + '" ' + (typeof $data[i].checked != 'undefined' && $data[i].checked == 'true' ? 'checked="checked"' : '');
+                                if (obj.options.lock) {
+                                    $tree[++o] = ' disabled="true"';
+                                }
+
+                                $tree[++o] = '>';
+                                $tree[++o] = $data[i].value;
+                                $tree[++o] = '</label>';
+                                $tree[++o] = '<p>';
+                                $tree[++o] = '<form id="skillform-' + $data[i].id + '">';
+                                $tree[++o] = '<input type="hidden" name="id" value="' + $data[i].id + '" />';
+                                $tree[++o] = '<input type="hidden" name="parent_id" value="' + $data[i].parent_id + '" />';
+                                $tree[++o] = '<input type="hidden" name="is_child" value="' + $data[i].is_child + '" />';
+                                $tree[++o] = '<input type="hidden" name="value" value="' + $data[i].value + '" />';
+                                $tree[++o] = '<input type="hidden" name="checked" value="' + (typeof $data[i].checked == 'undefined' ? false : $data[i].checked) + '" />';
+                                $tree[++o] = '</form>';
+                                $tree[++o] = '</p>';
+                                break;
+                            case 4:
+                                $tree[++o] = '<a> <i class="iys-plus"></i> ' + $data[i].value + '</a>';
+                                if (!obj.options.lock) {
+                                    $tree[++o] = '<input type="text" class="in-build-search textbox iys-placeholder" />';
+                                }
+                                $tree[++o] = '<input type="checkbox" class="skillcheck" name="skills[]" id="skillcheck-' + $data[i].id + '" data-id="' + $data[i].id + '"';
+                                if (typeof $data[i].rating === "undefined" || $data[i].rating === null || $data[i].rating == "") {
+                                }
+                                else {
+                                    $tree[++o] = ' checked="true"';
+                                    if (obj.options.lock) {
+                                        $tree[++o] = ' disabled="true"';
+                                    }
+                                }
+                                $tree[++o] = '>';
+                                $tree[++o] = '<div class="rating-f">';
+                                $tree[++o] = '<select class="skillselect"  name="skills-rating[]" id="skillselect-' + $data[i].id + '" data-id="' + $data[i].id + '">';
+                                $tree[++o] = $.fn.skillEngine.scaleType($data[i].scale_type, $data[i].rating);
+                                $tree[++o] = '</select>';
+                                $tree[++o] = '</div>';
+                                $tree[++o] = '<p>';
+                                $tree[++o] = '<form id="skillform-' + $data[i].id + '">';
+                                $tree[++o] = '<input type="hidden" name="id" value="' + $data[i].id + '" />';
+                                $tree[++o] = '<input type="hidden" name="parent_id" value="' + $data[i].parent_id + '" />';
+                                $tree[++o] = '<input type="hidden" name="is_child" value="' + $data[i].is_child + '" />';
+                                $tree[++o] = '<input type="hidden" name="scale_type" value="' + $data[i].scale_type + '" />';
+                                $tree[++o] = '<input type="hidden" name="rating" value="' + (typeof $data[i].rating == 'undefined' ? 0 : $data[i].rating) + '" />';
+                                $tree[++o] = '<input type="hidden" name="value" value="' + $data[i].value + '" />';
+                                if (obj.options.template) {
+
+                                    $tree[++o] = Mustache.render(obj.options.template, $data[i]);
+                                }
+
+                                $tree[++o] = '</form>';
+                                $tree[++o] = '</p>';
+                                break;
+                            default:
+                                $stem = 'Out of Child';
+                        }
+
+                        $tree[++o] = '</li>';
+                        /********** End of Li **********/
+
                     }
 
+//                    delete $data[i];
+                }//if data check
 
-                    if ($opt != 'SEARCH') {
+//                setTimeout(function () {
+//                    console.log('Loading please wait...');
+//                }, 1000 * i);
+            }//for loop
 
-                        var $mixedContent = $('li[id="' + $data.parent_id + '"] > ul > li').find('input[type="checkbox"]').length;
 
-                        if (!$mixedContent) {
+            /********** Start of Appending **********/
+            $element = $adam + ' li#' + $parent.id;
+            if ($parent.id == 0) {
 
-                            $('li[id="' + $data.parent_id + '"] > ul > li:not([class=skill-others]').tinysort({order: 'asc'});
-                        } else {
+                $($adam + ' ul#0').append($tree.join(''));
+            } else {
 
-                            $('li[id="' + $data.parent_id + '"] > ul > li:not([class=skill-others]').tinysort({order: 'asc', data: 'is_child'});
+                if ($($element).has('ul').length) {
+
+                    $($element + ' > ul').append($tree.join(''));
+                } else {
+
+                    if ($parent.is_child == 2) {
+
+                        $($element).append('<ul class="iysConceptChild">' + $tree.join('') + '</ul>');
+                    }
+                    else {
+
+                        $($element).append('<ul>' + $tree.join('') + '</ul>');
+                    }
+                }
+
+            }
+            /********** End of Appending **********/
+
+            /* Sorting */
+            if ($parent.id == 0) {
+
+                $($adam + ' ul[id="0"] > li:not([class=skill-others]').tinysort({order: 'asc'});
+            }
+            else {
+
+                var $mixedContent = $('li[id="' + $parent.id + '"] > ul > li').find('input[type="checkbox"]').length;
+                if (!$mixedContent) {
+
+                    $('li[id="' + $parent.id + '"] > ul > li:not([class=skill-others]').tinysort({order: 'asc'});
+                } else {
+
+                    $('li[id="' + $parent.id + '"] > ul > li:not([class=skill-others]').tinysort({order: 'asc', data: 'is_child'});
+                }
+            }
+
+        }// Non Search
+
+
+        /* Search */
+        if ($opt == 'SEARCH') {
+
+            readymade = function ($data, $parent) {
+
+                if (typeof $parent === "undefined" || $parent === null) {
+
+                    $parent = 0;
+                }
+
+                for (var i = 0; i < $data.length; i++) {
+
+                    if (typeof $data != 'undefined' && typeof $data[i] != 'undefined') {
+
+                        if (parseInt($data[i].parent_id) == parseInt($parent)) {
+
+                            $tree = treeList($data[i]);
+                            console.log('parent' + i);
+                            readymade($data, parseInt($data[i].id));
+                        }
+                        else {
+
+                            $tree = treeList($data[i]);
+//                        console.log('non parent' + i);
+//                        break; // for performance make it break
+                        }
+
+                        if ($opt != 'SEARCH') {
+
+                            delete $data[i];
                         }
                     }
                 }
             }
-            /********** End of Appending **********/
 
-            /********** Start of Display rest with searched data **********/
-            if ($opt == 'SEARCH') {
+            treeList = function ($data) {
 
-                $($adam + ' li#' + $data.id).show();
-                $($adam + ' li#' + $data.id + ' > ul').show();
+                $tree = '';
+                /********** Start of Li **********/
+                $tree += '<li id="' + $data.id + '" data-value="' + $data.value + '" data-parent_id="' + $data.parent_id + '" data-is_child="' + $data.is_child + '" data-id="' + $data.id + '" ';
+                if ($data.is_child == 1) {
+
+                    $tree += 'class="parent_li" data-appended="false"';
+                }
+                else {
+
+                    $tree += 'data-scale_type="' + $data.scale_type + '"';
+                }
+
+                $tree += ' >';
+                switch (parseInt($data.is_child)) {
+
+                    case 0:
+                        $tree += '<label>';
+                        $tree += '<input type="checkbox" class="skillcheck" name="skills[]" id="skillcheck-' + $data.id + '" data-id="' + $data.id + '" ' + (typeof $data.checked != 'undefined' && $data.checked == "true" ? 'checked="checked"' : '');
+                        if (obj.options.lock) {
+                            $tree += ' disabled="true"';
+                        }
+
+                        $tree += '>';
+                        $tree += $data.value;
+                        $tree += '</label>';
+                        $tree += '<div class="rating-f">';
+                        $tree += '<select class="skillselect"  name="skills-rating[]" id="skillselect-' + $data.id + '" data-id="' + $data.id + '">';
+                        $tree += $.fn.skillEngine.scaleType($data.scale_type, $data.rating);
+                        $tree += '</select>';
+                        $tree += '</div>';
+                        $tree += '<p>';
+                        $tree += '<form id="skillform-' + $data.id + '">';
+                        $tree += '<input type="hidden" name="id" value="' + $data.id + '" />';
+                        $tree += '<input type="hidden" name="parent_id" value="' + $data.parent_id + '" />';
+                        $tree += '<input type="hidden" name="is_child" value="' + $data.is_child + '" />';
+                        $tree += '<input type="hidden" name="scale_type" value="' + $data.scale_type + '" />';
+                        $tree += '<input type="hidden" name="rating" value="' + (typeof $data.rating == 'undefined' ? 0 : $data.rating) + '" />';
+                        $tree += '<input type="hidden" name="checked" value="' + (typeof $data.checked == 'undefined' ? false : $data.checked) + '" />';
+                        $tree += '<input type="hidden" name="value" value="' + $data.value + '" />';
+                        if (obj.options.template) {
+
+                            $tree += Mustache.render(obj.options.template, $data);
+                        }
+
+                        $tree += '</form>';
+                        $tree += '</p>';
+                        break;
+                    case 1:
+
+                        $tree += '<a> <i class="iys-plus"></i> ' + $data.value + '</a>';
+                        if (!obj.options.lock) {
+                            $tree += '<input type="text" class="in-build-search textbox iys-placeholder" />';
+                        }
+                        break;
+                    case 2:
+                        $tree += '<label>';
+                        $tree += '<input type="checkbox" class="skillcheck" name="skills[]" id="skillcheck-' + $data.id + '" data-id="' + $data.id + '" ' + (typeof $data.checked != 'undefined' && $data.checked == 'true' ? 'checked="checked"' : '');
+                        if (obj.options.lock) {
+                            $tree += ' disabled="true"';
+                        }
+
+                        $tree += '>';
+                        $tree += $data.value;
+                        $tree += '</label>';
+                        $tree += '<div class="rating-f">';
+                        $tree += '<select class="skillselect"  name="skills-rating[]" id="skillselect-' + $data.id + '" data-id="' + $data.id + '">';
+                        $tree += $.fn.skillEngine.scaleType($data.scale_type, $data.rating);
+                        $tree += '</select>';
+                        $tree += '</div>';
+                        $tree += '<p>';
+                        $tree += '<form id="skillform-' + $data.id + '">';
+                        $tree += '<input type="hidden" name="id" value="' + $data.id + '" />';
+                        $tree += '<input type="hidden" name="parent_id" value="' + $data.parent_id + '" />';
+                        $tree += '<input type="hidden" name="is_child" value="' + $data.is_child + '" />';
+                        $tree += '<input type="hidden" name="scale_type" value="' + $data.scale_type + '" />';
+                        $tree += '<input type="hidden" name="rating" value="' + (typeof $data.rating == 'undefined' ? 0 : $data.rating) + '" />';
+                        $tree += '<input type="hidden" name="checked" value="' + (typeof $data.checked == 'undefined' ? false : $data.checked) + '" />';
+                        $tree += '<input type="hidden" name="value" value="' + $data.value + '" />';
+                        if (obj.options.template) {
+
+                            $tree += Mustache.render(obj.options.template, $data);
+                        }
+
+                        $tree += '</form>';
+                        $tree += '</p>';
+                        self = obj;
+                        self.selector = 'li#' + $data.id;
+                        self.options.id = $data.id;
+                        $.fn.skillEngine.request(self);
+                        break;
+                    case 3:
+                        $tree += '<label>';
+                        $tree += '<input type="checkbox" class="skillcheck" name="skills[]" id="skillcheck-' + $data.id + '" data-id="' + $data.id + '" ' + (typeof $data.checked != 'undefined' && $data.checked == 'true' ? 'checked="checked"' : '');
+                        if (obj.options.lock) {
+                            $tree += ' disabled="true"';
+                        }
+
+                        $tree += '>';
+                        $tree += $data.value;
+                        $tree += '</label>';
+                        $tree += '<p>';
+                        $tree += '<form id="skillform-' + $data.id + '">';
+                        $tree += '<input type="hidden" name="id" value="' + $data.id + '" />';
+                        $tree += '<input type="hidden" name="parent_id" value="' + $data.parent_id + '" />';
+                        $tree += '<input type="hidden" name="is_child" value="' + $data.is_child + '" />';
+                        $tree += '<input type="hidden" name="value" value="' + $data.value + '" />';
+                        $tree += '<input type="hidden" name="checked" value="' + (typeof $data.checked == 'undefined' ? false : $data.checked) + '" />';
+                        $tree += '</form>';
+                        $tree += '</p>';
+                        break;
+                    case 4:
+                        $tree += '<a> <i class="iys-plus"></i> ' + $data.value + '</a>';
+                        if (!obj.options.lock) {
+                            $tree += '<input type="text" class="in-build-search textbox iys-placeholder" />';
+                        }
+                        $tree += '<input type="checkbox" class="skillcheck" name="skills[]" id="skillcheck-' + $data.id + '" data-id="' + $data.id + '"';
+                        if (typeof $data.rating === "undefined" || $data.rating === null || $data.rating == "") {
+                        }
+                        else {
+                            $tree += ' checked="true"';
+                            if (obj.options.lock) {
+                                $tree += ' disabled="true"';
+                            }
+                        }
+                        $tree += '>';
+                        $tree += '<div class="rating-f">';
+                        $tree += '<select class="skillselect"  name="skills-rating[]" id="skillselect-' + $data.id + '" data-id="' + $data.id + '">';
+                        $tree += $.fn.skillEngine.scaleType($data.scale_type, $data.rating);
+                        $tree += '</select>';
+                        $tree += '</div>';
+                        $tree += '<p>';
+                        $tree += '<form id="skillform-' + $data.id + '">';
+                        $tree += '<input type="hidden" name="id" value="' + $data.id + '" />';
+                        $tree += '<input type="hidden" name="parent_id" value="' + $data.parent_id + '" />';
+                        $tree += '<input type="hidden" name="is_child" value="' + $data.is_child + '" />';
+                        $tree += '<input type="hidden" name="scale_type" value="' + $data.scale_type + '" />';
+                        $tree += '<input type="hidden" name="rating" value="' + (typeof $data.rating == 'undefined' ? 0 : $data.rating) + '" />';
+                        $tree += '<input type="hidden" name="value" value="' + $data.value + '" />';
+                        if (obj.options.template) {
+
+                            $tree += Mustache.render(obj.options.template, $data);
+                        }
+
+                        $tree += '</form>';
+                        $tree += '</p>';
+                        break;
+                    default:
+                        $tree = 'Out of Child';
+                }
+
+                $tree += '</li>';
+                /********** End of Li **********/
+
+                /********** Start of Appending **********/
+                if ($opt == 'SEARCH') {
+                    $othersLi = '<li class="skill-others"><a><i class="iys-others"></i> Others</a></li>';
+                }
+                else {
+                    $othersLi = '<li class="skill-others" style="display:none;" ><a><i class="iys-others"></i> Others</a></li>';
+                }
+
+                $element = $adam + ' li#' + $data.parent_id;
+                if (!$($adam + ' li#' + $data.id).length) {
+
+                    if ($data.parent_id == 0) {
+
+                        if (!$($adam + ' ul#0').has('li.skill-others').length) {
+
+                            $($adam + ' ul#0').append($othersLi);
+                        }
+
+                        $($adam + ' ul#0').append($tree);
+                        if ($opt != 'SEARCH') {
+
+                            $($adam + ' ul[id="0"] > li:not([class=skill-others]').tinysort({order: 'asc'});
+                        }
+
+                    } else {
+
+                        if ($($element).has('ul li.skill-others').length) {
+
+                            $($element + ' > ul').append($tree);
+                        } else {
+
+                            if ($data.is_child == 3) {
+
+                                $($element).append('<ul class="iysConceptChild">' + $othersLi + $tree + '</ul>');
+                            }
+                            else {
+
+                                $($element).append('<ul>' + $othersLi + $tree + '</ul>');
+                            }
+                        }
+
+
+                        /* Sorting */
+                        if ($opt != 'SEARCH') {
+
+                            var $mixedContent = $('li[id="' + $data.parent_id + '"] > ul > li').find('input[type="checkbox"]').length;
+                            if (!$mixedContent) {
+
+                                $('li[id="' + $data.parent_id + '"] > ul > li:not([class=skill-others]').tinysort({order: 'asc'});
+                            } else {
+
+                                $('li[id="' + $data.parent_id + '"] > ul > li:not([class=skill-others]').tinysort({order: 'asc', data: 'is_child'});
+                            }
+                        }
+                    }
+                }
+                /********** End of Appending **********/
+
+                /********** Start of Display rest with searched data **********/
+                if ($opt == 'SEARCH') {
+
+                    $($adam + ' li#' + $data.id).show();
+                    $($adam + ' li#' + $data.id + ' > ul').show();
+                }
+                /********** End of Display rest with searched data **********/
+
+                /********** Start of Highlight ScrollTo on Search **********/
+                if ($opt == 'SEARCH' && $('input[name=iysSearchMethod]:checked', '#iysSearch').val() != 'template') {
+
+                    console.log($('#skillcheck-' + $data.id).length);
+                    $('.skill-count-scroll').scrollTo('#skillcheck-' + $data.id, 200, {offset: {top: -200, bottom: 200}});
+                    $('#skillcheck-' + $data.id).closest('li').delay(200).addClass('iys-bar4').delay(2000).queue(function () {
+                        $(this).removeClass("iys-bar4").dequeue();
+                    });
+                }
+                /********** End of Highlight ScrollTo on Search **********/
             }
-            /********** End of Display rest with searched data **********/
 
-            /********** Start of Highlight ScrollTo on Search **********/
-            if ($opt == 'SEARCH' && $('input[name=iysSearchMethod]:checked', '#iysSearch').val() != 'template') {
-
-                $('.skill-count-scroll').scrollTo('#skillcheck-' + $data.id, 200, {offset: {top: -200, bottom: 200}});
-                $('#skillcheck-' + $data.id).closest('li').delay(200).addClass('iys-bar4').delay(2000).queue(function () {
-                    $(this).removeClass("iys-bar4").dequeue();
-                });
-            }
-            /********** End of Highlight ScrollTo on Search **********/
+            readymade($data);
         }
 
-        readymade($data);
-
         if (obj.options.lock && !obj.options.unlockRating) {
+
             $('.skillselect').barrating({'readonly': true});
         } else {
+
             $('.skillselect').barrating('show', {onSelect: $.fn.skillEngine.chart
             });
         }
     }
 })(jQuery);
-
 /* ========================================================================
  * SPLE: Scale Type
  * ========================================================================
@@ -945,7 +1168,6 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
     }
 
 })(jQuery);
-
 /* ========================================================================
  * SPLE: Fuzzy Approach - Search
  * ========================================================================
@@ -1032,8 +1254,6 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
             obj.options.data = JSON.parse($e.val);
             $.fn.skillEngine.buildTree(obj, 'SEARCH');
         });
-
-
         $(document).off('click', '#iysAddSkillBtn');
         $(document).on('click', '#iysAddSkillBtn', function () {
             $('#iysVerifyCaptchaModal').modal('show');
@@ -1074,7 +1294,6 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
     }
 
 })(jQuery);
-
 /* ========================================================================
  * SPLE: Chart Widgets
  * ========================================================================
