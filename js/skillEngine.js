@@ -245,6 +245,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
             /* Icon */
             $(obj.selector + ' > a > i').alterClass('iys-*', 'iys-plus');
             $(obj.selector).siblings('li').children(' a > i').alterClass('iys-*', 'iys-plus');
+
             if ($(obj.selector).find("input:checked").length < 1) {
 
                 if ($(obj.selector).children('ul:visible').length < 1 || $(obj.selector).children('ul').length == 0) {
@@ -268,7 +269,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
 
                     if ($(value).data('appended') != 'false') {
 
-                        if (!$(value).find('input[name="skills[]"]:checkbox:checked').length) {
+                        if ($(value).find('input[name="skills[]"]:checkbox:checked').length === 0) {
 
                             $(value).hide();
                         }
@@ -279,6 +280,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                     }
                 }
             });
+
             if ($(obj.selector).children('ul').is(':hidden')) {
 
                 $(obj.selector).children('ul').show();
@@ -290,6 +292,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                 if (($(obj.selector).children('ul').children('li').length - 1) == $(obj.selector).children('ul').children('li:visible').length) {
 
                     var $localcheckbox = $(obj.selector).find('input[name="skills[]"]:checkbox');
+
                     if ($localcheckbox.length > 0) {
 
                         $localcheckbox.each(function () {
@@ -328,6 +331,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
 
             /* Checkbox */
             stabilizer(obj);
+
             /* Request */
             if ($(obj.selector).attr('data-appended') == "false" && ($(obj.selector).attr('data-is_child') == 1 || $(obj.selector).attr('data-is_child') == 2)) {
 
@@ -356,16 +360,18 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
 
                         $(this).not(":checked").closest('li').hide(); //Important
                         $(this).siblings('li.skill-others').show();
-                        var $parentId = $('li#' + $(this).data('id')).data('parent_id');
-                        var $parentSelector = $('li#' + $parentId + ' > ul');
 
-                        $.each($parentSelector.children(), function (key, value) {
-
-                            if ($(value).data('is_child') == 1 && 'li#' + $(value).data('id') != obj.selector && !$(value).find('input[name="skills[]"]:checkbox').is(":checked")) {
-
-                                $(value).hide();
-                            }
-                        });
+//                        commented to fix the Mixed error
+//                        var $parentId = $('li#' + $(this).data('id')).data('parent_id');
+//                        var $parentSelector = $('li#' + $parentId + ' > ul');
+//
+//                        $.each($parentSelector.children(), function (key, value) {
+//
+//                            if ($(value).data('is_child') == 1 && 'li#' + $(value).data('id') != obj.selector && !$(value).find('input[name="skills[]"]:checkbox').is(":checked")) {
+//
+//                                $(value).hide();
+//                            }
+//                        });
                     }
                 });
             }
@@ -516,74 +522,6 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
 })(jQuery);
 
 /* ========================================================================
- * SPLE: On-Fly Preview
- * ========================================================================
- * Copyright 2011-2015 IYS, Pvt. Ltd
- * Licensed under MIT
- * ======================================================================== */
-
-(function ($) {
-    $.fn.skillEngine.preview = function ($output) {
-
-        readymade = function ($data, $parent) {
-
-            if (typeof $parent === "undefined" || $parent === null) {
-
-                $parent = 0;
-            }
-
-            $tree = '';
-            if ($parent != 0) {
-
-                $tree += '<ul>';
-            }
-
-            for (var i = 0; i < $data.length; i++) {
-
-                if ($data[i]['parent_id'] == $parent) {
-
-                    $tree += '<li ';
-                    if ($data[i].is_child == 1) {
-
-                        $tree += 'class="parent_li"';
-                    }
-
-                    $tree += ' >';
-                    if ($data[i].is_child == 1) {
-
-                        $tree += '<a><i class="iys-toptree"></i>' + $data[i].value + '</a>';
-                    }
-
-                    $tree += readymade($data, $data[i]['id']);
-                    if ($data[i].is_child == 0 || $data[i].is_child == 2) {
-
-                        $tree += '<a><i class="iys-tick"></i>';
-                        $tree += $data[i].value;
-                        $tree += '</a>';
-                        $tree += '<div class="rating-f">';
-                        $tree += '<select class="previewskillselect" name="skills-rating[]" id="skillselect-' + $data[i].id + '" data-id="' + $data[i].id + '">';
-                        $tree += $.fn.skillEngine.scaleType($data[i].scale_type, parseInt($data[i].rating));
-                        $tree += '</select>';
-                        $tree += '</div>';
-                    }
-
-                    $tree += '</li>';
-                }
-            }
-
-            if ($parent != 0) {
-
-                $tree += '</ul>';
-            }
-            return $tree;
-        }
-
-        return('<ul class="iys-tree">' + readymade($output) + '</ul>');
-    }
-
-})(jQuery);
-
-/* ========================================================================
  * SPLE: Standalone View
  * ========================================================================
  * Copyright 2011-2015 IYS, Pvt. Ltd
@@ -701,6 +639,8 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
 (function ($) {
 
     $.fn.skillEngine.buildTree = function (obj, $opt) {
+
+
 
         $data = obj.options.data;
         $adam = obj.adam.selector;
@@ -821,6 +761,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
 
                     $tree += '</form>';
                     $tree += '</p>';
+
                     self = obj;
                     self.selector = 'li#' + $data.id;
                     self.options.id = $data.id;
@@ -846,44 +787,44 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                     $tree += '</form>';
                     $tree += '</p>';
                     break;
-//                case 4:
-//                    $tree += '<a> <i class="iys-plus"></i> ' + $data.value + '</a>';
-//                    if (!obj.options.lock) {
-//                        $tree += '<input type="text" class="in-build-search textbox iys-placeholder" />';
-//                    }
-//                    $tree += '<input type="checkbox" class="skillcheck" name="skills[]" id="skillcheck-' + $data.id + '" data-id="' + $data.id + '"';
-//                    if (typeof $data.rating === "undefined" || $data.rating === null || $data.rating == "") {
-//                    }
-//                    else {
-//                        $tree += ' checked="true"';
-//                        if (obj.options.lock) {
-//                            $tree += ' disabled="true"';
-//                        }
-//                    }
-//                    $tree += '>';
-//                    $tree += '<div class="rating-f">';
-//                    $tree += '<select class="skillselect"  name="skills-rating[]" id="skillselect-' + $data.id + '" data-id="' + $data.id + '">';
-//                    $tree += $.fn.skillEngine.scaleType($data.scale_type, $data.rating);
-//                    $tree += '</select>';
-//                    $tree += '</div>';
-//                    $tree += '<p>';
-//                    $tree += '<form id="skillform-' + $data.id + '">';
-//                    $tree += '<input type="hidden" name="id" value="' + $data.id + '" />';
-//                    $tree += '<input type="hidden" name="parent_id" value="' + $data.parent_id + '" />';
-//                    $tree += '<input type="hidden" name="is_child" value="' + $data.is_child + '" />';
-//                    $tree += '<input type="hidden" name="scale_type" value="' + $data.scale_type + '" />';
-//                    $tree += '<input type="hidden" name="rating" value="' + (typeof $data.rating == 'undefined' ? 0 : $data.rating) + '" />';
-//                    $tree += '<input type="hidden" name="value" value="' + $data.value + '" />';
-//
-//                    if (obj.options.template) {
-//
-//                        $tree += Mustache.render(obj.options.template, $data);
-//                    }
-//
-//                    $tree += '</form>';
-//                    $tree += '</p>';
-//
-//                    break;
+                case 4:
+                    $tree += '<a> <i class="iys-plus"></i> ' + $data.value + '</a>';
+                    if (!obj.options.lock) {
+                        $tree += '<input type="text" class="in-build-search textbox iys-placeholder" />';
+                    }
+                    $tree += '<input type="checkbox" class="skillcheck" name="skills[]" id="skillcheck-' + $data.id + '" data-id="' + $data.id + '"';
+                    if (typeof $data.rating === "undefined" || $data.rating === null || $data.rating == "") {
+                    }
+                    else {
+                        $tree += ' checked="true"';
+                        if (obj.options.lock) {
+                            $tree += ' disabled="true"';
+                        }
+                    }
+                    $tree += '>';
+                    $tree += '<div class="rating-f">';
+                    $tree += '<select class="skillselect"  name="skills-rating[]" id="skillselect-' + $data.id + '" data-id="' + $data.id + '">';
+                    $tree += $.fn.skillEngine.scaleType($data.scale_type, $data.rating);
+                    $tree += '</select>';
+                    $tree += '</div>';
+                    $tree += '<p>';
+                    $tree += '<form id="skillform-' + $data.id + '">';
+                    $tree += '<input type="hidden" name="id" value="' + $data.id + '" />';
+                    $tree += '<input type="hidden" name="parent_id" value="' + $data.parent_id + '" />';
+                    $tree += '<input type="hidden" name="is_child" value="' + $data.is_child + '" />';
+                    $tree += '<input type="hidden" name="scale_type" value="' + $data.scale_type + '" />';
+                    $tree += '<input type="hidden" name="rating" value="' + (typeof $data.rating == 'undefined' ? 0 : $data.rating) + '" />';
+                    $tree += '<input type="hidden" name="value" value="' + $data.value + '" />';
+
+                    if (obj.options.template) {
+
+                        $tree += Mustache.render(obj.options.template, $data);
+                    }
+
+                    $tree += '</form>';
+                    $tree += '</p>';
+
+                    break;
                 default:
                     $tree = 'Out of Child';
             }
@@ -959,7 +900,8 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
             /********** End of Display rest with searched data **********/
 
             /********** Start of Highlight ScrollTo on Search **********/
-            if ($opt == 'SEARCH') {
+            if ($opt == 'SEARCH' && $('input[name=iysSearchMethod]:checked', '#iysSearch').val() != 'template') {
+
                 $('.skill-count-scroll').scrollTo('#skillcheck-' + $data.id, 200, {offset: {top: -200, bottom: 200}});
                 $('#skillcheck-' + $data.id).closest('li').delay(200).addClass('iys-bar4').delay(2000).queue(function () {
                     $(this).removeClass("iys-bar4").dequeue();
@@ -968,11 +910,8 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
             /********** End of Highlight ScrollTo on Search **********/
         }
 
-        var start = new Date().getTime();
         readymade($data);
-        var end = new Date().getTime();
-        var time = end - start;
-        console.log(obj.selector + ' Tree Building Execution time: ' + time);
+
         if (obj.options.lock && !obj.options.unlockRating) {
             $('.skillselect').barrating({'readonly': true});
         } else {
@@ -1019,6 +958,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
 
         obj = $.fn.skillEngine.obj['functionals'];
         function formatItem(item) {
+
             var treeArr = item.text.replace(/[(:\d_)]+/g, '@@@').split('@@@');
             treeArr = treeArr.slice(1, treeArr.length - 1);
             var skillname = treeArr[0], categories = [], catstr = '';
@@ -1069,9 +1009,10 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                 dataType: 'json',
                 cache: "true",
                 data: function (term) {
+
                     return {
                         term: term,
-                        action: 'search'};
+                        action: $('input[name=iysSearchMethod]:checked', '#iysSearch').val()};
                 },
                 results: function (data, callback) {
                     var datum = [];
@@ -1090,7 +1031,6 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
 
             obj.options.data = JSON.parse($e.val);
             $.fn.skillEngine.buildTree(obj, 'SEARCH');
-
         });
 
 
@@ -1117,33 +1057,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                                 data: {'action': 'add', 'term': $('#iysAddSkillBtn').data('term')},
                                 success: function ($data) {
                                     $data = JSON.parse($data);
-                                    $original = $data[0].skillKey.split('|^|');
-                                    $childscale = $original[1].split('_');
-                                    $skillsDetails = $original[0].substring(1, $original[0].length - 1).split(':');
-                                    $datum = [];
-                                    $.each($skillsDetails, function (key, value) {
-                                        $data = {};
-                                        $temp = value.split('_');
-                                        $data.id = parseInt($temp[0]);
-                                        $data.value = $temp[1];
-                                        if ($skillsDetails.length - 1 > key) {
-                                            $data.parent_id = parseInt($skillsDetails[key + 1].split('_')[0]);
-                                        }
-                                        else {
-                                            $data.parent_id = 0;
-                                        }
-
-                                        if (key == 0) {
-                                            $data.is_child = parseInt($childscale[0]);
-                                            $data.scale_type = parseInt($childscale[1]);
-                                        }
-                                        else {
-                                            $data.is_child = 1;
-                                        }
-
-                                        $datum.push($data);
-                                    });
-                                    obj.options.data = $datum;
+                                    obj.options.data = $data[0].tree_structure;
                                     $.fn.skillEngine.buildTree(obj, 'SEARCH');
                                     $('#iysVerifyCaptchaModal').modal('hide');
                                     $('#iysAddSkillWrapper').html('Enter the required Skill in the Search Box above or Select from the Suggestion Tree below');
