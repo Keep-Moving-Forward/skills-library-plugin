@@ -6948,12 +6948,12 @@ html[dir="rtl"] .select2-container-multi .select2-search-choice-close{left:auto;
          .iysConceptChild li{width: 100%; display: inline-block; }  
          .iys-fun-title{display: inline-table;}
        }
-       .iys-bottom-fixed{.navbar{
-    height: 2em;
-    width: 100%;
-    background: blue;
-    color: white;
-    position: fixed;
-    top: 100%;
-    margin-top: -2em;
-}}
+       .iys-bottom-fixed{
+  width: 83%;
+        background: rgba(234, 234, 234, 0.7);
+        padding: 10px;
+        text-align: center;
+        position: fixed;
+        bottom: 0;
+        margin-top: -2em;
+}
