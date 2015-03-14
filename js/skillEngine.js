@@ -65,7 +65,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                     $.fn.skillEngine.request(this);
                 }
 
-                if (options.data) {
+                if (options.data && options.data != "" && options.data != null) {
 
                     $.fn.skillEngine.buildTree(this);
                 }
