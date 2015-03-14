@@ -67,7 +67,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
 
                 if (options.data && options.data != "" && options.data != null) {
 
-                    $.fn.skillEngine.buildTree(this);
+                    $.fn.skillEngine.buildTree(this, 'SEARCH');
                 }
 
                 var self = this;
