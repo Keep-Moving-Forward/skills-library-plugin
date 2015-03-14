@@ -617,31 +617,31 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                             $tree += '<a><i class="iys-tick"></i>' + $data[i].value + '</a>';
                             break;
                         case 4:
-                            $tree[++o] = '<a> <i class="iys-tick"></i> ' + $data[i].value + '</a>';
+                            $tree += '<a> <i class="iys-tick"></i> ' + $data[i].value + '</a>';
                             if (!obj.options.lock) {
-                                $tree[++o] = '<input type="text" class="in-build-search textbox iys-placeholder" />';
+                                $tree += '<input type="text" class="in-build-search textbox iys-placeholder" />';
                             }
-                            $tree[++o] = '<input style="display:none;" type="checkbox" class="skillcheck" name="skills[]" id="skillcheck-' + $data[i].id + '" data-id="' + $data[i].id + '"';
+                            $tree += '<input style="display:none;" type="checkbox" class="skillcheck" name="skills[]" id="skillcheck-' + $data[i].id + '" data-id="' + $data[i].id + '"';
                             if (typeof $data[i].rating === "undefined" || $data[i].rating === null || $data[i].rating == "") {
                             }
                             else {
-                                $tree[++o] = ' checked="true"';
+                                $tree += ' checked="true"';
                                 if (obj.options.lock) {
-                                    $tree[++o] = ' disabled="true"';
+                                    $tree += ' disabled="true"';
                                 }
                             }
-                            $tree[++o] = '>';
-                            $tree[++o] = '<div class="rating-f">';
-                            $tree[++o] = '<select class="skillselect"  name="skills-rating[]" id="skillselect-' + $data[i].id + '" data-id="' + $data[i].id + '">';
-                            $tree[++o] = $.fn.skillEngine.scaleType($data[i].scale_type, $data[i].rating);
-                            $tree[++o] = '</select>';
-                            $tree[++o] = '</div>';
-                            $tree[++o] = '<p>';
+                            $tree += '>';
+                            $tree += '<div class="rating-f">';
+                            $tree += '<select class="skillselect"  name="skills-rating[]" id="skillselect-' + $data[i].id + '" data-id="' + $data[i].id + '">';
+                            $tree += $.fn.skillEngine.scaleType($data[i].scale_type, $data[i].rating);
+                            $tree += '</select>';
+                            $tree += '</div>';
+                            $tree += '<p>';
                             if (obj.options.template) {
 
-                                $tree[++o] = Mustache.render(obj.options.template, $data[i]);
+                                $tree += Mustache.render(obj.options.template, $data[i]);
                             }
-                            $tree[++o] = '</p>';
+                            $tree += '</p>';
                             break;
                         default:
                             $tree = 'Out of Child';
@@ -676,11 +676,16 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
 
         $data = obj.options.data;
         $adam = obj.adam.selector;
+
         if ($opt != 'SEARCH' && $opt != 'INPUT') {
 
             $parent = $(obj.selector).data();
             var $tree = [], o = -1;
-            $tree[++o] = '<li class="skill-others" style="display:none;" ><a><i class="iys-others"></i> Others</a></li>';
+
+//            if (!$($adam + ' li:not([class=skill-others]').length) {
+//
+//                $tree[++o] = '<li class="skill-others" style="display:none;" ><a><i class="iys-others"></i> Others</a></li>';
+//            }
             for (var i = 0; i < $data.length; i++) {
 
                 if (typeof $data != 'undefined' && typeof $data[i] != 'undefined') {
@@ -851,24 +856,31 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
 
 
             /********** Start of Appending **********/
+            $othersLi = '<li class="skill-others" style="display:none;" ><a><i class="iys-others"></i> Others</a></li>';
+
             $element = $adam + ' li#' + $parent.id;
             if ($parent.id == 0) {
+
+                if (!$($adam + ' ul#0').has('li.skill-others').length) {
+
+                    $($adam + ' ul#0').append($othersLi);
+                }
 
                 $($adam + ' ul#0').append($tree.join(''));
             } else {
 
-                if ($($element).has('ul').length) {
+                if ($($element).has('ul li.skill-others').length) {
 
                     $($element + ' > ul').append($tree.join(''));
                 } else {
 
-                    if ($parent.is_child == 2) {
+                    if ($data.is_child == 2) {
 
-                        $($element).append('<ul class="iysConceptChild">' + $tree.join('') + '</ul>');
+                        $($element).append('<ul class="iysConceptChild">' + $othersLi + $tree.join('') + '</ul>');
                     }
                     else {
 
-                        $($element).append('<ul>' + $tree.join('') + '</ul>');
+                        $($element).append('<ul>' + $othersLi + $tree.join('') + '</ul>');
                     }
                 }
 
@@ -979,8 +991,20 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                         break;
                     case 1:
 
-                        $tree += '<a> <i class="iys-plus"></i> ' + $data.value + '</a>';
+                        $tree += '<a>';
+
+                        if (obj.options.lock) {
+
+                            $tree += '<i class="iys-toptree"></i> ';
+                        } else {
+
+                            $tree += '<i class="iys-plus"></i> ';
+                        }
+
+                        $tree += $data.value + '</a>';
+
                         if (!obj.options.lock) {
+
                             $tree += '<input type="text" class="in-build-search textbox iys-placeholder" />';
                         }
                         break;
@@ -1041,7 +1065,18 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                         $tree += '</p>';
                         break;
                     case 4:
-                        $tree += '<a> <i class="iys-plus"></i> ' + $data.value + '</a>';
+                        $tree += '<a>';
+
+                        if (obj.options.lock) {
+
+                            $tree += '<i class="iys-toptree"></i> ';
+                        } else {
+
+                            $tree += '<i class="iys-plus"></i> ';
+                        }
+
+                        $tree += $data.value + '</a>';
+
                         if (!obj.options.lock) {
                             $tree += '<input type="text" class="in-build-search textbox iys-placeholder" />';
                         }
@@ -1084,7 +1119,13 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                 /********** End of Li **********/
 
                 /********** Start of Appending **********/
+
+                if (!obj.options.lock && $opt == 'INPUT') {
+
+                    $othersLi = '<li class="skill-others"><a><i class="iys-others"></i> Others</a></li>';
+                }
                 if ($opt == 'SEARCH') {
+
                     $othersLi = '<li class="skill-others"><a><i class="iys-others"></i> Others</a></li>';
                 }
                 else {
@@ -1102,6 +1143,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                         }
 
                         $($adam + ' ul#0').append($tree);
+
                         if ($opt != 'SEARCH') {
 
                             $($adam + ' ul[id="0"] > li:not([class=skill-others]').tinysort({order: 'asc'});
