@@ -17,15 +17,14 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
 
     $.fn.skillEngine = function ($mode, options) {
 
-        // BOOTSTRAP
-        // =========
+// BOOTSTRAP
+// =========
         this.options = $.extend({}, $.fn.skillEngine.defaults, options);
         this.adam = $(this);
         $.fn.skillEngine.obj[this.options.type] = this;
         this.attr('data-type', options.type);
         this.attr('data-id', 0);
         Mustache.tags = ["<%", "%>"];
-
         // Switch case for Mode
         // ====================
         switch ($mode) {
@@ -80,17 +79,14 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                 });
         }
     };
-
     $.fn.skillEngine.defaults = {
         id: 0,
         type: 'functionals',
         lock: false,
         unlockRating: false
     };
-
     $.fn.skillEngine.type = ['functionals', 'behavioural', 'managerial'];
     $.fn.skillEngine.obj = {};
-
     // Event Repo
     // ==========
     $.fn.skillEngine.events = function (self, object) {
@@ -102,7 +98,6 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
             click: function () {
 
                 var $li = $(this).parent('li');
-
                 if ($li.hasClass('skill-others')) {
 
                     $parent = $li.parents('li').eq(0);
@@ -174,7 +169,6 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
 //                        });
             }
         }, 'input[name="skills[]"]');
-
         // Siblings level linear search
         // ============================
         $obj.on({
@@ -220,7 +214,6 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
             }
 
         }, "input.in-build-search");
-
         // Count Scroll
         // ============
         $('ul.skill-count-scroll').on({
@@ -234,11 +227,10 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
 
                     return value;
                 });
-                $('#skill-top-count').text('Skills selected @ top #' + top.length);
-                $('#skill-bottom-count').text('Skills selected @ bottom #' + bottom.length);
+                $('#skill-top-count').text(top.length + ' skills selected above current skill');
+                $('#skill-bottom-count').text(bottom.length + ' skills selected below current skill');
             }
         });
-
         // Switcher
         // ========
         function switcher(obj) {
@@ -246,7 +238,6 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
             /* Icon */
             $(obj.selector + ' > a > i').alterClass('iys-*', 'iys-plus');
             $(obj.selector).siblings('li').children(' a > i').alterClass('iys-*', 'iys-plus');
-
             if ($(obj.selector).find("input:checked").length < 1) {
 
                 if ($(obj.selector).children('ul:visible').length < 1 || $(obj.selector).children('ul').length == 0) {
@@ -281,7 +272,6 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                     }
                 }
             });
-
             if ($(obj.selector).children('ul').is(':hidden')) {
 
                 $(obj.selector).children('ul').show();
@@ -293,7 +283,6 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                 if (($(obj.selector).children('ul').children('li').length - 1) == $(obj.selector).children('ul').children('li:visible').length) {
 
                     var $localcheckbox = $(obj.selector).find('input[name="skills[]"]:checkbox');
-
                     if ($localcheckbox.length > 0) {
 
                         $localcheckbox.each(function () {
@@ -332,7 +321,6 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
 
             /* Checkbox */
             stabilizer(obj);
-
             /* Request */
             if ($(obj.selector).attr('data-appended') == "false" && ($(obj.selector).attr('data-is_child') == 1 || $(obj.selector).attr('data-is_child') == 2)) {
 
@@ -361,18 +349,16 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
 
                         $(this).not(":checked").closest('li').hide(); //Important
                         $(this).siblings('li.skill-others').show();
-
 //                        commented to fix the Mixed error
-//                        var $parentId = $('li#' + $(this).data('id')).data('parent_id');
-//                        var $parentSelector = $('li#' + $parentId + ' > ul');
-//
-//                        $.each($parentSelector.children(), function (key, value) {
-//
-//                            if ($(value).data('is_child') == 1 && 'li#' + $(value).data('id') != obj.selector && !$(value).find('input[name="skills[]"]:checkbox').is(":checked")) {
-//
-//                                $(value).hide();
-//                            }
-//                        });
+                        var $parentId = $('li#' + $(this).data('id')).data('parent_id');
+                        var $parentSelector = $('li#' + $parentId + ' > ul');
+                        $.each($parentSelector.children(), function (key, value) {
+
+                            if ($(value).data('is_child') == 1 && 'li#' + $(value).data('id') != obj.selector && !$(value).find('input[name="skills[]"]:checkbox').is(":checked")) {
+
+                                $(value).hide();
+                            }
+                        });
                     }
                 });
             }
@@ -381,7 +367,6 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
     }
 
 })(jQuery);
-
 /* ========================================================================
  * SPLE: Request Skills using Data source
  * ========================================================================
@@ -425,7 +410,6 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
     }
 
 })(jQuery);
-
 /* ========================================================================
  * SPLE: HTML Layout
  * ========================================================================
@@ -438,19 +422,45 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
     $.fn.skillEngine.setupHTML = function (obj) {
 
         $blueprint = '<div class="iys-spe">';
+        switch (obj.options.type) {
+            case 'functionals':
+                $blueprint += '<div class="iys-spe iys-search-br">';
+                $blueprint += '<div class="container">';
+                $blueprint += '<div class="row">';
+                $blueprint += '<div class="col-lg-6 col-sm-8 col-sm-8 col-lg-offset-1">';
+                $blueprint += '<div class="iys-sh-txt" id="iysAddSkillWrapper">Enter skill and select from the populated suggestions or use the skill tree</div>';
+                $blueprint += '<div class="keyword" style="width:100%;"></div>';
+                $blueprint += '<div class="pull-right">';
+                $blueprint += '<form id="iysSearch">';
+                $blueprint += 'Search by <input type="radio" name="iysSearchMethod" value="search" /> Skills';
+                $blueprint += '<input type="radio" name="iysSearchMethod" value="template" /> Templates';
+                $blueprint += '</form>';
+                $blueprint += '</div>';
+                $blueprint += '</div>';
+                $blueprint += '<div class="col-lg-3 col-sm-4 col-sm-4 col-lg-offset-1">';
+                $blueprint += '<div class="small margin-sm"><span id="skills-count" data-count="0">0</span> <span> skill(s) added to your profile</span></div>';
+                $blueprint += '<br/>';
+                $blueprint += '<div id="skill-chart"></div>';
+                $blueprint += '<div id="skill-chart-text"></div>';
+                $blueprint += '</div>';
+                $blueprint += '</div>';
+                $blueprint += '</div>';
+                $blueprint += '</div>';
+                break;
+        }
         $blueprint += '<div class="iys-container">';
         $blueprint += '<div class="iys-fun-title ';
         switch (obj.options.type) {
             case 'functionals':
                 $blueprint += 'iys-fun-bg">';
-                $blueprint += '<h2>Functional Skills</h2>';
+                $blueprint += '<h2>Functional / Technical Skills</h2>';
                 if (!obj.options.lock) {
-                    $blueprint += '<a><div id="skill-top-count">Skills selected @ top #0</div></a>';
+                    $blueprint += '<a><div id="skill-top-count"> 0 skills selected above current skill</div></a>';
                 }
                 break;
             case 'behavioural':
                 $blueprint += 'iys-beh-bg">';
-                $blueprint += '<h2>Behavioural Skills</h2>';
+                $blueprint += '<h2>Behavioral / Cognitive Skills</h2>';
                 break;
             case 'managerial':
                 $blueprint += 'iys-man-bg">';
@@ -465,7 +475,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
         if (!obj.options.lock) {
             switch (obj.options.type) {
                 case 'functionals':
-                    $blueprint += '<div class="iys-fun-end"><p>You have selected <span id="skills-count">0</span> Functional Skills</p><a><div id="skill-bottom-count">Skills selected @ bottom #0</div></a></div>';
+                    $blueprint += '<div class="iys-fun-end"><p>You have selected <span id="skills-count">0</span> Functional Skills</p><a><div id="skill-bottom-count">0 skills selected below current skill</div></a></div>';
                     break;
             }
         }
@@ -476,7 +486,6 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
 
 
 })(jQuery);
-
 /* ========================================================================
  * SPLE: Output in JSON Format
  * ========================================================================
@@ -521,7 +530,6 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
         }
     }
 })(jQuery);
-
 /* ========================================================================
  * SPLE: Standalone View
  * ========================================================================
@@ -562,7 +570,6 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                         $tree += 'class="parent_li"';
                     }
                     $tree += ' >';
-
                     switch (parseInt($data[i].is_child)) {
 
                         case 0:
@@ -575,7 +582,6 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                             $tree += '</select>';
                             $tree += '</div>';
                             $tree += '<p>';
-
                             if (options.template) {
 
                                 $tree += Mustache.render(options.template, $data[i]);
@@ -583,11 +589,9 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
 
                             $tree += '</p>';
                             break;
-
                         case 1:
                             $tree += '<a><i class="iys-toptree"></i>' + $data[i].value + '</a>';
                             break;
-
                         case 2:
                             $tree += '<a><i class="iys-tick"></i>';
                             $tree += $data[i].value;
@@ -608,7 +612,6 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                         case 3:
                             $tree += '<a><i class="iys-tick"></i>' + $data[i].value + '</a>';
                             break;
-
                         default:
                             $tree = 'Out of Child';
                     }
@@ -629,7 +632,6 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
     }
 
 })(jQuery);
-
 /* ========================================================================
  * SPLE: Core Tree Builder
  * ========================================================================
@@ -646,7 +648,6 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
         if ($opt != 'SEARCH') {
 
             $parent = $(obj.selector).data();
-
             var $tree = [], o = -1;
             $tree[++o] = '<li class="skill-others" style="display:none;" ><a><i class="iys-others"></i> Others</a></li>';
             for (var i = 0; i < $data.length; i++) {
@@ -1196,19 +1197,19 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
 
         function formatNoMatches(term) {
 
-            $captchaModal = "<button class='btn btn-sm btn-warning' data-term='" + term + "' id='iysAddSkillBtn'>Add Ur Skill</button>";
+            $captchaModal = "<button class='btn btn-sm btn-default' data-term='" + term + "' id='iysAddSkillBtn'> Add " + term + ". </button>";
             $captchaModal += '<div class="iys-spe"><div class="modal fade" id="iysVerifyCaptchaModal">';
             $captchaModal += '<div class="modal-dialog modal-md">';
             $captchaModal += '<div class="modal-content">';
             $captchaModal += '<div class="modal-header">';
             $captchaModal += '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>';
-            $captchaModal += '<h4 class="modal-title">Verify to add ' + term + ' as skill</h4>';
+            $captchaModal += '<h4 class="modal-title">Add "' + term + '" to my profile</h4>';
             $captchaModal += '</div>';
-            $captchaModal += '<div class="modal-body text-center">';
+            $captchaModal += '<div class="modal-body">';
             $captchaModal += '<div class="g-recaptcha" data-sitekey="6LeFDAMTAAAAAO06bx_YKqu35WIvwlGOqHnIpQQP"></div>';
             $captchaModal += '</div>';
             $captchaModal += '<div class="modal-footer">';
-            $captchaModal += '<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>';
+//            $captchaModal += '<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>';
             $captchaModal += '<button type="button" class="btn btn-primary" id="iysVerifyCaptchaBtn">add skill</button>';
             $captchaModal += '</div>';
             $captchaModal += '</div><!-- /.modal-content -->';
