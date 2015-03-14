@@ -618,9 +618,6 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                             break;
                         case 4:
                             $tree += '<a> <i class="iys-tick"></i> ' + $data[i].value + '</a>';
-                            if (!obj.options.lock) {
-                                $tree += '<input type="text" class="in-build-search textbox iys-placeholder" />';
-                            }
                             $tree += '<input style="display:none;" type="checkbox" class="skillcheck" name="skills[]" id="skillcheck-' + $data[i].id + '" data-id="' + $data[i].id + '"';
                             if (typeof $data[i].rating === "undefined" || $data[i].rating === null || $data[i].rating == "") {
                             }
