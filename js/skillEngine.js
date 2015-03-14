@@ -1197,27 +1197,31 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
 
         function formatNoMatches(term) {
 
-            $captchaModal = "<button class='btn btn-sm btn-default' data-term='" + term + "' id='iysAddSkillBtn'> Add " + term + ". </button>";
-            $captchaModal += '<div class="iys-spe"><div class="modal fade" id="iysVerifyCaptchaModal">';
-            $captchaModal += '<div class="modal-dialog modal-md">';
-            $captchaModal += '<div class="modal-content">';
-            $captchaModal += '<div class="modal-header">';
-            $captchaModal += '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>';
-            $captchaModal += '<h4 class="modal-title">Add "' + term + '" to my profile</h4>';
-            $captchaModal += '</div>';
-            $captchaModal += '<div class="modal-body">';
-            $captchaModal += '<div class="g-recaptcha" data-sitekey="6LeFDAMTAAAAAO06bx_YKqu35WIvwlGOqHnIpQQP"></div>';
-            $captchaModal += '</div>';
-            $captchaModal += '<div class="modal-footer">';
+            if ($('input[name=iysSearchMethod]:checked', '#iysSearch').val() != 'template') {
+
+                $captchaModal = "<button class='btn btn-sm btn-default' data-term='" + term + "' id='iysAddSkillBtn'> Add " + term + ". </button>";
+                $captchaModal += '<div class="iys-spe"><div class="modal fade" id="iysVerifyCaptchaModal">';
+                $captchaModal += '<div class="modal-dialog modal-md">';
+                $captchaModal += '<div class="modal-content">';
+                $captchaModal += '<div class="modal-header">';
+                $captchaModal += '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>';
+                $captchaModal += '<h4 class="modal-title">Add "' + term + '" to my profile</h4>';
+                $captchaModal += '</div>';
+                $captchaModal += '<div class="modal-body">';
+                $captchaModal += '<div class="g-recaptcha" data-sitekey="6LeFDAMTAAAAAO06bx_YKqu35WIvwlGOqHnIpQQP"></div>';
+                $captchaModal += '</div>';
+                $captchaModal += '<div class="modal-footer">';
 //            $captchaModal += '<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>';
-            $captchaModal += '<button type="button" class="btn btn-primary" id="iysVerifyCaptchaBtn">add skill</button>';
-            $captchaModal += '</div>';
-            $captchaModal += '</div><!-- /.modal-content -->';
-            $captchaModal += '</div><!-- /.modal-dialog -->';
-            $captchaModal += '</div></div>';
-            $('#iysAddSkillWrapper').html($captchaModal);
-            $.getScript('https://www.google.com/recaptcha/api.js');
-            //            $("#select2-drop-mask").click();
+                $captchaModal += '<button type="button" class="btn btn-primary" id="iysVerifyCaptchaBtn">add skill</button>';
+                $captchaModal += '</div>';
+                $captchaModal += '</div><!-- /.modal-content -->';
+                $captchaModal += '</div><!-- /.modal-dialog -->';
+                $captchaModal += '</div></div>';
+                $('#iysAddSkillWrapper').html($captchaModal);
+                $.getScript('https://www.google.com/recaptcha/api.js');
+                //            $("#select2-drop-mask").click();
+            }
+
             return "No Matches found, wanna add";
         }
 
