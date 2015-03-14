@@ -6647,7 +6647,7 @@
 /*bootstrap iys-spe end*/
 body{font-family: 'Open Sans', sans-serif; font-size: 14px; margin: 0 !important;}
 /* search bar*/
-.iys-search-br {background: #fff;padding:  10px;margin: 0 0 10px 0;border-top: 3px solid #27AE60;border-bottom: 1px solid #AAE4AF;
+.iys-search-br {background: #fff;padding:  10px;border-top: 3px solid #27AE60;border-bottom: 1px solid #AAE4AF;
 text-align:  center;}
 .iys-search{max-width: 580px;float: left;display: inline-block;}
 .iys-sh-txt{margin: 5px 0;font-size: 11px;color: #006919;text-align: left;}         
@@ -6658,9 +6658,9 @@ text-align:  center;}
 .iys-bar4{background: #DDDF00;}
 .iys-bar5{background: #1EA6E0;}
 .iys-bar6{background: #50B432;}
-.graph {-webkit-box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.3);-moz-box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.3);box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.3);width: 200px;height: 38px;background-color: #fff;overflow-x: visible;overflow-y: hidden; padding: 5px;
+.iys-bar-graph {-webkit-box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.3);-moz-box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.3);box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.3);width: 100%;height: 38px;background-color: #fff;overflow-x: visible;overflow-y: hidden; padding: 5px;
     white-space: nowrap;}
-.bar {width: 10px;margin: 3px;display: inline-block;position: relative;}
+.iys-bar {width: 10px;margin: 3px;display: inline-block;position: relative;}
 .active-bar{border-left: 5px solid rgba(0, 0, 0, 0);border-right: 5px solid rgba(0, 0, 0, 0);background: #1F9DA5;border-bottom: 11px solid #0A6267;}
 .iys-graph{margin: 0 15px;float: left;font-size: 12px;}
 .iys-btn-holder h4{margin: 0;}
@@ -6670,7 +6670,7 @@ text-align:  center;}
 #skill-chart-text{background: #0A6267;
 color: #fff;
 overflow: hidden;
-width: 200px;
+width: 100%;
 height: 20px;
 display: none;
 }
@@ -6769,7 +6769,7 @@ a:hover{text-decoration: none;}
 #iys-arrow {border-left: 10px solid rgba(0, 0, 0, 0);border-right: 10px solid rgba(0, 0, 0, 0);border-top: 11px solid #1F9DA5;height: 0;margin: 0  0 0 93px;
     text-align: center;width: 0;}
 .iys-tree {-webkit-box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.5);-moz-box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.5);box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.5);
-	background-color: #fbfbfb;max-height: 400px;min-height: 20px;margin: 0 ;overflow-y: auto;padding:0 0 15px 0;font-size: 14px;}
+	background-color: #fbfbfb;max-height: 400px;min-height: 20px;margin: 0 !important ;overflow-y: auto;padding:0 0 15px 0;font-size: 14px;}
 .iys-tree li form{padding-left: 30px;}
 .iys-tree li input{margin-right:5px !important;}
 .iys-tree label {display: inline;padding-left: 20px;overflow: hidden;text-decoration: none;text-overflow: ellipsis;width: 90%;}
@@ -6818,7 +6818,7 @@ a:hover{text-decoration: none;}
 {width: 8px; height: 8px;background-color: #F5F5F5;}
 .graph::-webkit-scrollbar-thumb
 {background-color: #587EA3;}
-#skills-count{background: #0397D8;color: #fff;padding: 2px 5px;border-radius: 5px;}
+#skills-count{background: #0397D8;color: #fff;padding: 0px 4px;border-radius: 5px;}
 /*scroll css end*/
 /*search bar start*/
 .select2-container{margin:0;position:relative;display:inline-block;zoom:1;*display:inline;vertical-align:middle;}
@@ -6935,6 +6935,25 @@ html[dir="rtl"] .select2-container-multi .select2-search-choice-close{left:auto;
 .rating-f .br-widget a:hover,
 .rating-f .br-widget a.br-active,
 .rating-f .br-widget a.br-selected {background-position: 0 24px;}
-.iysConceptChild{background: #fff; width: 100%;}
+.iysConceptChild{background: #fff; width: 100%; border: 1px solid #ccc;}
 .iysConceptChild li{width: 33%; display: inline-block; }
 .iysConceptChild li::after {border: none;}
+/*custom*/
+ .iys-spe .no-padding{padding: 0 !important;}
+  .iys-spe .margin-top-10{margin-top: 10px !important;}
+  @media screen and (max-width: 768px) {
+          .iysConceptChild li{width: 50%; display: inline-block; }  
+        }
+   @media screen and (max-width: 480px) {
+         .iysConceptChild li{width: 100%; display: inline-block; }  
+         .iys-fun-title{display: inline-table;}
+       }
+       .iys-bottom-fixed{.navbar{
+    height: 2em;
+    width: 100%;
+    background: blue;
+    color: white;
+    position: fixed;
+    top: 100%;
+    margin-top: -2em;
+}}

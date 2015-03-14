@@ -422,33 +422,32 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
     $.fn.skillEngine.setupHTML = function (obj) {
 
         $blueprint = '<div class="iys-spe">';
-        switch (obj.options.type) {
-            case 'functionals':
-                $blueprint += '<div class="iys-spe iys-search-br">';
-                $blueprint += '<div class="container">';
-                $blueprint += '<div class="row">';
-                $blueprint += '<div class="col-lg-6 col-sm-8 col-sm-8 col-lg-offset-1">';
-                $blueprint += '<div class="iys-sh-txt" id="iysAddSkillWrapper">Enter skill and select from the populated suggestions or use the skill tree</div>';
-                $blueprint += '<div class="keyword" style="width:100%;"></div>';
-                $blueprint += '<div class="pull-right">';
-                $blueprint += '<form id="iysSearch">';
-                $blueprint += 'Search by <input type="radio" name="iysSearchMethod" value="search" /> Skills';
-                $blueprint += '<input type="radio" name="iysSearchMethod" value="template" /> Templates';
-                $blueprint += '</form>';
-                $blueprint += '</div>';
-                $blueprint += '</div>';
-                $blueprint += '<div class="col-lg-3 col-sm-4 col-sm-4 col-lg-offset-1">';
-                $blueprint += '<div class="small margin-sm"><span id="skills-count" data-count="0">0</span> <span> skill(s) added to your profile</span></div>';
-                $blueprint += '<br/>';
-                $blueprint += '<div id="skill-chart"></div>';
-                $blueprint += '<div id="skill-chart-text"></div>';
-                $blueprint += '</div>';
-                $blueprint += '</div>';
-                $blueprint += '</div>';
-                $blueprint += '</div>';
-                break;
+        if (obj.options.type == 'functionals' && !obj.options.lock) {
+            $blueprint += '<div class="iys-spe iys-search-br iys-search-inhouse">';
+            $blueprint += '<div class="container">';
+            $blueprint += '<div class="col-lg-6 col-sm-6 col-sm-6 no-padding">';
+            $blueprint += '<div class="iys-sh-txt" id="iysAddSkillWrapper">Enter skill and select from the populated suggestions or use the skill tree</div>';
+            $blueprint += '<div class="keyword" style="width:100%;"></div>';
+            $blueprint += '<div class="pull-right">';
+            $blueprint += '<form id="iysSearch" class="form-inline">';
+            $blueprint += 'Search by <div class="radio"><label><input type="radio" name="iysSearchMethod" value="search" /> Skills </label></div>';
+            $blueprint += '<div class="radio"><label><input type="radio" name="iysSearchMethod" value="template" /> Templates</label></div>';
+            $blueprint += '</form>';
+            $blueprint += '</div>';
+            $blueprint += '</div>';
+            $blueprint += '<div class="col-lg-3 col-sm-3 col-sm-3">';
+//                $blueprint += '<div class="small margin-top-10"><span id="skills-count" data-count="0">0</span> <span> skill(s) added to your profile</span></div>';
+            $blueprint += '</div>';
+            $blueprint += '<div class="col-lg-3 col-sm-3 col-sm-3 no-padding">';
+            $blueprint += '<div class="small"><span id="skills-count" data-count="0">0</span> <span> skill(s) added to your profile</span></div>';
+            $blueprint += '<div id="skill-chart"></div>';
+            $blueprint += '<div id="skill-chart-text"></div>';
+            $blueprint += '</div>';
+            $blueprint += '</div>';
+            $blueprint += '</div>';
         }
-        $blueprint += '<div class="iys-container">';
+
+        $blueprint += '<div class="container">';
         $blueprint += '<div class="iys-fun-title ';
         switch (obj.options.type) {
             case 'functionals':
@@ -470,7 +469,12 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
 
         $blueprint += '</div>';
         $blueprint += '<div>';
-        $blueprint += '<ul class="iys-tree skill-count-scroll" id="0"><div class="iysInitialSpinner text-center text-info"><i class="fa fa-spinner fa-pulse fa-3x"></i></div></ul>';
+        $blueprint += '<ul class="iys-tree skill-count-scroll" id="0">';
+        if (!obj.options.lock) {
+
+            $blueprint += '<div class="iysInitialSpinner text-center text-info"><i class="fa fa-spinner fa-pulse fa-3x"></i></div>';
+        }
+        $blueprint += '</ul>';
         $blueprint += '</div>';
         if (!obj.options.lock) {
             switch (obj.options.type) {
@@ -611,6 +615,33 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                             break;
                         case 3:
                             $tree += '<a><i class="iys-tick"></i>' + $data[i].value + '</a>';
+                            break;
+                        case 4:
+                            $tree[++o] = '<a> <i class="iys-tick"></i> ' + $data[i].value + '</a>';
+                            if (!obj.options.lock) {
+                                $tree[++o] = '<input type="text" class="in-build-search textbox iys-placeholder" />';
+                            }
+                            $tree[++o] = '<input style="display:none;" type="checkbox" class="skillcheck" name="skills[]" id="skillcheck-' + $data[i].id + '" data-id="' + $data[i].id + '"';
+                            if (typeof $data[i].rating === "undefined" || $data[i].rating === null || $data[i].rating == "") {
+                            }
+                            else {
+                                $tree[++o] = ' checked="true"';
+                                if (obj.options.lock) {
+                                    $tree[++o] = ' disabled="true"';
+                                }
+                            }
+                            $tree[++o] = '>';
+                            $tree[++o] = '<div class="rating-f">';
+                            $tree[++o] = '<select class="skillselect"  name="skills-rating[]" id="skillselect-' + $data[i].id + '" data-id="' + $data[i].id + '">';
+                            $tree[++o] = $.fn.skillEngine.scaleType($data[i].scale_type, $data[i].rating);
+                            $tree[++o] = '</select>';
+                            $tree[++o] = '</div>';
+                            $tree[++o] = '<p>';
+                            if (obj.options.template) {
+
+                                $tree[++o] = Mustache.render(obj.options.template, $data[i]);
+                            }
+                            $tree[++o] = '</p>';
                             break;
                         default:
                             $tree = 'Out of Child';
@@ -770,7 +801,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                                 if (!obj.options.lock) {
                                     $tree[++o] = '<input type="text" class="in-build-search textbox iys-placeholder" />';
                                 }
-                                $tree[++o] = '<input type="checkbox" class="skillcheck" name="skills[]" id="skillcheck-' + $data[i].id + '" data-id="' + $data[i].id + '"';
+                                $tree[++o] = '<input style="display:none;" type="checkbox" class="skillcheck" name="skills[]" id="skillcheck-' + $data[i].id + '" data-id="' + $data[i].id + '"';
                                 if (typeof $data[i].rating === "undefined" || $data[i].rating === null || $data[i].rating == "") {
                                 }
                                 else {
@@ -881,13 +912,11 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                         if (parseInt($data[i].parent_id) == parseInt($parent)) {
 
                             $tree = treeList($data[i]);
-                            console.log('parent' + i);
                             readymade($data, parseInt($data[i].id));
                         }
                         else {
 
                             $tree = treeList($data[i]);
-//                        console.log('non parent' + i);
 //                        break; // for performance make it break
                         }
 
@@ -1016,7 +1045,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                         if (!obj.options.lock) {
                             $tree += '<input type="text" class="in-build-search textbox iys-placeholder" />';
                         }
-                        $tree += '<input type="checkbox" class="skillcheck" name="skills[]" id="skillcheck-' + $data.id + '" data-id="' + $data.id + '"';
+                        $tree += '<input style="display:none;" type="checkbox" class="skillcheck" name="skills[]" id="skillcheck-' + $data.id + '" data-id="' + $data.id + '"';
                         if (typeof $data.rating === "undefined" || $data.rating === null || $data.rating == "") {
                         }
                         else {
@@ -1123,7 +1152,6 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                 /********** Start of Highlight ScrollTo on Search **********/
                 if ($opt == 'SEARCH' && $('input[name=iysSearchMethod]:checked', '#iysSearch').val() != 'template') {
 
-                    console.log($('#skillcheck-' + $data.id).length);
                     $('.skill-count-scroll').scrollTo('#skillcheck-' + $data.id, 200, {offset: {top: -200, bottom: 200}});
                     $('#skillcheck-' + $data.id).closest('li').delay(200).addClass('iys-bar4').delay(2000).queue(function () {
                         $(this).removeClass("iys-bar4").dequeue();
@@ -1140,8 +1168,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
             $('.skillselect').barrating({'readonly': true});
         } else {
 
-            $('.skillselect').barrating('show', {onSelect: $.fn.skillEngine.chart
-            });
+            $('.skillselect').barrating('show', {onSelect: $.fn.skillEngine.chart});
         }
     }
 })(jQuery);
@@ -1311,7 +1338,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
     $.fn.skillEngine.chart = function (value, text) {
 
         var skillid = $(this).parent().siblings('select.skillselect').data('id');
-        $('#skill-chart').addClass('graph');
+        $('#skill-chart').addClass('iys-bar-graph');
         $('#skill-chart-text').show();
         if (value != '') {
             $('#skillform-' + skillid + ' input[name="rating"]').val(value);
@@ -1322,7 +1349,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                 $('div#chart-' + skillid).remove();
             }
 
-            $('#skill-chart').append('<div id="chart-' + skillid + '" title="' + $('li#' + skillid).data('value') + '" style="height: ' + ((parseInt(value) + 1) * 20) + '%;" class="bar active-bar iys-bar' + (parseInt(value) + 1) + '"></div>');
+            $('#skill-chart').append('<div id="chart-' + skillid + '" title="' + $('li#' + skillid).data('value') + '" style="height: ' + ((parseInt(value) + 1) * 20) + '%;" class="iys-bar active-bar iys-bar' + (parseInt(value) + 1) + '"></div>');
             $('#skill-chart-text').text($('li#' + skillid).data('value'));
             $('#skill-chart').scrollTo('#chart-' + skillid);
         }
