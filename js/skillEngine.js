@@ -67,7 +67,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
 
                 if (options.data && options.data != "" && options.data != null) {
 
-                    $.fn.skillEngine.buildTree(this, 'SEARCH');
+                    $.fn.skillEngine.buildTree(this, 'INPUT');
                 }
 
                 var self = this;
@@ -645,7 +645,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
 
         $data = obj.options.data;
         $adam = obj.adam.selector;
-        if ($opt != 'SEARCH') {
+        if ($opt != 'SEARCH' && $opt != 'INPUT') {
 
             $parent = $(obj.selector).data();
             var $tree = [], o = -1;
@@ -865,7 +865,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
 
 
         /* Search */
-        if ($opt == 'SEARCH') {
+        if ($opt == 'SEARCH' || $opt == 'INPUT') {
 
             readymade = function ($data, $parent) {
 
