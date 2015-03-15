@@ -388,7 +388,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
 
             $(obj.selector + ' > a > i').alterClass('iys-*', 'iys-loading');
             $.ajax({
-                url: obj.options.source,
+                url: obj.options.source.replace(/.*?:\/\//g, "//"),
                 type: 'POST',
                 data: {id: obj.options.id, type: obj.options.type},
                 datatype: 'json',
@@ -1154,6 +1154,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                         } else {
 
                             if ($data.is_child == 3) {
+
 
                                 $($element).append('<ul class="iysConceptChild">' + $othersLi + $tree + '</ul>');
                             }
