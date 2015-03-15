@@ -6939,21 +6939,21 @@ html[dir="rtl"] .select2-container-multi .select2-search-choice-close{left:auto;
 .iysConceptChild li{width: 33%; display: inline-block; }
 .iysConceptChild li::after {border: none;}
 /*custom*/
- .iys-spe .no-padding{padding: 0 !important;}
-  .iys-spe .margin-top-10{margin-top: 10px !important;}
-  @media screen and (max-width: 768px) {
-          .iysConceptChild li{width: 50%; display: inline-block; }  
-        }
-   @media screen and (max-width: 480px) {
-         .iysConceptChild li{width: 100%; display: inline-block; }  
-         .iys-fun-title{display: inline-table;}
-       }
-       .iys-bottom-fixed{.navbar{
-    height: 2em;
-    width: 100%;
-    background: blue;
-    color: white;
-    position: fixed;
-    top: 100%;
-    margin-top: -2em;
-}}
+.iys-spe .no-padding{padding: 0 !important;}
+.iys-spe .margin-top-10{margin-top: 10px !important;}
+@media screen and (max-width: 768px) {
+    .iysConceptChild li{width: 50%; display: inline-block; }  
+}
+@media screen and (max-width: 480px) {
+    .iysConceptChild li{width: 100%; display: inline-block; }  
+    .iys-fun-title{display: inline-table;}
+}
+.iys-bottom-fixed{
+width: 100%;
+background: none repeat scroll 0% 0% rgba(234, 234, 234, 0.7);
+padding: 10px;
+text-align: center;
+position: fixed;
+bottom: 0px;
+margin-top: -2em;
+}

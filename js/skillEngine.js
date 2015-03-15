@@ -144,6 +144,13 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
             click: function () {
 
                 $('#skillform-' + $(this).data('id') + ' input[name="checked"]').val($(this).prop("checked"));
+
+                if (!$(this).prop("checked")) {
+
+                    $('select#skillselect-' + $(this).data('id')).barrating('clear');
+                    $('#skillform-' + $(this).data('id') + ' input[name="rating"]').val("0");
+                }
+
 //                        $li = $(this).closest('li');
 //                        $parent = 'li#' + $li.data('parent_id');
 //
@@ -322,7 +329,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
             /* Checkbox */
             stabilizer(obj);
             /* Request */
-            if ($(obj.selector).attr('data-appended') == "false" && ($(obj.selector).attr('data-is_child') == 1 || $(obj.selector).attr('data-is_child') == 2 || $(obj.selector).attr('data-appended') == "false" && $(obj.selector).attr('data-is_child') == 4)) {
+            if ($(obj.selector).attr('data-appended') == "false" && (($(obj.selector).attr('data-is_child') == 1 || $(obj.selector).attr('data-is_child') == 2 || $(obj.selector).attr('data-is_child') == 4))) {
 
                 $.fn.skillEngine.request(obj);
             }
@@ -356,7 +363,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
 
                             if ($(value).data('is_child') == 1 && 'li#' + $(value).data('id') != obj.selector && !$(value).find('input[name="skills[]"]:checkbox').is(":checked")) {
 
-//                                $(value).hide();
+                                $(value).hide();
                             }
                         });
                     }
@@ -394,7 +401,6 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                 data: {id: obj.options.id, type: obj.options.type},
                 datatype: 'json',
                 success: function (data) {
-
                     $(obj.selector + ' div.iysInitialSpinner').remove();
                     obj.options.data = data;
                     $.fn.skillEngine.buildTree(obj);
@@ -505,7 +511,11 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
         if ($type) {
 
             $data = [];
-            $.each($('[data-type="' + $type + '"] input[name="skills[]"]:checkbox:checked').parents('li'), function (index, value) {
+
+            $.each($('[data-type="' + $type + '"] input:hidden[name="rating"]').filter(function () {
+
+                return $(this).val() > 0 && $(this).val() < 6;
+            }).parents('li'), function (index, value) {
 
                 if ($(value).data('is_child') == 1) {
 
@@ -521,6 +531,25 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                     $data.push($datum);
                 }
             });
+
+
+//            $.each($('[data-type="' + $type + '"] input[name="skills[]"]:checkbox:checked').parents('li'), function (index, value) {
+//
+//                if ($(value).data('is_child') == 1) {
+//
+//                    $data.push($(value).data());
+//                }
+//                else {
+//
+//                    $datum = {};
+//                    $.each($('form#skillform-' + $(value).attr('id')).serializeArray(), function () {
+//                        $datum[this.name] = this.value;
+//                    })
+//
+//                    $data.push($datum);
+//                }
+//            });
+
             if ($data.length > 0) {
 
                 $output = {};
@@ -619,18 +648,8 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                             break;
                         case 4:
                             $tree += '<a> <i class="iys-tick"></i> ' + $data[i].value + '</a>';
-                            $tree += '<input type="checkbox" class="skillcheck" name="skills[]" id="skillcheck-' + $data[i].id + '" data-id="' + $data[i].id + '"';
-                            if (typeof $data[i].rating === "undefined" || $data[i].rating === null || $data[i].rating == "") {
-                            }
-                            else {
-                                $tree += ' checked="true"';
-                                if (obj.options.lock) {
-                                    $tree += ' disabled="true"';
-                                }
-                            }
-                            $tree += '>';
                             $tree += '<div class="rating-f">';
-                            $tree += '<select class="skillselect"  name="skills-rating[]" id="skillselect-' + $data[i].id + '" data-id="' + $data[i].id + '">';
+                            $tree += '<select class="previewskillselect"  name="skills-rating[]" id="skillselect-' + $data[i].id + '" data-id="' + $data[i].id + '">';
                             $tree += $.fn.skillEngine.scaleType($data[i].scale_type, $data[i].rating);
                             $tree += '</select>';
                             $tree += '</div>';
@@ -701,7 +720,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
             /********** Start of Li **********/
             $tree += '<li id="' + $data.id + '" data-value="' + $data.value + '" data-parent_id="' + $data.parent_id + '" data-is_child="' + $data.is_child + '" data-id="' + $data.id + '" ';
 
-            if ($data.is_child == 1 || $data.is_child == 4) {
+            if ($data.is_child == 1 || $data.is_child == 2 || $data.is_child == 4) {
 
                 $tree += 'class="parent_li" data-appended="false"';
             }
@@ -793,6 +812,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
 
                     $tree += '</form>';
                     $tree += '</p>';
+
                     self = obj;
                     self.selector = 'li#' + $data.id;
                     self.options.id = $data.id;
@@ -834,13 +854,14 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                     if (!obj.options.lock) {
                         $tree += '<input type="text" class="in-build-search textbox iys-placeholder" />';
                     }
+
 //                        $tree += '<input type="checkbox" class="skillcheck" name="skills[]" id="skillcheck-' + $data.id + '" data-id="' + $data.id + '" ' + (typeof $data.checked != 'undefined' && $data.checked == 'true' ? 'checked="checked"' : '');
 //                        if (obj.options.lock) {
 //                            $tree += ' disabled="true"';
 //                        }
 //
 //                        $tree += '>';
-//
+
                     $tree += '<div class="rating-f">';
                     $tree += '<select class="skillselect"  name="skills-rating[]" id="skillselect-' + $data.id + '" data-id="' + $data.id + '">';
                     $tree += $.fn.skillEngine.scaleType($data.scale_type, $data.rating);
@@ -1648,6 +1669,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
         }
         else {
             $('#skillcheck-' + skillid).prop("checked", false);
+            $('#skillform-' + skillid + ' input[name="rating"]').val("0");
             $('#skillform-' + skillid + ' input[name="checked"]').val(false);
             $('div#chart-' + skillid).remove();
         }
