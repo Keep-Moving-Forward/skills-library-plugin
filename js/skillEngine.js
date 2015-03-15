@@ -388,7 +388,8 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
 
             $(obj.selector + ' > a > i').alterClass('iys-*', 'iys-loading');
             $.ajax({
-                url: obj.options.source.replace(/.*?:\/\//g, "//"),
+//                url: obj.options.source.replace(/.*?:\/\//g, "//"),
+                url: obj.options.source,
                 type: 'POST',
                 data: {id: obj.options.id, type: obj.options.type},
                 datatype: 'json',
