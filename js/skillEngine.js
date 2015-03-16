@@ -535,9 +535,10 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
 
             $data = [];
 
-            $.each($('[data-type="' + $type + '"] input:hidden[name="rating"]').filter(function () {
+            $.each($('[data-type="' + $type + '"] input:hidden[name="checked"]').filter(function () {
 
-                return $(this).val() > 0 && $(this).val() < 6;
+                return $(this).val() == "true";
+
             }).parents('li'), function (index, value) {
 
                 if ($(value).data('is_child') == 1) {
@@ -858,6 +859,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                     $tree += '<input type="hidden" name="parent_id" value="' + $data.parent_id + '" />';
                     $tree += '<input type="hidden" name="is_child" value="' + $data.is_child + '" />';
                     $tree += '<input type="hidden" name="value" value="' + $data.value + '" />';
+                    $tree += '<input type="hidden" name="rating" value="' + (typeof $data.rating == 'undefined' ? 0 : $data.rating) + '" />';
                     $tree += '<input type="hidden" name="checked" value="' + (typeof $data.checked == 'undefined' ? false : $data.checked) + '" />';
                     $tree += '</form>';
                     $tree += '</p>';
@@ -898,6 +900,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                     $tree += '<input type="hidden" name="is_child" value="' + $data.is_child + '" />';
                     $tree += '<input type="hidden" name="scale_type" value="' + $data.scale_type + '" />';
                     $tree += '<input type="hidden" name="rating" value="' + (typeof $data.rating == 'undefined' ? 0 : $data.rating) + '" />';
+                    $tree += '<input type="hidden" name="checked" value="' + (typeof $data.checked == 'undefined' ? false : $data.checked) + '" />';
                     $tree += '<input type="hidden" name="value" value="' + $data.value + '" />';
                     if (obj.options.template) {
 
