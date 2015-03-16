@@ -145,8 +145,12 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
 
                 $('#skillform-' + $(this).data('id') + ' input[name="checked"]').val($(this).prop("checked"));
 
+                if ($(this).prop("checked")) {
+                    $('li#' + $(this).data('id')).css({'background': '#CCC'});
+                }
                 if (!$(this).prop("checked")) {
 
+                    $('li#' + $(this).data('id')).css({'background': ''});
                     $('select#skillselect-' + $(this).data('id')).barrating('clear');
                     $('#skillform-' + $(this).data('id') + ' input[name="rating"]').val("0");
                 }
@@ -903,7 +907,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                     }
                     $($adam + ' ul#0').append($tree);
                     if ($opt != 'SEARCH') {
-                        $($adam + ' ul[id="0"] > li:not([class=skill-others]').tinysort({order: 'asc'});
+                        $($adam + ' ul[id="0"] > li:not([class=skill-others]').tinysort({data: 'display_order', order: 'asc'});
                     }
                 } else {
                     if ($($element).has('ul li.skill-others').length) {
@@ -919,9 +923,9 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                     if ($opt != 'SEARCH') {
                         var $mixedContent = $('li[id="' + $data.parent_id + '"] > ul > li').find('input[type="checkbox"]').length;
                         if (!$mixedContent) {
-                            $('li[id="' + $data.parent_id + '"] > ul > li:not([class=skill-others]').tinysort({order: 'asc'});
+                            $('li[id="' + $data.parent_id + '"] > ul > li:not([class=skill-others]').tinysort({data: 'display_order', order: 'asc'});
                         } else {
-                            $('li[id="' + $data.parent_id + '"] > ul > li:not([class=skill-others]').tinysort({order: 'asc', data: 'is_child'});
+                            $('li[id="' + $data.parent_id + '"] > ul > li:not([class=skill-others]').tinysort({order: 'asc', data: 'display_order', data: 'is_child'});
                         }
                     }
                 }
@@ -1622,8 +1626,9 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                                 type: 'POST',
                                 data: {'action': 'add', 'term': $('#iysAddSkillBtn').data('term')},
                                 success: function ($data) {
+
                                     $data = JSON.parse($data);
-                                    obj.options.data = $data[0].tree_structure;
+                                    obj.options.data = JSON.parse($data[0].tree_structure);
                                     $.fn.skillEngine.buildTree(obj, 'SEARCH');
                                     $('#iysVerifyCaptchaModal').modal('hide');
                                     $('#iysAddSkillWrapper').html('Enter the required Skill in the Search Box above or Select from the Suggestion Tree below');
@@ -1655,6 +1660,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
         $('#skill-chart').addClass('iys-bar-graph');
         $('#skill-chart-text').show();
         if (value != '') {
+            $('li#' + skillid).css({'background': '#CCC'});
             $('#skillform-' + skillid + ' input[name="rating"]').val(value);
             $('#skillform-' + skillid + ' input[name="checked"]').val(true);
             $('#skillcheck-' + skillid).prop("checked", true);
@@ -1663,11 +1669,12 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                 $('div#chart-' + skillid).remove();
             }
 
-            $('#skill-chart').append('<div id="chart-' + skillid + '" title="' + $('li#' + skillid).data('value') + '" style="height: ' + ((parseInt(value) + 1) * 20) + '%;" class="iys-bar active-bar iys-bar' + (parseInt(value) + 1) + '"></div>');
+            $('#skill-chart').append('<div id="chart-' + skillid + '" data-toggle="tooltip" data-placement="top" data-title="' + $('li#' + skillid).data('value') + '" title="' + $('li#' + skillid).data('value') + ' &raquo; ' + parseInt(value) + '" style="height: ' + ((parseInt(value) + 1) * 20) + '%;" class="iys-chart iys-bar active-bar iys-bar' + (parseInt(value)) + '"></div>');
             $('#skill-chart-text').text($('li#' + skillid).data('value'));
             $('#skill-chart').scrollTo('#chart-' + skillid);
         }
         else {
+            $('li#' + skillid).css({'background': ''});
             $('#skillcheck-' + skillid).prop("checked", false);
             $('#skillform-' + skillid + ' input[name="rating"]').val("0");
             $('#skillform-' + skillid + ' input[name="checked"]').val(false);
@@ -1675,6 +1682,14 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
         }
 
         $('span#skills-count').text($('input[name="skills[]"]:checkbox:checked').length);
+
+        $('[data-toggle="tooltip"]').tooltip();
+
+        $('div.iys-chart').on('click', function () {
+
+            $('#skill-chart-text').text($(this).data('title'));
+        });
     }
 
 })(jQuery);
+
