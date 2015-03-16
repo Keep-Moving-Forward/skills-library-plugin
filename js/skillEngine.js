@@ -1568,7 +1568,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
             if ($('input[name=iysSearchMethod]:checked', '#iysSearch').val() != 'template') {
 
                 $captchaModal = "<a class='btn btn-info' data-term='" + term + "' id='iysAddSkillBtn'> Add " + term + ". </a>";
-                $captchaModal += '<div class="iys-spe"><div class="modal fade" id="iysVerifyCaptchaModal">';
+                $captchaModal += '<div class="iys-spe"><div class="modal fade" id="iysVerifyCaptchaModal"  tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">';
                 $captchaModal += '<div class="modal-dialog modal-md">';
                 $captchaModal += '<div class="modal-content">';
                 $captchaModal += '<div class="modal-header">';
