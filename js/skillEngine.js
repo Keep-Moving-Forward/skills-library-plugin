@@ -74,6 +74,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                 return this.each(function () {
 
                     if (!options.lock) {
+
                         $.fn.skillEngine.events(self, this);
                     }
                 });
@@ -87,6 +88,23 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
     };
     $.fn.skillEngine.type = ['functionals', 'behavioural', 'managerial'];
     $.fn.skillEngine.obj = {};
+
+    // Event Repo
+    // ==========
+    $.fn.skillEngine.eventsnew = function (self, object) {
+
+        console.log('SELF' + self);
+        console.log('CURRENT OBJ' + object);
+
+        var $obj = $(object);
+
+        $obj.on({
+            click: function () {
+
+                alert(this.selector);
+            }
+        });
+    }
 
     // Event Repo
     // ==========
@@ -659,7 +677,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                             $tree += '</select>';
                             $tree += '</div>';
                             $tree += '<p>';
-                            if (obj.options.template) {
+                            if (options.template) {
 
                                 $tree += Mustache.render(obj.options.template, $data[i]);
                             }
@@ -1638,7 +1656,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                         }
                         else {
                             $('#iysVerifyCaptchaModal').modal('hide');
-                            alert('Retry to add your skill');
+                            $('#iysAddSkillWrapper').html('Enter the required Skill in the Search Box above or Select from the Suggestion Tree below');
                         }
                     }});
             });
