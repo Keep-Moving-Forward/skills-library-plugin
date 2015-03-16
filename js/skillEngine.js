@@ -717,6 +717,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
         $data = obj.options.data;
         $adam = obj.adam.selector;
 
+        $(obj.selector + ' div.iysInitialSpinner').remove();
 
         readymade = function ($data, $parent) {
             if (typeof $parent === "undefined" || $parent === null) {
