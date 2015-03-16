@@ -465,13 +465,16 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
             $blueprint += '</form>';
             $blueprint += '</div>';
             $blueprint += '</div>';
-            $blueprint += '<div class="col-lg-3 col-sm-3 col-sm-3">';
-//                $blueprint += '<div class="small margin-top-10"><span id="skills-count" data-count="0">0</span> <span> skill(s) added to your profile</span></div>';
-            $blueprint += '</div>';
-            $blueprint += '<div class="col-lg-3 col-sm-3 col-sm-3 no-padding">';
+//            $blueprint += '<div class="col-lg-3 col-sm-3 col-sm-3">';
+//            $blueprint += '<div id="iysAddSkillVerifyWrapper"></div>';
+//            $blueprint += '</div>';
+            $blueprint += '<div class="col-lg-4 col-sm-4 col-sm-4 no-padding pull-right">';
+            $blueprint += '<div id="iysAddSkillVerifyWrapper"></div>';
+            $blueprint += '<div id="iysSkillChart">';
             $blueprint += '<div class="small"><span id="skills-count" data-count="0">0</span> <span> skill(s) added to your profile</span></div>';
             $blueprint += '<div id="skill-chart"></div>';
             $blueprint += '<div id="skill-chart-text"></div>';
+            $blueprint += '</div>';
             $blueprint += '</div>';
             $blueprint += '</div>';
             $blueprint += '</div>';
@@ -1567,27 +1570,12 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
 
             if ($('input[name=iysSearchMethod]:checked', '#iysSearch').val() != 'template') {
 
-                $captchaModal = "<a class='btn btn-info' data-term='" + term + "' id='iysAddSkillBtn'> Add " + term + ". </a>";
-                $captchaModal += '<div class="iys-spe"><div class="modal fade" id="iysVerifyCaptchaModal"  tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">';
-                $captchaModal += '<div class="modal-dialog modal-md">';
-                $captchaModal += '<div class="modal-content">';
-                $captchaModal += '<div class="modal-header">';
-                $captchaModal += '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>';
-                $captchaModal += '<h4 class="modal-title">Add "' + term + '" to my profile</h4>';
-                $captchaModal += '</div>';
-                $captchaModal += '<div class="modal-body">';
-                $captchaModal += '<div class="g-recaptcha" data-sitekey="6LeFDAMTAAAAAO06bx_YKqu35WIvwlGOqHnIpQQP"></div>';
-                $captchaModal += '</div>';
-                $captchaModal += '<div class="modal-footer">';
-//            $captchaModal += '<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>';
-                $captchaModal += '<a type="button" class="btn btn-primary" id="iysVerifyCaptchaBtn">add skill</a>';
-                $captchaModal += '</div>';
-                $captchaModal += '</div><!-- /.modal-content -->';
-                $captchaModal += '</div><!-- /.modal-dialog -->';
-                $captchaModal += '</div></div>';
-                $('#iysAddSkillWrapper').html($captchaModal);
+                $captchaModal = '<div class="g-recaptcha" data-sitekey="6LeFDAMTAAAAAO06bx_YKqu35WIvwlGOqHnIpQQP"></div>';
+                $captchaModal += '<a type="button" class="btn btn-primary" data-term="' + term + '" id="iysVerifyCaptchaBtn">Add Skill</a>';
+                $captchaModal += '<a type="button" class="btn btn-danger"id="iysVerifyCaptchaBtnCancel">Cancel</a>';
+                $('#iysAddSkillVerifyWrapper').html($captchaModal);
+                $('#iysSkillChart').hide();
                 $.getScript('https://www.google.com/recaptcha/api.js');
-                //            $("#select2-drop-mask").click();
             }
 
             return "No Matches found, wanna add";
@@ -1627,44 +1615,52 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
             obj.options.data = JSON.parse($e.val);
             $.fn.skillEngine.buildTree(obj, 'SEARCH');
         });
-        $(document).off('click', '#iysAddSkillBtn');
-        $(document).on('click', '#iysAddSkillBtn', function () {
-            $('#iysVerifyCaptchaModal').modal({'show': true, 'backdrop': false});
-            $(document).off('click', '#iysVerifyCaptchaBtn');
-            $(document).on('click', '#iysVerifyCaptchaBtn', function () {
-                if ($('#g-recaptcha-response').val() == '') {
-                    alert('Please verify the Recaptcha');
-                    return false;
-                }
 
-                $.ajax({
-                    url: 'https://www.itsyourskills.com/proxy/verify-captcha/' + $('#g-recaptcha-response').val(),
-                    type: 'POST',
-                    async: true,
-                    success: function ($da) {
-                        if ($da.success) {
-                            obj = $.fn.skillEngine.obj['functionals'];
-                            $.ajax({
-                                url: 'https://www.itsyourskills.com/proxy/action',
-                                type: 'POST',
-                                data: {'action': 'add', 'term': $('#iysAddSkillBtn').data('term')},
-                                success: function ($data) {
 
-                                    $data = JSON.parse($data);
-                                    obj.options.data = JSON.parse($data[0].tree_structure);
-                                    $.fn.skillEngine.buildTree(obj, 'SEARCH');
-                                    $('#iysVerifyCaptchaModal').modal('hide');
-                                    $('#iysAddSkillWrapper').html('Enter the required Skill in the Search Box above or Select from the Suggestion Tree below');
-                                }
-                            });
-                        }
-                        else {
-                            $('#iysVerifyCaptchaModal').modal('hide');
-                            $('#iysAddSkillWrapper').html('Enter the required Skill in the Search Box above or Select from the Suggestion Tree below');
-                        }
-                    }});
-            });
+        $(document).off('click', '#iysVerifyCaptchaBtnCancel');
+        $(document).on('click', '#iysVerifyCaptchaBtnCancel', function () {
+
+            $('#iysSkillChart').show();
+            $('#iysAddSkillVerifyWrapper').empty();
         });
+
+        $(document).off('click', '#iysVerifyCaptchaBtn');
+        $(document).on('click', '#iysVerifyCaptchaBtn', function () {
+
+            if ($('#g-recaptcha-response').val() == '') {
+                alert('Please verify the Recaptcha');
+                return false;
+            }
+
+            $.ajax({
+                url: 'https://www.itsyourskills.com/proxy/verify-captcha/' + $('#g-recaptcha-response').val(),
+                type: 'POST',
+                async: true,
+                success: function ($da) {
+                    if ($da.success) {
+                        obj = $.fn.skillEngine.obj['functionals'];
+                        $.ajax({
+                            url: 'https://www.itsyourskills.com/proxy/action',
+                            type: 'POST',
+                            data: {'action': 'add', 'term': $('#iysVerifyCaptchaBtn').data('term')},
+                            success: function ($data) {
+
+                                $data = JSON.parse($data);
+                                obj.options.data = JSON.parse($data[0].tree_structure);
+                                $.fn.skillEngine.buildTree(obj, 'SEARCH');
+                                $('#iysSkillChart').show();
+                                $('#iysAddSkillVerifyWrapper').empty();
+                                alert('Added new skill successfully');
+                            }
+                        });
+                    }
+                    else {
+
+                        alert('Failed to add new skill');
+                    }
+                }});
+        });
+
     }
 
 })(jQuery);
