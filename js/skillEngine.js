@@ -680,7 +680,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                             $tree += '<p>';
                             if (options.template) {
 
-                                $tree += Mustache.render(obj.options.template, $data[i]);
+                                $tree += Mustache.render(options.template, $data[i]);
                             }
                             $tree += '</p>';
                             break;
