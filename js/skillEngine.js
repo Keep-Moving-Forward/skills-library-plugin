@@ -460,7 +460,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
             $blueprint += '<div class="keyword" style="width:100%;"></div>';
             $blueprint += '<div class="pull-right">';
             $blueprint += '<form id="iysSearch" class="form-inline">';
-            $blueprint += 'Search by <div class="radio"><label><input type="radio" name="iysSearchMethod" value="search" /> Skills </label></div>';
+            $blueprint += 'Search by <div class="radio"><label><input type="radio" name="iysSearchMethod" value="search" checked="checked" /> Skills </label></div>';
             $blueprint += '<div class="radio"><label><input type="radio" name="iysSearchMethod" value="template" /> Templates</label></div>';
             $blueprint += '</form>';
             $blueprint += '</div>';
@@ -1563,7 +1563,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
 
             if ($('input[name=iysSearchMethod]:checked', '#iysSearch').val() != 'template') {
 
-                $captchaModal = "<button class='btn btn-sm btn-default' data-term='" + term + "' id='iysAddSkillBtn'> Add " + term + ". </button>";
+                $captchaModal = "<a class='btn btn-info' data-term='" + term + "' id='iysAddSkillBtn'> Add " + term + ". </a>";
                 $captchaModal += '<div class="iys-spe"><div class="modal fade" id="iysVerifyCaptchaModal">';
                 $captchaModal += '<div class="modal-dialog modal-md">';
                 $captchaModal += '<div class="modal-content">';
@@ -1576,7 +1576,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                 $captchaModal += '</div>';
                 $captchaModal += '<div class="modal-footer">';
 //            $captchaModal += '<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>';
-                $captchaModal += '<button type="button" class="btn btn-primary" id="iysVerifyCaptchaBtn">add skill</button>';
+                $captchaModal += '<a type="button" class="btn btn-primary" id="iysVerifyCaptchaBtn">add skill</a>';
                 $captchaModal += '</div>';
                 $captchaModal += '</div><!-- /.modal-content -->';
                 $captchaModal += '</div><!-- /.modal-dialog -->';
