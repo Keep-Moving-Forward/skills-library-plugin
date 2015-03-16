@@ -1629,7 +1629,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
         });
         $(document).off('click', '#iysAddSkillBtn');
         $(document).on('click', '#iysAddSkillBtn', function () {
-            $('#iysVerifyCaptchaModal').modal('show');
+            $('#iysVerifyCaptchaModal').modal({'show': true, 'backdrop': false});
             $(document).off('click', '#iysVerifyCaptchaBtn');
             $(document).on('click', '#iysVerifyCaptchaBtn', function () {
                 if ($('#g-recaptcha-response').val() == '') {
@@ -1655,14 +1655,12 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                                     $.fn.skillEngine.buildTree(obj, 'SEARCH');
                                     $('#iysVerifyCaptchaModal').modal('hide');
                                     $('#iysAddSkillWrapper').html('Enter the required Skill in the Search Box above or Select from the Suggestion Tree below');
-                                    $(document).remove('.modal-backdrop');
                                 }
                             });
                         }
                         else {
                             $('#iysVerifyCaptchaModal').modal('hide');
                             $('#iysAddSkillWrapper').html('Enter the required Skill in the Search Box above or Select from the Suggestion Tree below');
-                            $(document).remove('.modal-backdrop');
                         }
                     }});
             });
