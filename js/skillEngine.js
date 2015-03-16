@@ -87,6 +87,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
     };
     $.fn.skillEngine.type = ['functionals', 'behavioural', 'managerial'];
     $.fn.skillEngine.obj = {};
+
     // Event Repo
     // ==========
     $.fn.skillEngine.events = function (self, object) {
@@ -399,8 +400,8 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
 
             $(obj.selector + ' > a > i').alterClass('iys-*', 'iys-loading');
             $.ajax({
-                url: obj.options.source.replace(/.*?:\/\//g, "//"),
-//                url: obj.options.source,
+//                url: obj.options.source.replace(/.*?:\/\//g, "//"),
+                url: obj.options.source,
                 type: 'POST',
                 data: {id: obj.options.id, type: obj.options.type},
                 datatype: 'json',
