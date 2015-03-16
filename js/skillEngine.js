@@ -1578,7 +1578,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
             multiple: false,
             openOnEnter: true,
             quietMillis: 2000,
-            ajax: {url: 'http://api.itsyourskills.com/proxy/action',
+            ajax: {url: 'https://www.itsyourskills.com/proxy/action',
                 dataType: 'json',
                 cache: "true",
                 data: function (term) {
@@ -1616,14 +1616,14 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                 }
 
                 $.ajax({
-                    url: 'http://api.itsyourskills.com/proxy/verify-captcha/' + $('#g-recaptcha-response').val(),
+                    url: 'https://www.itsyourskills.com/proxy/verify-captcha/' + $('#g-recaptcha-response').val(),
                     type: 'POST',
                     async: true,
                     success: function ($da) {
                         if ($da.success) {
                             obj = $.fn.skillEngine.obj['functionals'];
                             $.ajax({
-                                url: 'http://api.itsyourskills.com/proxy/action',
+                                url: 'https://www.itsyourskills.com/proxy/action',
                                 type: 'POST',
                                 data: {'action': 'add', 'term': $('#iysAddSkillBtn').data('term')},
                                 success: function ($data) {
