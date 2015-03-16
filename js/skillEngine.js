@@ -1651,12 +1651,14 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                                     $.fn.skillEngine.buildTree(obj, 'SEARCH');
                                     $('#iysVerifyCaptchaModal').modal('hide');
                                     $('#iysAddSkillWrapper').html('Enter the required Skill in the Search Box above or Select from the Suggestion Tree below');
+                                    $('div.modal-backdrop').remove();
                                 }
                             });
                         }
                         else {
                             $('#iysVerifyCaptchaModal').modal('hide');
                             $('#iysAddSkillWrapper').html('Enter the required Skill in the Search Box above or Select from the Suggestion Tree below');
+                            $('div.modal-backdrop').remove();
                         }
                     }});
             });
