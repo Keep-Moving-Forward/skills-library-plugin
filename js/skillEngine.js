@@ -25,7 +25,10 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
         this.attr('data-type', options.type);
         this.attr('data-id', 0);
         Mustache.tags = ["<%", "%>"];
-        $('[data-toggle="tooltip"]').tooltip();
+        //$('[data-toggle="tooltip"]').tooltip();
+        $('body').tooltip({
+            selector: '[data-toggle="tooltip"]'
+        });
         // Switch case for Mode
         // ====================
         switch ($mode) {
@@ -357,8 +360,8 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
             $blueprint += '<div class="pull-left">';
             $blueprint += '<form id="iysSearch" class="form-inline">';
             $blueprint += 'Search by <label><input type="radio" name="iysSearchMethod" value="search" checked="checked" /> Skills </label>';
-            $blueprint += '&nbsp;<label><input type="radio" name="iysSearchMethod" value="template" /> Templates</label>';
-            $blueprint += '&nbsp;<span data-toggle="tooltip" data-placement="bottom" data-title="Enter skill and select from the populated suggestions or use the skill tree" title="Enter skill and select from the populated suggestions or use the skill tree" class="label label-info">?</span>';
+            $blueprint += '&emsp;<label><input type="radio" name="iysSearchMethod" value="template" /> Templates</label>';
+            $blueprint += '&emsp;<span data-toggle="tooltip" data-placement="bottom" data-title="Enter skill and select from the populated suggestions or use the skill tree" title="Enter skill and select from the populated suggestions or use the skill tree" class="label label-info">?</span>';
             $blueprint += '</form>';
             $blueprint += '</div>';
             $blueprint += '</div>';
@@ -401,7 +404,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
         $blueprint += '<ul class="iys-tree skill-count-scroll" id="0">';
         if (!obj.options.lock) {
 
-            $blueprint += '<div class="iysInitialSpinner text-center text-info"><i class="fa fa-spinner fa-pulse fa-3x"></i></div>';
+            $blueprint += '<div class="iysInitialSpinner text-center text-info"><i class="fa fa-spinner fa-pulse"></i> &nbsp Please wait... The skills menu is getting ready...</div>';
         }
         $blueprint += '</ul>';
         $blueprint += '</div>';
@@ -788,10 +791,10 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
             /********** Start of Appending **********/
             if ($opt == 'SEARCH') {
 
-                $othersLi = '<li class="skill-others" data-search="true" prev-visit="li#' + $data.id + '"><a><i class="iys-others"></i> Others</a></li>';
+                $othersLi = '<li class="skill-others" data-search="true" prev-visit="li#' + $data.id + '"><a><i class="iys-others fa fa-ellipsis-h"></i> Others</a></li>';
             }
             else {
-                $othersLi = '<li class="skill-others" style="display:none;" ><a><i class="iys-others"></i> Others</a></li>';
+                $othersLi = '<li class="skill-others" style="display:none;" ><a><i class="iys-others fa fa-ellipsis-h"></i> Others</a></li>';
             }
 
             $element = $adam + ' li#' + $data.parent_id;
