@@ -359,7 +359,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
             $blueprint += '<div class="iys-sh-txt" id="iysAddSkillWrapper" >';
             $blueprint += '<div class="pull-left">';
             $blueprint += '<form id="iysSearch" class="form-inline">';
-            $blueprint += 'Search by <label><input type="radio" name="iysSearchMethod" value="search" checked="checked" /> Skills </label>';
+            $blueprint += 'Search by &emsp;<label><input type="radio" name="iysSearchMethod" value="search" checked="checked" /> Skills </label>';
             $blueprint += '&emsp;<label><input type="radio" name="iysSearchMethod" value="template" /> Templates</label>';
             $blueprint += '&emsp;<span data-toggle="tooltip" data-placement="bottom" data-title="Enter skill and select from the populated suggestions or use the skill tree" title="Enter skill and select from the populated suggestions or use the skill tree" class="label label-info">?</span>';
             $blueprint += '</form>';
