@@ -607,6 +607,10 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
             }
             for (var i = 0; i < $data.length; i++) {
                 if (typeof $data != 'undefined' && typeof $data[i] != 'undefined') {
+                    
+                    if(parseInt($data[i].is_child) == 2 && typeof $data[i].concept == 'undefined'){
+                        $data[i].concept = 'false';
+                    }
                     if (parseInt($data[i].parent_id) == parseInt($parent)) {
                         $tree = treeList($data[i]);
                         readymade($data, parseInt($data[i].id));
@@ -615,6 +619,11 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                         $tree = treeList($data[i]);
                         // break; // for performance make it break
                     }
+                    
+                     if(parseInt($data[i].is_child) == 2){
+                        $data[i].concept = 'true';
+                    }
+                    
                     if ($opt != 'SEARCH') {
                         delete $data[i];
                     }
@@ -716,7 +725,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
 
                     $tree += '</form>';
                     $tree += '</p>';
-                    if (!$avoidRec) {
+                    if ($data.concept == 'false') {
                         self = obj;
                         self.selector = 'li#' + $data.id;
                         self.options.id = $data.id;
