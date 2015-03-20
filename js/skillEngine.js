@@ -607,7 +607,6 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
             }
             for (var i = 0; i < $data.length; i++) {
                 if (typeof $data != 'undefined' && typeof $data[i] != 'undefined') {
-                    
                     if(typeof $data[i].is_child != 'undefined' && parseInt($data[i].is_child) == 2 && typeof $data[i].concept == 'undefined'){
                         $data[i].concept = 'false';
                     }
