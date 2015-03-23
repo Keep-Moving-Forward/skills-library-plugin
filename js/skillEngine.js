@@ -132,12 +132,14 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                     $($clickedElementObject.selector + ' > ul').children('li:not([class="skill-others"])').show();
                     /* Icon minus while showing the descendant */
                     $($clickedElementObject.selector + ' > a > i').alterClass('iys-*', 'iys-minus');
+                    $($clickedElementObject.selector).find('li[data-is_child="3"]').show();
                 }
 
                 /* Lock the selected Skill & its parents */
                 $.each($elementToLock, function (index, value) {
 
                     $(value).siblings('li.skill-others').show();
+                    $(value).find('li[data-is_child="3"]').show();
                     $(value).show();
                     $(value).find(' > a > i').alterClass('iys-*', 'iys-toptree');
                 });
@@ -164,19 +166,22 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                 }
 
                 $clickedElementSibilings.show();
+                $.each($clickedElementSibilings, function (index, value) {
+                    $(value).find('li[data-is_child="3"]').show();
+                });
                 $($clickedElement.attr('prev-visit') + ' ul').children('li').hide();
                 /* Icon */
                 $($clickedElement.attr('prev-visit') + ' > a > i').alterClass('iys-*', 'iys-plus');
                 $($clickedElement.attr('prev-visit')).find('li:not([class="skill-others"]) > a > i').alterClass('iys-*', 'iys-plus');
 
                 /* Lock the selected Skill & its parents */
-
                 if ($elementToLock.length) {
 
                     $.each($elementToLock, function (index, value) {
 
                         $(value).siblings('li[data-is_madatory="1"]').show();
                         $(value).siblings('li.skill-others').show();
+                        $(value).find('li[data-is_child="3"]').show();
                         $(value).show();
                         $(value).find(' > a > i').alterClass('iys-*', 'iys-toptree');
                     });
@@ -186,8 +191,8 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                 $clickedElement.hide();
             }
         }, 'ul li.skill-others a');
-        // Handling Search Other
-        // =====================
+        // Handling Others when loaded from Search
+        // =======================================
         $obj.on({
             click: function () {
 
@@ -216,10 +221,36 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
         $obj.on({
             click: function () {
 
+                var $parentLi = $(this).closest('li');
+                var $nonHighlight = jQuery.inArray($parentLi.data('is_child'), [2, 3]);
+
+                /* Based upon the concept its parent is checked*/
+                if ($parentLi.data('is_child') == 3) {
+
+                    var $conceptChecked = 0;
+
+                    $.each($('li[data-parent_id="' + $parentLi.data('parent_id') + '"]'), function (index, value) {
+
+                        $conceptChecked = $conceptChecked + $(value).find('label input[name="skills[]"]:checkbox:checked').length;
+                    });
+
+                    if ($conceptChecked > 0) {
+
+                        $('#skillcheck-' + $parentLi.data('parent_id')).prop("checked", true);
+                    }
+                    else {
+
+                        $('#skillcheck-' + $parentLi.data('parent_id')).prop("checked", false);
+                    }
+                }
+
                 $('#skillform-' + $(this).data('id') + ' input[name="checked"]').val($(this).prop("checked"));
-                if ($(this).prop("checked")) {
+
+                if ($(this).prop("checked") && $nonHighlight == -1) {
+
                     $('li#' + $(this).data('id')).addClass('iys-highlight');
                 }
+
                 if (!$(this).prop("checked")) {
 
                     $('li#' + $(this).data('id')).removeClass('iys-highlight');
@@ -326,9 +357,9 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                 success: function (data) {
                     $(obj.selector + ' div.iysInitialSpinner').remove();
                     obj.options.data = data;
-                    $.fn.skillEngine.buildTree(obj);
                     $(obj.selector).attr('data-appended', true);
                     $(obj.selector + ' > a > i').alterClass('iys-*', 'iys-minus');
+                    $.fn.skillEngine.buildTree(obj);
                 },
                 error: function (err) {
 
@@ -597,17 +628,22 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
 
     $.fn.skillEngine.buildTree = function (obj, $opt) {
 
-        $data = obj.options.data;
-        $adam = obj.adam.selector;
-        $avoidRec = false;
+        var $data = obj.options.data;
+        var $adam = obj.adam.selector;
+
         $(obj.selector + ' div.iysInitialSpinner').remove();
+
         readymade = function ($data, $parent) {
+
             if (typeof $parent === "undefined" || $parent === null) {
                 $parent = 0;
             }
             for (var i = 0; i < $data.length; i++) {
+
                 if (typeof $data != 'undefined' && typeof $data[i] != 'undefined') {
+
                     if (typeof $data[i].is_child != 'undefined' && parseInt($data[i].is_child) == 2 && typeof $data[i].concept == 'undefined') {
+
                         $data[i].concept = 'false';
                     }
                     if (parseInt($data[i].parent_id) == parseInt($parent)) {
@@ -617,6 +653,13 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                     else {
                         $tree = treeList($data[i]);
                         // break; // for performance make it break
+                    }
+
+                    if ($data[i].concept == 'false') {
+                        self = obj;
+                        self.selector = 'li#' + $data[i].id;
+                        self.options.id = $data[i].id;
+                        $.fn.skillEngine.request(self);
                     }
 
                     if (typeof $data[i].is_child != 'undefined' && parseInt($data[i].is_child) == 2) {
@@ -724,13 +767,6 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
 
                     $tree += '</form>';
                     $tree += '</p>';
-                    if ($data.concept == 'false') {
-                        self = obj;
-                        self.selector = 'li#' + $data.id;
-                        self.options.id = $data.id;
-                        $.fn.skillEngine.request(self);
-                        $avoidRec = true;
-                    }
                     break;
                 case 3:
                     $tree += '<label>';
