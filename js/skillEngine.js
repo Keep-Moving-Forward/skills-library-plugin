@@ -619,7 +619,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                         // break; // for performance make it break
                     }
                     
-                     if(parseInt($data[i].is_child) == 2){
+                     if(typeof $data[i].is_child != 'undefined' && parseInt($data[i].is_child) == 2){
                         $data[i].concept = 'true';
                     }
                     
