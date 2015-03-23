@@ -979,9 +979,14 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                 $('#iysAddSkillVerifyWrapper').html($captchaModal);
                 $('#iysSkillChart').hide();
                 $.getScript('https://www.google.com/recaptcha/api.js');
+
+                return "Add " + term;
+            } else {
+
+                return ' Your search - ' + term + '- did not match any templates.';
             }
 
-            return "Add " + term;
+
         }
 
         $('.keyword').select2({
