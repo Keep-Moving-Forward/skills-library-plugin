@@ -359,9 +359,9 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
             $blueprint += '<div class="iys-sh-txt" id="iysAddSkillWrapper" >';
             $blueprint += '<div class="pull-left">';
             $blueprint += '<form id="iysSearch" class="form-inline">';
-            $blueprint += 'Search by &emsp;<label><input type="radio" name="iysSearchMethod" value="search" checked="checked" /> Skills </label>';
-            $blueprint += '&emsp;<label><input type="radio" name="iysSearchMethod" value="template" /> Templates</label>';
-            $blueprint += '&emsp;<span data-toggle="tooltip" data-placement="bottom" data-title="Enter skill and select from the populated suggestions or use the skill tree" title="Enter skill and select from the populated suggestions or use the skill tree" class="label label-info">?</span>';
+            $blueprint += 'Search by <label><input type="radio" name="iysSearchMethod" value="search" checked="checked" /> Skills </label>';
+            $blueprint += '&nbsp;&nbsp;<label><input type="radio" name="iysSearchMethod" value="template" /> Templates</label>';
+            $blueprint += '&nbsp;&nbsp;<span data-toggle="tooltip" data-placement="bottom" data-title="Enter skill and select from the populated suggestions or use the skill tree" title="Enter skill and select from the populated suggestions or use the skill tree" class="label label-info">?</span>';
             $blueprint += '</form>';
             $blueprint += '</div>';
             $blueprint += '</div>';
@@ -607,7 +607,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
             }
             for (var i = 0; i < $data.length; i++) {
                 if (typeof $data != 'undefined' && typeof $data[i] != 'undefined') {
-                    if(typeof $data[i].is_child != 'undefined' && parseInt($data[i].is_child) == 2 && typeof $data[i].concept == 'undefined'){
+                    if (typeof $data[i].is_child != 'undefined' && parseInt($data[i].is_child) == 2 && typeof $data[i].concept == 'undefined') {
                         $data[i].concept = 'false';
                     }
                     if (parseInt($data[i].parent_id) == parseInt($parent)) {
@@ -618,14 +618,14 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                         $tree = treeList($data[i]);
                         // break; // for performance make it break
                     }
-                    
-                     if(typeof $data[i].is_child != 'undefined' && parseInt($data[i].is_child) == 2){
+
+                    if (typeof $data[i].is_child != 'undefined' && parseInt($data[i].is_child) == 2) {
                         $data[i].concept = 'true';
                     }
-                    
-                    if ($opt != 'SEARCH') {
-                        delete $data[i];
-                    }
+
+//                    if ($opt != 'SEARCH') {
+//                        delete $data[i];
+//                    }
                 }
             }
         }
