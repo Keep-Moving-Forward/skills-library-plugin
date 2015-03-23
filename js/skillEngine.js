@@ -983,7 +983,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                 return "Add " + term;
             } else {
 
-                return ' Your search - ' + term + '- did not match any templates.';
+                return ' Your search - <b>' + term + '</b> - did not match any templates.';
             }
 
 
