@@ -1161,8 +1161,6 @@ $(document).on('ready', function () {
 
     $('#functionals-fullscreen').on('click', function () {
 
-        alert('a');
-
         if (!$.fullscreen.isFullScreen()) {
 
             $(this).find(' > i').alterClass('fa-*', 'fa-compress');
