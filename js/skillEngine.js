@@ -1157,7 +1157,8 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
 // Full Screen
 // ===========
 
-$(function () {
+$('body').on('ready', function () {
+
     $('#functionals-fullscreen').on('click', function () {
 
         alert('a');
@@ -1177,5 +1178,6 @@ $(function () {
             $("a.top-btm-count").show();
             $.fullscreen.exit();
         }
-    });
+    }
+    );
 });
