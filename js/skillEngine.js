@@ -1157,7 +1157,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
 // Full Screen
 // ===========
 
-$('body').on('ready', function () {
+$(document).on('ready', function () {
 
     $('#functionals-fullscreen').on('click', function () {
 
