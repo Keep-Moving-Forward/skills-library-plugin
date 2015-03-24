@@ -1169,13 +1169,15 @@ $(document).on('ready', function () {
                 overflow: 'auto'
             });
             $("a.top-btm-count").hide();
+            $('div.iys-search-br').removeClass('iys-search-inhouse');
         }
         else {
             $(this).find(' > i').alterClass('fa-*', 'fa-expand');
             $('[data-type="functionals"]').find('ul#0').css({'max-height': ''});
             $("a.top-btm-count").show();
+            $('div.iys-search-br').addClass('iys-search-inhouse');
             $.fullscreen.exit();
         }
-    }
-    );
+    });
+
 });
