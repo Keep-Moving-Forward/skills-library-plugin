@@ -296,7 +296,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
 
                     if ($(this).text().toUpperCase().indexOf(txt.toUpperCase()) != -1) {
 
-                        $(this).filter(':not(.skill-others)').show();
+                        $(this).filter(':not([class="skill-others"])').show();
                     }
                     else {
 
@@ -853,7 +853,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                     $($adam + ' ul#0').append($tree);
                     if ($opt != 'SEARCH') {
 
-                        $($adam + ' ul[id="0"] > li:not([class=skill-others])').tinysort({data: 'display_order', order: 'asc'});
+                        $($adam + ' ul[id="0"] > li:not([class="skill-others"])').tinysort({data: 'display_order', order: 'asc'});
                     }
                 } else {
 
@@ -879,10 +879,10 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                         var $mixedContent = $('li[id="' + $data.parent_id + '"] > ul > li').find('input[type="checkbox"]').length;
                         if (!$mixedContent) {
 
-                            $('li[id="' + $data.parent_id + '"] > ul > li:not([class=skill-others]').tinysort({data: 'display_order', order: 'asc'});
+                            $('li[id="' + $data.parent_id + '"] > ul > li:not([class="skill-others"])').tinysort({data: 'display_order', order: 'asc'});
                         } else {
 
-                            $('li[id="' + $data.parent_id + '"] > ul > li:not([class=skill-others]').tinysort({order: 'asc', data: 'display_order', data: 'is_child'});
+                            $('li[id="' + $data.parent_id + '"] > ul > li:not([class="skill-others"])').tinysort({order: 'asc', data: 'display_order', data: 'is_child'});
                         }
                     }
                 }
