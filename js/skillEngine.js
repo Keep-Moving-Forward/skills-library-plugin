@@ -943,7 +943,6 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
 
             if (value.id == type) {
 
-                console.log(value.scale.split(':'));
                 scale_split = value.scale.split(':');
             }
         });
@@ -1160,6 +1159,8 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
 
 $(function () {
     $('#functionals-fullscreen').on('click', function () {
+
+        alert('a');
 
         if (!$.fullscreen.isFullScreen()) {
 
