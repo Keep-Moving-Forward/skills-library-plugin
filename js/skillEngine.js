@@ -104,8 +104,9 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
 
                 /* Declaration */
                 var $clickedElement = $(this).parent('li');
+                var $clickedElementChildrenOthers = $clickedElement.find('li.skill-others');
                 var $clickedElementSibilings = $clickedElement.siblings('li');
-                var $clickedElementChildren = $clickedElementSibilings.find('li');
+                var $clickedElementSibilingsChildren = $clickedElementSibilings.find('li');
                 var $clickedElementSibilingsMandatory = $clickedElement.siblings('li[data-is_madatory="1"]');
                 var $clickedElementSibilingsOthers = $clickedElement.siblings('li.skill-others');
                 var $clickedElementData = $clickedElement.data();
@@ -117,7 +118,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
 
                 /* Toggling */
                 $clickedElementSibilings.hide();
-                $clickedElementChildren.hide();
+                $clickedElementSibilingsChildren.hide();
                 $clickedElementSibilingsMandatory.show();
                 $clickedElementSibilingsOthers.show();
                 $clickedElementSibilingsOthers.attr('prev-visit', 'li#' + $clickedElementData.id);
@@ -143,6 +144,8 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                     $(value).show();
                     $(value).find(' > a > i').alterClass('iys-*', 'iys-toptree');
                 });
+
+                $clickedElementChildrenOthers.hide();
             }
         }, 'ul li a');
         // Handling Others (i.e) Back
@@ -198,7 +201,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
 
                 var $clickedElement = $(this).parent('li.skill-others');
                 var $clickedElementSibilings = $clickedElement.siblings('li');
-                var $clickedElementChildren = $clickedElementSibilings.find('li.iysTreeLi');
+                var $clickedElementSibilingsChildren = $clickedElementSibilings.find('li.iysTreeLi');
                 var $clickedElementParent = $clickedElement.closest('li.iysTreeLi');
                 var $clickedElementParentData = $clickedElementParent.data();
                 var $clickedElementObject = self;
@@ -210,7 +213,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
 
                 if ($clickedElementSibilings.data("is_child") == 2) {
                     $clickedElementSibilings.show();
-                    $clickedElementChildren.show();
+                    $clickedElementSibilingsChildren.show();
                 }
 
                 $clickedElement.removeAttr('data-search');
@@ -325,6 +328,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                 $('#skill-bottom-count').text(bottom.length);
             }
         });
+
     }
 
 })(jQuery);
@@ -384,21 +388,21 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
 
         $blueprint = '<div class="iys-spe">';
         if (obj.options.type == 'functionals' && !obj.options.lock) {
-            $blueprint += '<div class="iys-spe iys-search-br iys-search-inhouse">';
             $blueprint += '<div class="container">';
-            $blueprint += '<div class="col-lg-6 col-sm-6 col-sm-6 no-padding">';
+            $blueprint += '<div class="iys-search-br iys-search-inhouse">';
+            $blueprint += '<div class="col-lg-6 col-sm-6 col-sm-6">';
             $blueprint += '<div class="iys-sh-txt" id="iysAddSkillWrapper" >';
             $blueprint += '<div class="pull-left">';
             $blueprint += '<form id="iysSearch" class="form-inline">';
             $blueprint += 'Search by <label><input type="radio" name="iysSearchMethod" value="search" checked="checked" /> Skills </label>';
-            $blueprint += '&nbsp;&nbsp;<label><input type="radio" name="iysSearchMethod" value="template" /> Templates</label>';
+            $blueprint += '&nbsp;&nbsp;<label><input type="radio" name="iysSearchMethod" value="template" /> Some sample job profiles</label>';
             $blueprint += '&nbsp;&nbsp;<span data-toggle="tooltip" data-placement="bottom" data-title="Enter skill and select from the populated suggestions or use the skill tree" title="Enter skill and select from the populated suggestions or use the skill tree" class="label label-info">?</span>';
             $blueprint += '</form>';
             $blueprint += '</div>';
             $blueprint += '</div>';
             $blueprint += '<div class="keyword" style="width:100%;"></div>';
             $blueprint += '</div>';
-            $blueprint += '<div class="col-lg-4 col-sm-4 col-sm-4 no-padding pull-right">';
+            $blueprint += '<div class="col-lg-4 col-sm-4 col-sm-4 pull-right">';
             $blueprint += '<div id="iysAddSkillVerifyWrapper"></div>';
             $blueprint += '<div id="iysSkillChart">';
             $blueprint += '<div class="small"><span id="skills-count" data-count="0">0</span> <span> skill(s) added to your profile</span></div>';
@@ -406,6 +410,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
             $blueprint += '<div id="skill-chart-text"></div>';
             $blueprint += '</div>';
             $blueprint += '</div>';
+            $blueprint += '<div class="clearfix"></div>';
             $blueprint += '</div>';
             $blueprint += '</div>';
         }
@@ -417,7 +422,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                 $blueprint += 'iys-fun-bg">';
                 $blueprint += '<h2>Functional / Technical Skills</h2>';
                 if (!obj.options.lock) {
-                    $blueprint += '<a><div><span id="skill-top-count">0</span> skills selected above current skill</div></a>';
+                    $blueprint += '<a id="functionals-fullscreen" class="btn btn-info pull-right"><i class="fa fa-expand text-default"></i></a><a class="top-btm-count"><div><span id="skill-top-count">0</span> skills selected above current skill</div></a>';
                 }
                 break;
             case 'behavioural':
@@ -442,7 +447,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
         if (!obj.options.lock) {
             switch (obj.options.type) {
                 case 'functionals':
-                    $blueprint += '<div class="iys-fun-end"><p>You have selected <span id="skills-count-functionals">0</span> Functional Skills</p><a><div><span id="skill-bottom-count">0</span> skills selected below current skill</div></a></div>';
+                    $blueprint += '<div class="iys-fun-end"><p>You have selected <span id="skills-count-functionals">0</span> Functional Skills</p><a class="top-btm-count"><div><span id="skill-bottom-count">0</span> skills selected below current skill</div></a></div>';
                     break;
             }
         }
@@ -835,10 +840,10 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
             /********** Start of Appending **********/
             if ($opt == 'SEARCH') {
 
-                $othersLi = '<li class="skill-others" data-search="true" prev-visit="li#' + $data.id + '"><a><i class="iys-others fa fa-ellipsis-h"></i> Others</a></li>';
+                $othersLi = '<li class="skill-others" data-search="true" prev-visit="li#' + $data.id + '"><a><i class="iys-others fa fa-ellipsis-h"></i> Click to expand</a></li>';
             }
             else {
-                $othersLi = '<li class="skill-others" style="display:none;" ><a><i class="iys-others fa fa-ellipsis-h"></i> Others</a></li>';
+                $othersLi = '<li class="skill-others" style="display:none;" ><a><i class="iys-others fa fa-ellipsis-h"></i> Click to expand</a></li>';
             }
 
             $element = $adam + ' li#' + $data.parent_id;
@@ -897,7 +902,14 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
             /********** End of Display rest skill with searched data **********/
             /********** Start of Highlight ScrollTo on Search **********/
             if ($opt == 'SEARCH' && $('input[name=iysSearchMethod]:checked', '#iysSearch').val() != 'template') {
-                $('.skill-count-scroll').scrollTo('#skillcheck-' + $data.id, 200, {offset: {top: -200, bottom: 200}});
+
+                if (!$.fullscreen.isFullScreen()) {
+                    $('.skill-count-scroll').scrollTo('#skillcheck-' + $data.id, 200, {offset: {top: -200, bottom: 200}});
+                }
+                else {
+                    $('[data-type="functionals"]').scrollTo('#skillcheck-' + $data.id, 200, {offset: {top: -200, bottom: 200}});
+                }
+
                 $('#skillcheck-' + $data.id).closest('li').delay(200).addClass('iys-highlight').delay(2000).queue(function () {
                     $(this).removeClass("iys-highlight").dequeue();
                 });
@@ -924,8 +936,18 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
 (function ($) {
     $.fn.skillEngine.scaleType = function (type, rate) {
 
+//        var scale_type = [{"id": "1", "scale": "Novice:Competent:Proficient:Expert:Master"}, {"id": "2", "scale": "0 - 2 yrs exp:2 - 5 yrs exp:5 - 10 yrs exp:10 - 20 yrs exp: 20 plus yrs exp"}, {"id": "4", "scale": "Fair:Good:Very Good:Excellent:Outstanding"}, {"id": "5", "scale": "1 - 5:6 - 10:11 - 50:51 - 200:&gt;200"}, {"id": "6", "scale": "Low:Medium:High:Very High:Extreme"}, {"id": "7", "scale": "&lt;10:10 - 50:50 - 100:100 - 200:&gt;200"}, {"id": "8", "scale": "&lt; 1 Mn:1 - 2 Mn:2 - 5 Mn:5 - 10 Mn:&gt; 10 Mn"}, {"id": "9", "scale": "Experience in compliance:Experience in making improvements:Experience in driving implementation:Experience in making changes:Experience in conceptualising and strategising"}, {"id": "10", "scale": "Mostly compliance:Made improvements:Led small scale implementation:Led large scale implementation:Conceptualised \/ Strategised"}, {"id": "11", "scale": "Compliance:Improvement:Implementation Team:Implementation Head:Strategy"}, {"id": "12", "scale": "Operational Level:Junior Mgmt:Middle Mgmt:Senior Mgmt:CXO Level"}, {"id": "13", "scale": "Making Improvements:Adding Features:Involved in NPD:Driving NPD:Strategy for NPD"}, {"id": "14", "scale": "&lt; 1 Month:1-3 Months:3-12 Months:1-2 Years:&gt;2 Years"}, {"id": "15", "scale": "Level 1:Level 2:Level 3:Level 4:Level 5"}];
         var scale_type = [{"id": "1", "scale": "Novice:Competent:Proficient:Expert:Master"}, {"id": "2", "scale": "0 - 2 yrs exp:2 - 5 yrs exp:5 - 10 yrs exp:10 - 20 yrs exp: 20 plus yrs exp"}, {"id": "4", "scale": "Fair:Good:Very Good:Excellent:Outstanding"}, {"id": "5", "scale": "1 - 5:6 - 10:11 - 50:51 - 200:&gt;200"}, {"id": "6", "scale": "Low:Medium:High:Very High:Extreme"}, {"id": "7", "scale": "&lt;10:10 - 50:50 - 100:100 - 200:&gt;200"}, {"id": "8", "scale": "&lt; 1 Mn:1 - 2 Mn:2 - 5 Mn:5 - 10 Mn:&gt; 10 Mn"}, {"id": "9", "scale": "Experience in compliance:Experience in making improvements:Experience in driving implementation:Experience in making changes:Experience in conceptualising and strategising"}, {"id": "10", "scale": "Mostly compliance:Made improvements:Led small scale implementation:Led large scale implementation:Conceptualised \/ Strategised"}, {"id": "11", "scale": "Compliance:Improvement:Implementation Team:Implementation Head:Strategy"}, {"id": "12", "scale": "Operational Level:Junior Mgmt:Middle Mgmt:Senior Mgmt:CXO Level"}, {"id": "13", "scale": "Making Improvements:Adding Features:Involved in NPD:Driving NPD:Strategy for NPD"}, {"id": "14", "scale": "&lt; 1 Month:1-3 Months:3-12 Months:1-2 Years:&gt;2 Years"}, {"id": "15", "scale": "Level 1:Level 2:Level 3:Level 4:Level 5"}];
-        scale_split = scale_type[type].scale.split(':');
+
+        $.each(scale_type, function (index, value) {
+
+            if (value.id == type) {
+
+                console.log(value.scale.split(':'));
+                scale_split = value.scale.split(':');
+            }
+        });
+
         var scale = '<option value=""></option>';
         $.each(scale_split, function (index, value) {
             if (rate == index + 1) {
@@ -1129,5 +1151,30 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
         });
     }
 
+
 })(jQuery);
 
+
+// Full Screen
+// ===========
+
+$(function () {
+    $('#functionals-fullscreen').on('click', function () {
+
+        if (!$.fullscreen.isFullScreen()) {
+
+            $(this).find(' > i').alterClass('fa-*', 'fa-compress');
+            $('[data-type="functionals"]').find('ul#0').css({'max-height': '100%'});
+            $('[data-type="functionals"]').fullscreen({
+                overflow: 'auto'
+            });
+            $("a.top-btm-count").hide();
+        }
+        else {
+            $(this).find(' > i').alterClass('fa-*', 'fa-expand');
+            $('[data-type="functionals"]').find('ul#0').css({'max-height': ''});
+            $("a.top-btm-count").show();
+            $.fullscreen.exit();
+        }
+    });
+});
