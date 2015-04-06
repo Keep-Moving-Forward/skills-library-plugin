@@ -42,13 +42,12 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
             case "view":
 
                 if (options.data.length > 0) {
-
                     $(this).append($.fn.skillEngine.view(options));
                     $('.previewskillselect').barrating({'readonly': true});
                 }
                 else {
 
-                    $(this).html('<p>No ' + options.type + ' skills selected</p>');
+                    $(this).html('<p style="padding-left:25px;" class="iys text-danger">No skills found</p>');
                 }
 
                 break;
