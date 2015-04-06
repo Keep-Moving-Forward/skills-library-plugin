@@ -371,6 +371,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                 data: {id: obj.options.id, type: obj.options.type},
                 datatype: 'json',
                 success: function (data) {
+                    console.log(data);
                     $(obj.selector + ' div.iysInitialSpinner').remove();
                     obj.options.data = data;
                     $(obj.selector).attr('data-appended', true);
