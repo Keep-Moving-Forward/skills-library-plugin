@@ -1046,7 +1046,11 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                     var datum = [];
                     $.each(data, function (key, value) {
                         var compressedSkill = value.tree_structure;
-                        datum.push({'id': compressedSkill, 'text': value.tree_id_value});
+                        var str = value.tree_id_value;
+                        var si = str.indexOf("_")+1;
+                        var ei = str.indexOf(":",1);
+                        var txt = str.substr(0,si) + value.value + str.substr(ei);
+                        datum.push({'id': compressedSkill, 'text': txt});
                     });
                     return {results: datum};
                 }
