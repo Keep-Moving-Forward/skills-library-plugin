@@ -6649,7 +6649,7 @@ body{font-family: 'Open Sans', sans-serif; font-size: 14px; margin: 0 !important
 .iys-search-br {background: #fff;padding: 5px 0;border-top: 3px solid #27AE60;border-bottom: 1px solid #AAE4AF;
 text-align:  center;}
 .iys-search{max-width: 580px;float: left;display: inline-block;}
-.iys-sh-txt{margin: 0 0 3px 0;font-size: 14px;color: #006919;text-align: left;}         
+.iys-sh-txt{margin: 0 0 3px 0;font-size: 13px;color: #006919;text-align: left;}         
 /** Graph ***/
 .iys-bar1{background: #ED561B;}
 .iys-bar2{background: #FFA500;}
