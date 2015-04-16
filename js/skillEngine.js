@@ -1,4 +1,4 @@
-/*!
+/**
  * Skill Profile & Library Engine
  * Copyright 2011-2015 IYS, Pvt. Ltd
  * Licensed under MIT
@@ -20,6 +20,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
         // BOOTSTRAP
         // =========
         this.options = $.extend({}, $.fn.skillEngine.defaults, options);
+        this.options.mode = $mode;
         this.adam = $(this);
         $.fn.skillEngine.obj[this.options.type] = this;
         this.attr('data-type', options.type);
@@ -40,16 +41,8 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                     return $.fn.skillEngine.output(this);
                 break;
             case "view":
-
-                if (options.data.length > 0) {
-                    $(this).append($.fn.skillEngine.view(options));
-                    $('.previewskillselect').barrating({'readonly': true});
-                }
-                else {
-
-                    $(this).html('<p style="padding-left:25px;" class="iys text-danger">No skills found</p>');
-                }
-
+                $(this).append($.fn.skillEngine.view(options));
+                $('.previewskillselect').barrating({'readonly': true});
                 break;
             case "preview":
 
@@ -66,9 +59,33 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
 
                 $('.previewskillselect').barrating({'readonly': true});
                 break;
-            case "search":
 
+            case "search":
                 break;
+
+            case "report":
+                $.fn.skillEngine.setupHTML(this);
+                if (!options.lock) {
+
+                    $.fn.skillEngine.search(this);
+                    $.fn.skillEngine.request(this);
+                }
+
+                if (options.data && options.data != "" && options.data != null) {
+
+                    $.fn.skillEngine.report(this, 'INPUT');
+                }
+
+                var self = this;
+                return this.each(function () {
+
+                    if (!options.lock) {
+
+                        $.fn.skillEngine.events(self, this);
+                    }
+                });
+                break;
+
             default:
                 $.fn.skillEngine.setupHTML(this);
                 if (!options.lock) {
@@ -89,8 +106,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
 
                         $.fn.skillEngine.events(self, this);
                     }
-                }
-                );
+                });
         }
     };
     $.fn.skillEngine.defaults = {
@@ -111,52 +127,108 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
         $obj.on({
             click: function () {
 
-                /* Declaration */
                 var $clickedElement = $(this).parent('li');
-                var $clickedElementChildrenOthers = $clickedElement.find('li.skill-others');
-                var $clickedElementSibilings = $clickedElement.siblings('li');
-                var $clickedElementSibilingsChildren = $clickedElementSibilings.find('li');
-                var $clickedElementSibilingsMandatory = $clickedElement.siblings('li[data-is_madatory="1"]');
-                var $clickedElementSibilingsOthers = $clickedElement.siblings('li.skill-others');
-                var $clickedElementData = $clickedElement.data();
-                var $clickedElementObject = self;
-                var $elementToLock = $('[data-type="' + $clickedElementObject.options.type + '"] input:hidden[name="checked"][value="true"]').parents('li');
 
-                $clickedElementObject.options.id = $clickedElementData.id;
-                $clickedElementObject.selector = 'li#' + $clickedElementData.id;
+                if ($clickedElement.attr('data-collapse') == 'close') {
 
-                /* Toggling */
-                $clickedElementSibilings.hide();
-                $clickedElementSibilingsChildren.hide();
-                $clickedElementSibilingsMandatory.show();
-                $clickedElementSibilingsOthers.show();
-                $clickedElementSibilingsOthers.attr('prev-visit', 'li#' + $clickedElementData.id);
+                    /* Declaration */
+                    var $clickedElementChildrenOthers = $clickedElement.find('li.skill-others');
+                    var $clickedElementSibilings = $clickedElement.siblings('li');
+                    var $clickedElementSibilingsChildren = $clickedElementSibilings.find('li');
+                    var $clickedElementSibilingsMandatory = $clickedElement.siblings('li[data-is_madatory="1"]');
+                    var $clickedElementSibilingsOthers = $clickedElement.siblings('li.skill-others');
+                    var $clickedElementData = $clickedElement.data();
+                    var $clickedElementObject = self;
+                    var $elementToLock = $('[data-type="' + $clickedElementObject.options.type + '"] input:hidden[name="checked"][value="true"]').parents('li');
 
-                /* Fetch children from remote if not appended already */
-                if ($($clickedElementObject.selector).attr('data-appended') == "false" && $.inArray($clickedElementData.is_child, ["1", "2", "4"])) {
+                    $clickedElementObject.options.id = $clickedElementData.id;
+                    $clickedElementObject.selector = 'li#' + $clickedElementData.id;
 
-                    $.fn.skillEngine.request($clickedElementObject);
-                } else {
+                    /* Toggling */
+                    $clickedElement.attr('data-collapse', 'open');
+                    $clickedElementSibilings.hide();
+                    $clickedElementSibilingsChildren.hide();
+                    $clickedElementSibilingsMandatory.show();
+                    $clickedElementSibilingsOthers.show();
+                    $clickedElementSibilingsOthers.attr('prev-visit', 'li#' + $clickedElementData.id);
 
-                    /* Direct descendant only shown > */
-                    $($clickedElementObject.selector + ' > ul').children('li:not([class="skill-others"])').show();
-                    /* Icon minus while showing the descendant */
-                    $($clickedElementObject.selector + ' > a > i').alterClass('iys-*', 'iys-minus');
-                    $($clickedElementObject.selector).find('li[data-is_child="3"]').show();
+                    /* Fetch children from remote if not appended already */
+                    if ($($clickedElementObject.selector).attr('data-appended') == "false" && $.inArray($clickedElementData.is_child, ["1", "2", "4"])) {
+
+                        $.fn.skillEngine.request($clickedElementObject);
+                    } else {
+
+                        /* Direct descendant only shown > */
+                        $($clickedElementObject.selector + ' > ul').children('li:not([class="skill-others"])').show();
+                        /* Icon minus while showing the descendant */
+                        $($clickedElementObject.selector + ' > a > i').alterClass('iys-*', 'iys-minus');
+                        $($clickedElementObject.selector).find('li[data-is_child="3"]').show();
+                    }
+
+                    /* Lock the selected Skill & its parents */
+                    $.each($elementToLock, function (index, value) {
+
+                        $(value).siblings('li.skill-others').show();
+                        $(value).find('li[data-is_child="3"]').show();
+                        $(value).show();
+                        $(value).find(' > a > i').alterClass('iys-*', 'iys-toptree');
+                    });
+
+                    $clickedElementChildrenOthers.hide();
                 }
+                else {
 
-                /* Lock the selected Skill & its parents */
-                $.each($elementToLock, function (index, value) {
+                    /* Declaration */
+                    var $clickedElementSibilingsOthers = $clickedElement.siblings('li.skill-others');
+                    var $clickedElementChildrenOthers = $clickedElement.find('li.skill-others');
+                    var $clickedElementSibilings = $clickedElement.siblings('li');
+                    var $clickedElementData = $clickedElement.data();
+                    var $clickedElementObject = self;
+                    var $elementToLock = $('[data-type="' + $clickedElementObject.options.type + '"] input:hidden[name="checked"][value="true"]').parents('li');
 
-                    $(value).siblings('li.skill-others').show();
-                    $(value).find('li[data-is_child="3"]').show();
-                    $(value).show();
-                    $(value).find(' > a > i').alterClass('iys-*', 'iys-toptree');
-                });
+                    /* Toggling */
+                    $clickedElement.attr('data-collapse', 'close');
+                    $clickedElement.find('li.iysTreeLi').attr('data-collapse', 'close');
+                    $('li#' + $clickedElementData.parent_id).find('li.iysTreeLi').attr('data-collapse', 'close');
+                    console.log($('li#' + $clickedElementData.parent_id).find('li.iysTreeLi'));
+                    if ($elementToLock.length) {
+                        $('[data-type="' + $clickedElementObject.options.type + '"] li.iysTreeLi').hide();
+                        $clickedElement.parents('li.iysTreeLi').show();
+                    }
+                    else {
+                        $clickedElement.find('li.iysTreeLi').hide();
+                    }
 
-                $clickedElementChildrenOthers.hide();
+                    $clickedElementSibilings.show();
+                    $.each($clickedElementSibilings, function (index, value) {
+                        $(value).find('li[data-is_child="3"]').show();
+                    });
+
+                    /* Icon */
+                    //$('li#'+ $clickedElementData.parent_id).find('li:not([class="skill-others"]) > a > i').alterClass('iys-*', 'iys-plus');
+                    $('li#' + $clickedElementData.id + ' > a > i').alterClass('iys-*', 'iys-plus');
+                    $('li#' + $clickedElementData.id).find('li:not([class="skill-others"]) > a > i').alterClass('iys-*', 'iys-plus');
+
+
+                    /* Lock the selected Skill & its parents */
+                    if ($elementToLock.length) {
+
+                        $.each($elementToLock, function (index, value) {
+
+                            $(value).siblings('li[data-is_madatory="1"]').show();
+                            $(value).siblings('li.skill-others').show();
+                            $(value).find('li[data-is_child="3"]').show();
+                            $(value).show();
+                            $(value).find(' > a > i').alterClass('iys-*', 'iys-toptree');
+                        });
+                    }
+
+                    $clickedElementChildrenOthers.hide();
+                    $clickedElementSibilingsOthers.hide();
+                }
             }
         }, 'ul li a');
+
         // Handling Others (i.e) Back
         // ==========================
         $obj.on({
@@ -169,6 +241,8 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                 var $elementToLock = $('[data-type="' + $clickedElementObject.options.type + '"] input:hidden[name="checked"][value="true"]').parents('li');
 
                 /* Toggling */
+                $clickedElementSibilings.attr('data-collapse', 'close');
+                $clickedElementSibilings.find('li.iysTreeLi').attr('data-collapse', 'close');
                 if ($elementToLock.length) {
                     $('[data-type="' + $clickedElementObject.options.type + '"] li.iysTreeLi').hide();
                     $clickedElement.parents('li.iysTreeLi').show();
@@ -282,12 +356,11 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                 self.selector = 'li#' + id;
                 self.options.id = id;
                 $(this).removeClass('iys-placeholder');
-//                $(self.selector + ' > a').trigger('click');
 
                 if ($(self.selector).attr('data-appended') == "false") {
 
-//                    $.fn.skillEngine.request(self);
-                    $(self.selector + ' > a').trigger('click');
+                    $.fn.skillEngine.request(self);
+//                    $(self.selector + ' > a').trigger('click');
                 }
             },
             focusout: function () {
@@ -304,11 +377,11 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                 self.selector = 'li#' + id;
                 self.options.id = id;
                 var txt = $(this).val();
-                $(self.selector + ' > ul > li').each(function () {
+                $(self.selector + ' ul').show();
+                $(self.selector).find('li').each(function () {
 
                     if ($(this).text().toUpperCase().indexOf(txt.toUpperCase()) != -1) {
 
-//                        $(this).text().toUpperCase().indexOf(txt.toUpperCase());
                         $(this).filter(':not([class="skill-others"])').show();
                     }
                     else {
@@ -362,8 +435,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
         else {
 
             $(obj.selector + ' > a > i').alterClass('iys-*', 'iys-loading');
-
-            var request = $.ajax({
+            $.ajax({
 //                url: obj.options.source.replace(/.*?:\/\//g, "//"),
                 url: obj.options.source,
                 type: 'POST',
@@ -374,19 +446,22 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                     obj.options.data = data;
                     $(obj.selector).attr('data-appended', true);
                     $(obj.selector + ' > a > i').alterClass('iys-*', 'iys-minus');
-                    $.fn.skillEngine.buildTree(obj);
+
+                    if (obj.options.mode == 'report') {
+
+                        $.fn.skillEngine.report(obj);
+                    }
+                    else {
+
+                        $.fn.skillEngine.buildTree(obj);
+                    }
                 },
                 error: function (err) {
 
-                    $(obj.selector).attr('data-appended', false);
-                    $(obj.selector + ' > a > i').alterClass('iys-*', 'iys-plus');
-                    console.log('SPL-Error: Ajax error check console log');
+                    alert('SPL-Error: Ajax error check console log');
                     console.log(err);
-//                    $(obj.selector + ' > a').trigger('click');
                 }
             });
-
-            return request;
         }
     }
 
@@ -410,24 +485,30 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
             $blueprint += '<div class="iys-sh-txt" id="iysAddSkillWrapper" >';
             $blueprint += '<div class="pull-left">';
             $blueprint += '<form id="iysSearch" class="form-inline">';
-            $blueprint += 'Search by <label><input type="radio" name="iysSearchMethod" value="search" checked="checked" /> Skills </label>';
-            $blueprint += '&nbsp;&nbsp;<label><input type="radio" name="iysSearchMethod" value="template" /> Some sample job profiles</label>';
-            $blueprint += '&nbsp;&nbsp;<span data-toggle="tooltip" data-placement="bottom" data-title="Enter skill and select from the populated suggestions or use the skill tree" title="Enter skill and select from the populated suggestions or use the skill tree" class="label label-info">?</span>';
+            if (obj.options.mode != 'report') {
+                $blueprint += 'Search by <label><input type="radio" name="iysSearchMethod" value="search" checked="checked" /> Skills </label>';
+                $blueprint += '&nbsp;&nbsp;<label><input type="radio" name="iysSearchMethod" value="template" /> Some sample job profiles</label>';
+                $blueprint += '&nbsp;&nbsp;<span data-toggle="tooltip" data-placement="bottom" data-title="Enter skill and select from the populated suggestions or use the skill tree" title="Enter skill and select from the populated suggestions or use the skill tree" class="label label-info">?</span>';
+            } else {
+                $blueprint += '<input type="radio" name="iysSearchMethod" value="report"  checked="checked" class="hide"/> ';
+            }
             $blueprint += '</form>';
             $blueprint += '</div>';
             $blueprint += '</div>';
             $blueprint += '<div class="keyword" style="width:100%;"></div>';
             $blueprint += '</div>';
-            $blueprint += '<div class="col-lg-4 col-sm-4 col-sm-4 pull-right">';
-            $blueprint += '<div id="iysAddSkillVerifyWrapper"></div>';
-            $blueprint += '<div id="iysSkillChart">';
-            $blueprint += '<div class="small"><span id="skills-count" data-count="0">0</span> <span> skill(s) added to your profile</span></div>';
-            $blueprint += '<div id="skill-chart"></div>';
-            $blueprint += '<div id="skill-chart-text"></div>';
-            $blueprint += '</div>';
-            $blueprint += '</div>';
-            $blueprint += '<div class="clearfix"></div>';
-            $blueprint += '</div>';
+            if (obj.options.mode != 'report') {
+                $blueprint += '<div class="col-lg-4 col-sm-4 col-sm-4 pull-right">';
+                $blueprint += '<div id="iysAddSkillVerifyWrapper"></div>';
+                $blueprint += '<div id="iysSkillChart">';
+                $blueprint += '<div class="small"><span id="skills-count" data-count="0">0</span> <span> skill(s) added to your profile</span></div>';
+                $blueprint += '<div id="skill-chart"></div>';
+                $blueprint += '<div id="skill-chart-text"></div>';
+                $blueprint += '</div>';
+                $blueprint += '</div>';
+                $blueprint += '<div class="clearfix"></div>';
+                $blueprint += '</div>';
+            }
             $blueprint += '</div>';
         }
 
@@ -453,6 +534,17 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
 
         $blueprint += '</div>';
         $blueprint += '<div>';
+
+        if (typeof obj.options.report != 'undefined' && typeof obj.options.report.header != 'undefined') {
+
+            $blueprint += '<div class="tit-con">';
+            $blueprint += '<div class="sampleClass bold">';
+            $blueprint += Mustache.render(obj.options.report.header);
+            $blueprint += '</div>';
+            $blueprint += '<div class="clearfix"></div>';
+            $blueprint += '</div>';
+        }
+
         $blueprint += '<ul class="iys-tree skill-count-scroll" id="0">';
         if (!obj.options.lock) {
 
@@ -460,6 +552,21 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
         }
         $blueprint += '</ul>';
         $blueprint += '</div>';
+        switch (obj.options.type) {
+            case 'functionals':
+
+                if (typeof obj.options.report != 'undefined' && typeof obj.options.report.header != 'undefined') {
+
+                    $blueprint += '<div class="tit-con">';
+                    $blueprint += '<div class="sampleClass bold">';
+                    $blueprint += Mustache.render(obj.options.report.header);
+                    $blueprint += '</div>';
+                    $blueprint += '<div class="clearfix"></div>';
+                    $blueprint += '</div>';
+                }
+
+                break;
+        }
         if (!obj.options.lock) {
             switch (obj.options.type) {
                 case 'functionals':
@@ -639,7 +746,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
 
 })(jQuery);
 /* ========================================================================
- * SPLE: Core Tree Builder
+ * SPLE: Report
  * ========================================================================
  * Copyright 2011-2015 IYS, Pvt. Ltd
  * Licensed under MIT
@@ -647,7 +754,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
 
 (function ($) {
 
-    $.fn.skillEngine.buildTree = function (obj, $opt) {
+    $.fn.skillEngine.report = function (obj, $opt) {
 
         var $data = obj.options.data;
         var $adam = obj.adam.selector;
@@ -706,7 +813,304 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
             else {
                 $tree += 'class="iysTreeLi" data-scale_type="' + $data.scale_type + '"';
             }
-            $tree += ' >';
+            $tree += '  data-collapse="close" >';
+            switch (parseInt($data.is_child)) {
+
+                case 0:
+                    $tree += '<label>';
+
+                    $tree += $data.value;
+                    $tree += '</label>';
+                    if (obj.options.report && obj.options.report.template) {
+
+                        $tree += '<div class="sampleClass hideClass">';
+                        $tree += Mustache.render(obj.options.report.template, $data);
+                        $tree += '</div>';
+                    }
+                    $tree += '<p>';
+                    $tree += '<form id="skillform-' + $data.id + '">';
+                    $tree += '<input type="hidden" name="id" value="' + $data.id + '" />';
+                    $tree += '<input type="hidden" name="parent_id" value="' + $data.parent_id + '" />';
+                    $tree += '<input type="hidden" name="is_child" value="' + $data.is_child + '" />';
+                    $tree += '<input type="hidden" name="scale_type" value="' + $data.scale_type + '" />';
+                    $tree += '<input type="hidden" name="rating" value="' + (typeof $data.rating == 'undefined' ? 0 : $data.rating) + '" />';
+                    $tree += '<input type="hidden" name="checked" value="' + (typeof $data.checked == 'undefined' ? false : $data.checked) + '" />';
+                    $tree += '<input type="hidden" name="value" value="' + $data.value + '" />';
+
+                    if (obj.options.template) {
+
+                        $tree += Mustache.render(obj.options.template, $data);
+                    }
+
+                    $tree += '</form>';
+                    $tree += '</p>';
+                    break;
+                case 1:
+                    $tree += '<a class="' + ($data.is_madatory == 1 ? 'text-warning' : '') + '">';
+                    if (obj.options.lock) {
+
+                        $tree += '<i class="iys-toptree"></i> ';
+                    } else {
+
+                        $tree += '<i class="iys-plus"></i> ';
+                    }
+
+                    $tree += $data.value + '</a>';
+                    if (!obj.options.lock) {
+
+                        $tree += '<input type="text" class="in-build-search textbox iys-placeholder" />';
+                    }
+
+
+                    if (obj.options.report && obj.options.report.template && !obj.options.lock) {
+
+                        $tree += '<div class="sampleClass hideClass">';
+                        $tree += Mustache.render(obj.options.report.template, $data);
+                        $tree += '</div>';
+                    }
+                    break;
+                case 2:
+                    $tree += '<label>';
+                    $tree += $data.value;
+                    $tree += '</label>';
+                    if (obj.options.report && obj.options.report.template) {
+
+                        $tree += '<div class="sampleClass hideClass">';
+                        $tree += Mustache.render(obj.options.report.template, $data);
+                        $tree += '</div>';
+                    }
+                    $tree += '<p>';
+                    $tree += '<form id="skillform-' + $data.id + '">';
+                    $tree += '<input type="hidden" name="id" value="' + $data.id + '" />';
+                    $tree += '<input type="hidden" name="parent_id" value="' + $data.parent_id + '" />';
+                    $tree += '<input type="hidden" name="is_child" value="' + $data.is_child + '" />';
+                    $tree += '<input type="hidden" name="scale_type" value="' + $data.scale_type + '" />';
+                    $tree += '<input type="hidden" name="rating" value="' + (typeof $data.rating == 'undefined' ? 0 : $data.rating) + '" />';
+                    $tree += '<input type="hidden" name="checked" value="' + (typeof $data.checked == 'undefined' ? false : $data.checked) + '" />';
+                    $tree += '<input type="hidden" name="value" value="' + $data.value + '" />';
+                    if (obj.options.template) {
+
+                        $tree += Mustache.render(obj.options.template, $data);
+                    }
+
+                    $tree += '</form>';
+                    $tree += '</p>';
+                    break;
+                case 3:
+//                    $tree += '<label>';
+//
+//                    $tree += $data.value;
+//                    $tree += '</label>';
+//                    $tree += '<p>';
+//                    $tree += '<form id="skillform-' + $data.id + '">';
+//                    $tree += '<input type="hidden" name="id" value="' + $data.id + '" />';
+//                    $tree += '<input type="hidden" name="parent_id" value="' + $data.parent_id + '" />';
+//                    $tree += '<input type="hidden" name="is_child" value="' + $data.is_child + '" />';
+//                    $tree += '<input type="hidden" name="value" value="' + $data.value + '" />';
+//                    $tree += '<input type="hidden" name="rating" value="' + (typeof $data.rating == 'undefined' ? 0 : $data.rating) + '" />';
+//                    $tree += '<input type="hidden" name="checked" value="' + (typeof $data.checked == 'undefined' ? false : $data.checked) + '" />';
+//                    $tree += '</form>';
+//                    $tree += '</p>';
+                    break;
+                case 4:
+                    $tree += '<a>';
+                    if (obj.options.lock) {
+
+                        $tree += '<i class="iys-toptree"></i> ';
+                    } else {
+
+                        $tree += '<i class="iys-plus"></i> ';
+                    }
+
+                    $tree += $data.value + '</a>';
+                    if (!obj.options.lock) {
+                        $tree += '<input type="text" class="in-build-search textbox iys-placeholder" />';
+                    }
+
+                    if (obj.options.report && obj.options.report.template) {
+
+                        $tree += '<div class="sampleClass hideClass">';
+                        $tree += Mustache.render(obj.options.report.template, $data);
+                        $tree += '</div>';
+                    }
+                    $tree += '<p>';
+                    $tree += '<form id="skillform-' + $data.id + '">';
+                    $tree += '<input type="hidden" name="id" value="' + $data.id + '" />';
+                    $tree += '<input type="hidden" name="parent_id" value="' + $data.parent_id + '" />';
+                    $tree += '<input type="hidden" name="is_child" value="' + $data.is_child + '" />';
+                    $tree += '<input type="hidden" name="scale_type" value="' + $data.scale_type + '" />';
+                    $tree += '<input type="hidden" name="rating" value="' + (typeof $data.rating == 'undefined' ? 0 : $data.rating) + '" />';
+                    $tree += '<input type="hidden" name="checked" value="' + (typeof $data.checked == 'undefined' ? false : $data.checked) + '" />';
+                    $tree += '<input type="hidden" name="value" value="' + $data.value + '" />';
+                    if (obj.options.template) {
+
+                        $tree += Mustache.render(obj.options.template, $data);
+                    }
+
+                    $tree += '</form>';
+                    $tree += '</p>';
+                    break;
+                default:
+                    $tree = 'Out of Child';
+            }
+            $tree += '</li>';
+            /********** End of Li **********/
+
+            /********** Start of Appending **********/
+            if ($opt == 'SEARCH') {
+
+                $othersLi = '<li class="skill-others" data-search="true" prev-visit="li#' + $data.id + '"><a><i class="iys-others fa fa-ellipsis-h"></i> Click to expand</a></li>';
+            }
+            else {
+                $othersLi = '<li class="skill-others" style="display:none;" ><a><i class="iys-others fa fa-ellipsis-h"></i> Click to expand</a></li>';
+            }
+
+            $element = $adam + ' li#' + $data.parent_id;
+            if (!$($adam + ' li#' + $data.id).length) {
+
+                if ($data.parent_id == 0) {
+                    if (!$($adam + ' ul#0').has('li.skill-others').length) {
+
+                        $($adam + ' ul#0').append($othersLi);
+                    }
+                    $($adam + ' ul#0').append($tree);
+                    if ($opt != 'SEARCH' && !obj.options.lock) {
+
+                        $($adam + ' ul[id="0"] > li:not([class="skill-others"])').tinysort({data: 'display_order', order: 'asc'});
+                    }
+                } else {
+
+                    if ($($element).has('ul li.skill-others').length || $($element).has('ul.iysConceptChild').length) {
+
+                        $($element + ' > ul').append($tree);
+                    }
+
+                    else {
+
+                        if ($data.is_child == 3) {
+                            //                            $($element).append('<ul class="iysConceptChild">' + $tree + '</ul>');
+                        }
+                        else {
+
+                            $($element).append('<ul>' + $othersLi + $tree + '</ul>');
+                        }
+                    }
+
+                    if ($opt != 'SEARCH' && !obj.options.lock) {
+
+                        var $mixedContent = $('li[id="' + $data.parent_id + '"] > ul > li').find('input[type="checkbox"]').length;
+                        if (!$mixedContent) {
+
+                            $('li[id="' + $data.parent_id + '"] > ul > li:not([class="skill-others"])').tinysort({data: 'display_order', order: 'asc'});
+
+                        } else {
+
+
+                            $('li[id="' + $data.parent_id + '"] > ul > li:not([class="skill-others"])').tinysort({order: 'asc', data: 'display_order', data: 'is_child'});
+                        }
+                    }
+                }
+            }
+            /********** End of Appending **********/
+
+            /********** Start of Display rest skill with searched data **********/
+            if ($opt == 'SEARCH') {
+                $($adam + ' li#' + $data.id).show();
+                $($adam + ' li#' + $data.id + ' > ul').show();
+            }
+            /********** End of Display rest skill with searched data **********/
+            /********** Start of Highlight ScrollTo on Search **********/
+            if ($opt == 'SEARCH' && $('input[name=iysSearchMethod]:checked', '#iysSearch').val() != 'template') {
+
+                if (!$.fullscreen.isFullScreen()) {
+                    $('.skill-count-scroll').scrollTo('#skillcheck-' + $data.id, 200, {offset: {top: -200, bottom: 200}});
+                }
+                else {
+                    $('[data-type="functionals"]').scrollTo('#skillcheck-' + $data.id, 200, {offset: {top: -200, bottom: 200}});
+                }
+
+                $('#skillcheck-' + $data.id).closest('li').delay(200).addClass('iys-highlight').delay(2000).queue(function () {
+                    $(this).removeClass("iys-highlight").dequeue();
+                });
+            }
+            /********** End of Highlight ScrollTo on Search **********/
+        }
+        readymade($data);
+        if (obj.options.lock && !obj.options.unlockRating) {
+            $('.skillselect').barrating({'readonly': true});
+        } else {
+            $('.skillselect').barrating('show', {onSelect: $.fn.skillEngine.chart
+            });
+        }
+
+    }
+})(jQuery);
+
+/* ========================================================================
+ * SPLE: Core Tree Builder
+ * ========================================================================
+ * Copyright 2011-2015 IYS, Pvt. Ltd
+ * Licensed under MIT
+ * ======================================================================== */
+
+(function ($) {
+    $.fn.skillEngine.buildTree = function (obj, $opt) {
+
+        var $data = obj.options.data;
+        var $adam = obj.adam.selector;
+
+        $(obj.selector + ' div.iysInitialSpinner').remove();
+
+        readymade = function ($data, $parent) {
+
+            if (typeof $parent === "undefined" || $parent === null) {
+                $parent = 0;
+            }
+            for (var i = 0; i < $data.length; i++) {
+
+                if (typeof $data != 'undefined' && typeof $data[i] != 'undefined') {
+
+                    if (typeof $data[i].is_child != 'undefined' && parseInt($data[i].is_child) == 2 && typeof $data[i].concept == 'undefined') {
+
+                        $data[i].concept = 'false';
+                    }
+                    if (parseInt($data[i].parent_id) == parseInt($parent)) {
+                        $tree = treeList($data[i]);
+                        readymade($data, parseInt($data[i].id));
+                    }
+                    else {
+                        $tree = treeList($data[i]);
+                        // break; // for performance make it break
+                    }
+
+                    if ($data[i].concept == 'false') {
+                        self = obj;
+                        self.selector = 'li#' + $data[i].id;
+                        self.options.id = $data[i].id;
+                        $.fn.skillEngine.request(self);
+                    }
+
+                    if (typeof $data[i].is_child != 'undefined' && parseInt($data[i].is_child) == 2) {
+                        $data[i].concept = 'true';
+                    }
+
+//                    if ($opt != 'SEARCH') {
+//                        delete $data[i];
+//                    }
+                }
+            }
+        }
+
+        treeList = function ($data) {
+            $tree = '';             /********** Start of Li **********/
+            $tree += '<li id="' + $data.id + '" data-value="' + $data.value + '" data-parent_id="' + $data.parent_id + '" data-is_child="' + $data.is_child + '" data-is_madatory="' + $data.is_madatory + '" data-id="' + $data.id + '" ';
+            if ($data.is_child == 1 || $data.is_child == 2 || $data.is_child == 4) {
+                $tree += 'class="iysTreeLi parent_li" data-appended="false"';
+            }
+            else {
+                $tree += 'class="iysTreeLi" data-scale_type="' + $data.scale_type + '"';
+            }
+            $tree += '  data-collapse="close" >';
             switch (parseInt($data.is_child)) {
 
                 case 0:
@@ -866,7 +1270,6 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
             if (!$($adam + ' li#' + $data.id).length) {
 
                 if ($data.parent_id == 0) {
-
                     if (!$($adam + ' ul#0').has('li.skill-others').length) {
 
                         $($adam + ' ul#0').append($othersLi);
@@ -886,7 +1289,6 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                     else {
 
                         if ($data.is_child == 3) {
-
                             $($element).append('<ul class="iysConceptChild">' + $tree + '</ul>');
                         }
                         else {
@@ -984,15 +1386,14 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
 
 (function ($) {
     $.fn.skillEngine.search = function () {
-
         obj = $.fn.skillEngine.obj['functionals'];
         function formatItem(item) {
 
             var treeArr = item.text.replace(/[(:\d_)]+/g, '@@@').split('@@@');
             treeArr = treeArr.slice(1, treeArr.length - 1);
             var skillname = treeArr[0], categories = [], catstr = '';
-            if (treeArr.length >= 7) {
-                categories = treeArr.slice(treeArr.length - 6);
+            if (treeArr.length >= 6) {
+                categories = treeArr.slice(treeArr.length - 5);
             } else if (treeArr.length == 1) {
                 //categories.push(treeArr[1]);
             } else if (treeArr.length == 2) {
@@ -1028,73 +1429,105 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
 
 
         }
+        if ($('input[name=iysSearchMethod]:checked').val() != 'report') {
+            $('.keyword').select2({
+                placeholder: "Please Enter Your skill",
+                minimumInputLength: 2,
+                allowClear: true,
+                multiple: false,
+                openOnEnter: true,
+                quietMillis: 2000,
+                ajax: {
+                    url: 'https://www.itsyourskills.com/proxy/action',
+                    dataType: 'json',
+                    cache: "true",
+                    data: function (term) {
+                        var action = $('input[name=iysSearchMethod]:checked', '#iysSearch').val();
+                        var q = action == 'template' && term == '' ? 'ALL' : term;
+                        return {
+                            term: q,
+                            action: action
+                        };
+                    },
+                    results: function (data, callback) {
+                        var datum = [];
+                        $.each(data, function (key, value) {
+                            var compressedSkill = value.tree_structure;
+                            datum.push({'id': compressedSkill, 'text': value.tree_id_value});
+                        });
+                        return {results: datum};
+                    }
+                },
+                formatResult: formatItem,
+                formatSelection: function () {
+                    return '';
+                },
+                formatNoMatches: formatNoMatches
 
-        $('.keyword').select2({
-            placeholder: "Please Enter Your skill",
-            minimumInputLength: 2,
-            allowClear: true,
-            multiple: false,
-            openOnEnter: true,
-            quietMillis: 2000,
-            ajax: {url: 'https://www.itsyourskills.com/proxy/action',
-                dataType: 'json',
-                cache: "true",
-                data: function (term) {
-                    var action = $('input[name=iysSearchMethod]:checked', '#iysSearch').val();
-                    var q = action == 'template' && term == '' ? 'ALL' : term;
-                    return {
-                        term: q,
-                        action: action
-                    };
-                },  
-                results: function (data, callback) {
-                    var datum = [];
-                    $.each(data, function (key, value) {
-                        var compressedSkill = value.tree_structure;
-                        datum.push({'id': compressedSkill, 'text': value.tree_id_value});
-                    });
-                    return {results: datum};
-                }
-                /*results: function (data, callback) {
-                    var datum = [];
-                    $.each(data, function (key, value) {
-                        var compressedSkill = value.tree_structure;
-                        var str = value.tree_id_value;
-                        var si = str.indexOf("_")+1;
-                        var ei = str.indexOf(":",1);
-                        var txt = str.substr(0,si) + value.value + str.substr(ei);
-                        datum.push({'id': compressedSkill, 'text': txt});
-                    });
-                    return {results: datum};
-                }*/
-            },
-            formatResult: formatItem,
-            formatSelection: function () {
-                return '';
-            },
-            formatNoMatches: formatNoMatches
+            }).on("change", function ($e) {
 
-        }).on("change", function ($e) {
+                obj.options.data = JSON.parse($e.val);
+                $.fn.skillEngine.buildTree(obj, 'SEARCH');
+            }).on("select2-opening", function () {
+                var minimumInputLength = $('input[name=iysSearchMethod]:checked').val() == 'search' ? 2 : 0;
+                $(this).data("select2").opts.minimumInputLength = minimumInputLength;
+            });
 
-            obj.options.data = JSON.parse($e.val);
-            $.fn.skillEngine.buildTree(obj, 'SEARCH');
-        }).on("select2-opening", function () {
-            var minimumInputLength = $('input[name=iysSearchMethod]:checked').val() == 'search' ? 2 : 0;
-            $(this).data("select2").opts.minimumInputLength = minimumInputLength;
-        });
+            $('input[name=iysSearchMethod]').on('click', function () {
+                $('.keyword').select2('open');
+            });
+        } else {
 
-        $('input[name=iysSearchMethod]').on('click', function () {
-            $('.keyword').select2('open');
-        });
+            $('.keyword').select2({
+                placeholder: "Please Enter Your skill",
+                minimumInputLength: 2,
+                allowClear: true, multiple: false,
+                openOnEnter: true, quietMillis: 2000, ajax: {url: '/skillreport',
+                    dataType: 'json',
+                    cache: "true",
+                    data: function (term) {
+
+                        return {
+                            term: term, action: $('input[name=iysSearchMethod]:checked', '#iysSearch').val()};
+                    },
+                    results: function (data, callback) {
+                        var datum = [];
+                        $.each(data, function (key, value) {
+                            var compressedSkill = value.tree_structure;
+                            datum.push({'id': compressedSkill, 'text': value.tree_id_value});
+                        });
+                        return {results: datum};
+                    }
+                },
+                formatResult: formatItem,
+                formatSelection: function () {
+                    return '';
+                },
+                formatNoMatches: formatNoMatches
+
+            }).on("change", function ($e) {
+                $e.preventDefault();
+                obj.options.data = JSON.parse($e.val);
+                ajx = $.ajax({
+                    url: '/skillreport',
+                    type: 'POST',
+                    async: true, dataType: 'json',
+                    data: {'skillStructure': obj.options.data},
+                    success: function ($data) {
+                        obj.options.data = $data;
+                        $.fn.skillEngine.report(obj, 'SEARCH');
+                    }
+                });
+            });
+        }
+
         $(document).off('click', '#iysVerifyCaptchaBtnCancel');
         $(document).on('click', '#iysVerifyCaptchaBtnCancel', function () {
-
             $('#iysSkillChart').show();
             $('#iysAddSkillVerifyWrapper').empty();
         });
         $(document).off('click', '#iysVerifyCaptchaBtn');
         $(document).on('click', '#iysVerifyCaptchaBtn', function () {
-
             if ($('#g-recaptcha-response').val() == '') {
                 alert('Please verify the Recaptcha');
                 return false;
@@ -1103,8 +1536,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
             $.ajax({
                 url: 'https://www.itsyourskills.com/proxy/verify-captcha/' + $('#g-recaptcha-response').val(),
                 type: 'POST',
-                async: true,
-                success: function ($da) {
+                async: true, success: function ($da) {
                     if ($da.success) {
                         obj = $.fn.skillEngine.obj['functionals'];
                         $.ajax({
@@ -1139,7 +1571,6 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
  * ======================================================================== */
 
 (function ($) {
-
     $.fn.skillEngine.chart = function (value, text) {
 
         var skillid = $(this).parent().siblings('select.skillselect').data('id');
@@ -1147,7 +1578,6 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
         $('#skill-chart-text').show();
 
         if (value != '') {
-
             $('li#' + skillid).addClass('iys-highlight');
             $('#skillform-' + skillid + ' input[name="rating"]').val(value);
             $('#skillform-' + skillid + ' input[name="checked"]').val(true);
@@ -1173,17 +1603,14 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
         }
 
         $('span#skills-count').text($('input:hidden[name="rating"]').filter(function () {
-
             return $(this).val() > 0 && $(this).val() < 6;
         }).length);
 
         $('span#skills-count-functionals').text($('[data-type="functionals"] input:hidden[name="rating"]').filter(function () {
-
             return $(this).val() > 0 && $(this).val() < 6;
         }).length);
 
         $('div.iys-chart').on('click', function () {
-
             $('#skill-chart').children('div').removeClass('active-bar');
             $('#skill-chart-text').text($(this).data('title'));
             $(this).addClass('active-bar');
@@ -1196,14 +1623,11 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
 
 // Full Screen
 // ===========
-$(document).on('ready', function () {
-
+$(document).on('ready ajaxComplete', function () {
     $('#functionals-fullscreen').on('click', function () {
-
         if (!$.fullscreen.isFullScreen()) {
 
             $(this).find(' > i').alterClass('fa-*', 'fa-compress');
-            $('[data-type="functionals"]').attr('fullscreen', 'yes');
             $('[data-type="functionals"]').find('ul#0').css({'max-height': '100%'});
             $('[data-type="functionals"]').fullscreen({
                 overflow: 'auto'
@@ -1212,9 +1636,7 @@ $(document).on('ready', function () {
             $('div.iys-search-br').removeClass('iys-search-inhouse');
         }
         else {
-
-            $('#functionals-fullscreen').find(' > i').alterClass('fa-*', 'fa-expand');
-            $('[data-type="functionals"]').attr('fullscreen', 'no');
+            $(this).find(' > i').alterClass('fa-*', 'fa-expand');
             $('[data-type="functionals"]').find('ul#0').css({'max-height': ''});
             $("a.top-btm-count").show();
             $('div.iys-search-br').addClass('iys-search-inhouse');
@@ -1222,32 +1644,19 @@ $(document).on('ready', function () {
         }
     });
 
-    window.addEventListener("keyup", function (e) {
-        if (e.keyCode == 27) {
+    var subCatContainer = $(".sampleClass");
 
-            $('#functionals-fullscreen').find(' > i').alterClass('fa-*', 'fa-expand');
-            $('[data-type="functionals"]').attr('fullscreen', 'no');
-            $('[data-type="functionals"]').find('ul#0').css({'max-height': ''});
-            $("a.top-btm-count").show();
-            $('div.iys-search-br').addClass('iys-search-inhouse');
-            $.fullscreen.exit();
-        }
+    subCatContainer.scroll(function () {
+        subCatContainer.scrollLeft($(this).scrollLeft());
     });
 
-    var fullscreen = document.getElementById('functionals');
+    var ColIncrement = 1;
+    $('.titleCol').each(function () {
+//        console.log($(this).text() + '-' + $(this).width());
+        $('.childCol' + ColIncrement).width($(this).width());
+        ColIncrement++;
+    });
 
-    fullscreen.addEventListener('DOMAttrModified', function (e) {
-        if (e.attrName === 'style') {
-
-            if (e.prevValue == 'box-sizing: border-box; width: 100%; height: 100%; overflow: auto;') {
-                $('#functionals-fullscreen').find(' > i').alterClass('fa-*', 'fa-expand');
-                $('[data-type="functionals"]').attr('fullscreen', 'no');
-                $('[data-type="functionals"]').find('ul#0').css({'max-height': ''});
-                $("a.top-btm-count").show();
-                $('div.iys-search-br').addClass('iys-search-inhouse');
-                $.fullscreen.exit();
-            }
-        }
-    }, false);
 
 });
+
