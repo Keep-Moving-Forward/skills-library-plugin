@@ -991,8 +991,8 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
             var treeArr = item.text.replace(/[(:\d_)]+/g, '@@@').split('@@@');
             treeArr = treeArr.slice(1, treeArr.length - 1);
             var skillname = treeArr[0], categories = [], catstr = '';
-            if (treeArr.length >= 5) {
-                categories = treeArr.slice(treeArr.length - 4);
+            if (treeArr.length >= 7) {
+                categories = treeArr.slice(treeArr.length - 6);
             } else if (treeArr.length == 1) {
                 //categories.push(treeArr[1]);
             } else if (treeArr.length == 2) {
