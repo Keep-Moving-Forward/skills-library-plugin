@@ -991,13 +991,16 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
             var treeArr = item.text.replace(/[(:\d_)]+/g, '@@@').split('@@@');
             treeArr = treeArr.slice(1, treeArr.length - 1);
             var skillname = treeArr[0], categories = [], catstr = '';
-            if (treeArr.length >= 3) {
-                categories = treeArr.slice(treeArr.length - 2);
+            if (treeArr.length >= 5) {
+                categories = treeArr.slice(treeArr.length - 4);
+            } else if (treeArr.length == 1) {
+                //categories.push(treeArr[1]);
             } else if (treeArr.length == 2) {
                 categories.push(treeArr[1]);
             } else {
+                categories = treeArr;
             }
-            catstr = (categories.length > 0 ? ('<div><smaller>(' + categories.join(' &laquo; ') + ')</smaller></div>') : '');
+            catstr = (categories.length > 0 ? ('<div><small class="iys-subcat">(' + categories.join(' &laquo; ') + ')</small></div>') : '');
             return '<div><b>' + skillname + '</b></div>' + catstr;
         }
 
@@ -1037,12 +1040,22 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                 dataType: 'json',
                 cache: "true",
                 data: function (term) {
-
+                    var action = $('input[name=iysSearchMethod]:checked', '#iysSearch').val();
+                    var q = action == 'template' && term == '' ? 'ALL' : term;
                     return {
-                        term: term,
-                        action: $('input[name=iysSearchMethod]:checked', '#iysSearch').val()};
-                },
+                        term: q,
+                        action: action
+                    };
+                },  
                 results: function (data, callback) {
+                    var datum = [];
+                    $.each(data, function (key, value) {
+                        var compressedSkill = value.tree_structure;
+                        datum.push({'id': compressedSkill, 'text': value.tree_id_value});
+                    });
+                    return {results: datum};
+                }
+                /*results: function (data, callback) {
                     var datum = [];
                     $.each(data, function (key, value) {
                         var compressedSkill = value.tree_structure;
@@ -1053,7 +1066,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                         datum.push({'id': compressedSkill, 'text': txt});
                     });
                     return {results: datum};
-                }
+                }*/
             },
             formatResult: formatItem,
             formatSelection: function () {
@@ -1065,6 +1078,10 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
 
             obj.options.data = JSON.parse($e.val);
             $.fn.skillEngine.buildTree(obj, 'SEARCH');
+        });
+
+        $('input[name=iysSearchMethod]').on('click', function () {
+            $('.keyword').select2('open');
         });
         $(document).off('click', '#iysVerifyCaptchaBtnCancel');
         $(document).on('click', '#iysVerifyCaptchaBtnCancel', function () {
