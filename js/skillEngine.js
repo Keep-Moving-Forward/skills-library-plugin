@@ -1078,6 +1078,9 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
 
             obj.options.data = JSON.parse($e.val);
             $.fn.skillEngine.buildTree(obj, 'SEARCH');
+        }).on("select2-opening", function () {
+            var minimumInputLength = $('input[name=iysSearchMethod]:checked').val() == 'search' ? 2 : 0;
+            $(this).data("select2").opts.minimumInputLength = minimumInputLength;
         });
 
         $('input[name=iysSearchMethod]').on('click', function () {
