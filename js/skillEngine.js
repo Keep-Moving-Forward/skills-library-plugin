@@ -524,7 +524,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                 break;
             case 'behavioural':
                 $blueprint += 'iys-beh-bg">';
-                $blueprint += '<h2>Behavioral / Cognitive Skills</h2>';
+                $blueprint += '<h2>General Behavioral / Cognitive Skills</h2>';
                 break;
             case 'managerial':
                 $blueprint += 'iys-man-bg">';
