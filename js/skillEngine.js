@@ -518,7 +518,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
             case 'functionals':
                 $blueprint += 'iys-fun-bg">';
                 $blueprint += '<h2>Functional / Technical Skills</h2>';
-                if (!obj.options.lock) {
+                if (!obj.options.lock || obj.options.mode != 'report') {
                     $blueprint += '<a id="functionals-fullscreen" class="btn btn-info pull-right"><i class="fa fa-expand text-default"></i></a><a class="top-btm-count"><div><span id="skill-top-count">0</span> skills selected above current skill</div></a>';
                 }
                 break;
@@ -567,7 +567,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
 
                 break;
         }
-        if (!obj.options.lock) {
+        if (!obj.options.lock || obj.options.mode != 'report') {
             switch (obj.options.type) {
                 case 'functionals':
                     $blueprint += '<div class="iys-fun-end"><p>You have selected <span id="skills-count-functionals">0</span> Functional Skills</p><a class="top-btm-count"><div><span id="skill-bottom-count">0</span> skills selected below current skill</div></a></div>';
@@ -1508,11 +1508,14 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
             }).on("change", function ($e) {
                 $e.preventDefault();
                 obj.options.data = JSON.parse($e.val);
+                var BUName = $('[name="BUName[]"]').val();
+                var Title = $('[name="Title[]"]').val();
+                var Level = $('[name="Level[]"]').val();
                 ajx = $.ajax({
                     url: '/skillreport',
                     type: 'POST',
                     async: true, dataType: 'json',
-                    data: {'skillStructure': obj.options.data},
+                    data: {'skillStructure': obj.options.data,BUName:BUName, Level:Level, Title:Title},
                     success: function ($data) {
                         obj.options.data = $data;
                         $.fn.skillEngine.report(obj, 'SEARCH');
