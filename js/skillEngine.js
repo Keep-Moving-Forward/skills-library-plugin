@@ -1406,28 +1406,30 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
         }
 
         function formatNoMatches(term) {
-
-            if ($('input[name=iysSearchMethod]:checked', '#iysSearch').val() != 'template') {
-
-                $captchaModal = '<div class="panel panel-info">';
-                $captchaModal += '<div class="panel-heading">Add ' + term + '</div>';
-                $captchaModal += '<div class="panel-body text-center">';
-                $captchaModal += '<div class="g-recaptcha" data-sitekey="6LeFDAMTAAAAAO06bx_YKqu35WIvwlGOqHnIpQQP"></div>';
-                $captchaModal += '<a class="btn btn-success btn-sm pull-left" data-term="' + term + '" id="iysVerifyCaptchaBtn"><i class="fa fa-plus"></i> Add</a>';
-                $captchaModal += '<a class="btn btn-danger btn-sm pull-right" id="iysVerifyCaptchaBtnCancel">Cancel</a>';
-                $captchaModal += '</div>';
-                $captchaModal += '</div>';
-                $('#iysAddSkillVerifyWrapper').html($captchaModal);
-                $('#iysSkillChart').hide();
-                $.getScript('https://www.google.com/recaptcha/api.js');
-
-                return "Add " + term;
-            } else {
-
-                return ' Your search - <b>' + term + '</b> - did not match any templates.';
+            var opt = $('input[name=iysSearchMethod]:checked', '#iysSearch').val();
+            switch(opt){
+                case 'template':
+                    return ' Your search - <b>' + term + '</b> - did not match any templates.';
+                    break;
+                case 'report':
+                    return ' Your search - <b>' + term + '</b> - did not match.';
+                    break;
+                default:
+                    $captchaModal = '<div class="panel panel-info">';
+                    $captchaModal += '<div class="panel-heading">Add ' + term + '</div>';
+                    $captchaModal += '<div class="panel-body text-center">';
+                    $captchaModal += '<div class="g-recaptcha" data-sitekey="6LeFDAMTAAAAAO06bx_YKqu35WIvwlGOqHnIpQQP"></div>';
+                    $captchaModal += '<a class="btn btn-success btn-sm pull-left" data-term="' + term + '" id="iysVerifyCaptchaBtn"><i class="fa fa-plus"></i> Add</a>';
+                    $captchaModal += '<a class="btn btn-danger btn-sm pull-right" id="iysVerifyCaptchaBtnCancel">Cancel</a>';
+                    $captchaModal += '</div>';
+                    $captchaModal += '</div>';
+                    $('#iysAddSkillVerifyWrapper').html($captchaModal);
+                    $('#iysSkillChart').hide();
+                    $.getScript('https://www.google.com/recaptcha/api.js');
+    
+                    return "Add " + term;
+                    break;
             }
-
-
         }
         if ($('input[name=iysSearchMethod]:checked').val() != 'report') {
             $('.keyword').select2({
