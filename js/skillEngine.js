@@ -448,10 +448,6 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                     $(obj.selector + ' > a > i').alterClass('iys-*', 'iys-minus');
 
                     if (obj.options.mode == 'report') {
-                        if(data.length == 0){
-                            $(this).html('<p>No ' + obj.options.type + ' skills available</p>');
-                            return false;
-                        }
                         $.fn.skillEngine.report(obj);
                     }
                     else {
@@ -1410,7 +1406,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
 
         function formatNoMatches(term) {
             var opt = $('input[name=iysSearchMethod]:checked', '#iysSearch').val();
-            switch(opt){
+            switch (opt) {
                 case 'template':
                     return ' Your search - <b>' + term + '</b> - did not match any templates.';
                     break;
@@ -1429,7 +1425,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                     $('#iysAddSkillVerifyWrapper').html($captchaModal);
                     $('#iysSkillChart').hide();
                     $.getScript('https://www.google.com/recaptcha/api.js');
-    
+
                     return "Add " + term;
                     break;
             }
@@ -1520,7 +1516,7 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                     url: '/skillreport',
                     type: 'POST',
                     async: true, dataType: 'json',
-                    data: {'skillStructure': obj.options.data,BUName:BUName, Level:Level, Title:Title},
+                    data: {'skillStructure': obj.options.data, BUName: BUName, Level: Level, Title: Title},
                     success: function ($data) {
                         obj.options.data = $data;
                         $.fn.skillEngine.report(obj, 'SEARCH');
