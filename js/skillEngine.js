@@ -448,7 +448,10 @@ if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
                     $(obj.selector + ' > a > i').alterClass('iys-*', 'iys-minus');
 
                     if (obj.options.mode == 'report') {
-
+                        if(data.length == 0){
+                            $(this).html('<p>No ' + obj.options.type + ' skills available</p>');
+                            return false;
+                        }
                         $.fn.skillEngine.report(obj);
                     }
                     else {
